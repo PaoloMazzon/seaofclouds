@@ -58,6 +58,9 @@ class Character is Entity {
         _velocity_x = 0
         _velocity_y = 0
         _sprite_set = null
+        hitbox = Hitbox.new_rectangle(8, 6)
+        hitbox.x_offset = 4
+        hitbox.y_offset = 3
     }
 
     sprite_set { _sprite_set }
@@ -69,7 +72,7 @@ class Character is Entity {
     facing_left { _facing_x == -1 }
     facing_right { _facing_x == 1 }
 
-    process_physics() {
+    process_physics(level) {
         // Facing
         if (velocity_x > 0) {
             _facing_x = 1
@@ -77,8 +80,17 @@ class Character is Entity {
             _facing_x = -1
         }
 
-        x = x + (velocity_x * Engine.delta)
-        y = y + (velocity_y * Engine.delta)
+        var new_x = x + (velocity_x * Engine.delta)
+        if (level.tileset[(hitbox.bb_left(new_x, y) / level.tileset.tile_width).floor, (y / level.tileset.tile_height).floor] != 0 && 
+            level.tileset[(hitbox.bb_right(new_x, y) / level.tileset.tile_width).floor, (y / level.tileset.tile_height).floor] != 0) {
+            x = new_x
+        }
+
+        var new_y = y + (velocity_y * Engine.delta)
+        if (level.tileset[(x / level.tileset.tile_width).floor, (hitbox.bb_top(x, new_y) / level.tileset.tile_height).floor] != 0 && 
+            level.tileset[(x / level.tileset.tile_width).floor, (hitbox.bb_bottom(x, new_y) / level.tileset.tile_height).floor] != 0) {
+            y = new_y
+        }
     }
 
     create(level, tiled_data) {

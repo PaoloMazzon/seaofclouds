@@ -14,7 +14,8 @@ class Player is Character {
         if (!level.is_paused) {
             velocity_x = Keyboard.keys_as_axis(Keyboard.KEY_LEFT, Keyboard.KEY_RIGHT) * Constants.PLAYER_SPEED
             velocity_y = Keyboard.keys_as_axis(Keyboard.KEY_UP, Keyboard.KEY_DOWN) * Constants.PLAYER_SPEED
-            process_physics()
+            process_physics(level)
+            level.set_focal_point(x, y, 1)
         }
     }
 }

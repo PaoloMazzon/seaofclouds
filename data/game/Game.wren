@@ -25,16 +25,39 @@ class Cloud {
     }
 }
 
+class SkillCheck {
+    static SKILL_CHECK_EASY { 1 }
+    static SKILL_CHECK_HARD { 3 }
+
+    construct new(difficulty, fiber) {
+        _difficulty = difficulty
+        _fiber = fiber
+
+    }
+}
+
 class Game is Level {
     construct new() {
         _start_time = 0
         _title_length = 0
         _stop_time = 0
         _screen_shake = 0
+        _skill_check = null
         _clouds_foreground = []
         _clouds_background = []
+        _focal_x = 0
+        _focal_y = 0
+        _focal_zoom = 1
+        _paused = false
+        _fade_in = Constants.FADE_TIME
+        _fade_out = 0
     }
     rng { _rng }
+
+    // Triggers a skillcheck - fiber is called with the result, true for passed
+    skill_check(difficulty, fiber) {
+        _skill_check = SkillCheck.new(difficulty)
+    }
 
     // Handles internal things like screen shake and pausing
     process_meta() {
@@ -44,18 +67,50 @@ class Game is Level {
         _stop_time = _stop_time - Engine.delta
     }
 
+    // Pauses game for a given period of time in seconds
     pause(time) {
         _stop_time = time
     }
 
+    // Pauses indefinetely
+    pause() {
+        _paused = true
+    }
+
+    // Unpauses
+    unpause() {
+        _paused = false
+        _stop_time = 0
+    }
+
+    // Toggles the pause
+    toggle_pause() {
+        _paused = !_paused
+    }
+
+    // Shakes the screen for a given amount of time in seconds
     shake_screen(time) {
         _screen_shake = time
     }
 
-    is_paused { _stop_time > 0 }
+    // Returns true if a skill check is currently happening
+    in_skill_check { _skill_check != null }
 
+    // Returns true if the game is paused for any reason
+    is_paused { _stop_time > 0 || _paused || _skill_check != null || _fade_in > 0 || _fade_out > 0 }
+
+    // Returns true if the screen is shaking
     is_shaking {
         return _screen_shake > 0 && !is_paused
+    }
+
+    // Ground tileset
+    tileset { _tileset }
+
+    set_focal_point(x, y, zoom) {
+        _focal_x = x
+        _focal_y = y
+        _focal_zoom = zoom
     }
 
     create() {
@@ -76,6 +131,7 @@ class Game is Level {
         _foreground_tileset = tilesets["foreground"]
 
         // Tileset surface
+        Renderer.use_cameras_on_surfaces = false
         _tileset_surface = _tileset.draw_to_surface()
         _background_tileset_surface = _background_tileset.draw_to_surface()
         _foreground_tileset_surface = _foreground_tileset.draw_to_surface()
@@ -93,11 +149,14 @@ class Game is Level {
 
         // Setup cameras
         _game_camera = Camera.new()
+        _ui_camera = Camera.new()
         var aspectRatio = Renderer.window_width / Renderer.window_height
         _game_camera.width = Constants.GAME_HEIGHT * aspectRatio
         _game_camera.height = Constants.GAME_HEIGHT
         _game_camera.x = _player.x - (_game_camera.width / 2)
         _game_camera.y = _player.y - (_game_camera.height / 2)
+        set_focal_point(_player.x, _player.y, 1)
+        _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
     }
 
     pre_frame() {
@@ -106,12 +165,12 @@ class Game is Level {
         if (!is_paused) {
             // Calculate camera's width and height
             var aspectRatio = Renderer.window_width / Renderer.window_height
-            _game_camera.width = Constants.GAME_HEIGHT * aspectRatio
-            _game_camera.height = Constants.GAME_HEIGHT
+            _game_camera.width = (Constants.GAME_HEIGHT * aspectRatio) / _focal_zoom 
+            _game_camera.height = Constants.GAME_HEIGHT / _focal_zoom
             _game_camera.w_on_screen = Renderer.window_width
             _game_camera.h_on_screen = Renderer.window_height
-            _game_camera.x = _game_camera.x + 0.05 * ((_player.x - (_game_camera.width / 2)) - _game_camera.x)
-            _game_camera.y = _game_camera.y + 0.05 * ((_player.y - (_game_camera.height / 2)) - _game_camera.y)
+            _game_camera.x = _game_camera.x + 0.05 * ((_focal_x - (_game_camera.width / 2)) - _game_camera.x)
+            _game_camera.y = _game_camera.y + 0.05 * ((_focal_y - (_game_camera.height / 2)) - _game_camera.y)
 
             if (is_shaking) {
                 _game_camera.x = _game_camera.x + _rng.float(-Constants.SHAKE_INTENSITY, Constants.SHAKE_INTENSITY)
@@ -135,7 +194,18 @@ class Game is Level {
             _game_camera.y = _player.y - (_game_camera.height / 2)
         } 
 
+        _ui_camera.width = Renderer.window_width
+        _ui_camera.height = Renderer.window_height
+        _ui_camera.w_on_screen = Renderer.window_width
+        _ui_camera.h_on_screen = Renderer.window_height
+
+        _ui_camera.update()
         _game_camera.update()
+
+        // Update window surface if resized
+        if (_window_surface.width != Renderer.window_width || _window_surface.height != Renderer.window_height) {
+            _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
+        }
     }
 
     update() {
@@ -158,7 +228,33 @@ class Game is Level {
             cloud.draw(is_paused)
         }
 
+        // Top-level game stuff
         process_meta()
+        if (_skill_check != null) {
+            _skill_check.update()
+        }
+
+        // Fade in and out
+        if (_fade_in > 0 || _fade_out > 0) {
+            var percent = 0
+            if (_fade_in > 0) {
+                percent = Math.serp(1 - (_fade_in / Constants.FADE_TIME), 0, 1)
+                _fade_in = _fade_in - Engine.delta
+            } else {
+                percent = Math.serp(_fade_out / Constants.FADE_TIME, 0, 1)
+                _fade_out = _fade_out - Engine.delta
+            }
+            
+            Renderer.target = _window_surface
+            Renderer.colour_mod = [0, 0, 0, 1]
+            Renderer.clear()
+            Renderer.blend_mode = Renderer.BLEND_MODE_SUBTRACT
+            Renderer.draw_circle(_window_surface.width / 2, _window_surface.height / 2, _window_surface.width * percent)
+            Renderer.blend_mode = Renderer.BLEND_MODE_BLEND
+            Renderer.target = Renderer.RENDER_TARGET_DEFAULT
+            Renderer.lock_cameras(_ui_camera)
+            Renderer.draw_texture(_window_surface, 0, 0)
+        }
 
         // Debug
         if (Keyboard.key_pressed(Keyboard.KEY_Y)) {
