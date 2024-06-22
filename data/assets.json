@@ -1,0 +1,130 @@
+{
+  "sprites": [
+    {
+      "file": "player.png",
+      "name": "player_walk_right",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.2
+    },
+    {
+      "file": "player.png",
+      "name": "player_walk_left",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.2
+    },
+    {
+      "file": "player.png",
+      "name": "player_hit_right",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 128,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.2
+    },
+    {
+      "file": "player.png",
+      "name": "player_hit_left",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 128,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.2
+    },
+    {
+      "file": "player.png",
+      "name": "player_idle_right",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "frames": 16,
+      "delay": 0.2
+    },
+    {
+      "file": "player.png",
+      "name": "player_idle_left",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 128,
+      "w": 32,
+      "h": 32,
+      "frames": 16,
+      "delay": 0.2
+    },
+    {
+      "file": "player.png",
+      "name": "player_die",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "frames": 12,
+      "delay": 0.2
+    }
+  ],
+  "fonts": [
+      {
+          "file": "merriweather.ttf",
+          "name": "merriweather48",
+          "ustart": 32,
+          "uend": 128,
+          "size": 48
+      },
+      {
+          "file": "merriweather.ttf",
+          "name": "merriweather32",
+          "ustart": 32,
+          "uend": 128,
+          "size": 32
+      },
+      {
+          "file": "merriweather.ttf",
+          "name": "merriweather24",
+          "ustart": 32,
+          "uend": 128,
+          "size": 24
+      },
+      {
+          "file": "merriweather.ttf",
+          "name": "merriweather16",
+          "ustart": 32,
+          "uend": 128,
+          "size": 16
+      }
+  ],
+  "bitmap_fonts": [
+      
+  ],
+  "buffers": [
+
+  ],
+  "strings": [
+
+  ],
+  "exclude": [
+      
+  ]
+}
