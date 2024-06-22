@@ -11,8 +11,10 @@ class Player is Character {
 
     update(level) {
         super.update(level)
-        velocity_x = Keyboard.keys_as_axis(Keyboard.KEY_LEFT, Keyboard.KEY_RIGHT) * Engine.delta * Constants.PLAYER_SPEED
-        velocity_y = Keyboard.keys_as_axis(Keyboard.KEY_UP, Keyboard.KEY_DOWN) * Engine.delta * Constants.PLAYER_SPEED
-        process_physics()
+        if (!level.is_paused) {
+            velocity_x = Keyboard.keys_as_axis(Keyboard.KEY_LEFT, Keyboard.KEY_RIGHT) * Constants.PLAYER_SPEED
+            velocity_y = Keyboard.keys_as_axis(Keyboard.KEY_UP, Keyboard.KEY_DOWN) * Constants.PLAYER_SPEED
+            process_physics()
+        }
     }
 }

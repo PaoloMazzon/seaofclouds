@@ -77,8 +77,8 @@ class Character is Entity {
             _facing_x = -1
         }
 
-        x = x + velocity_x
-        y = y + velocity_y
+        x = x + (velocity_x * Engine.delta)
+        y = y + (velocity_y * Engine.delta)
     }
 
     create(level, tiled_data) {
@@ -87,8 +87,18 @@ class Character is Entity {
 
     update(level) {
         super.update(level)
-        velocity_x = 0
-        velocity_y = 0
+        if (!level.is_paused) {
+            velocity_x = 0
+            velocity_y = 0
+        }
+    }
+
+    draw_sprite(sprite, x, y, paused) {
+        if (paused) {
+            Renderer.draw_sprite(sprite, sprite.frame, x, y)
+        } else {
+            Renderer.draw_sprite(sprite, x, y)
+        }
     }
 
     draw(level) {
@@ -96,9 +106,9 @@ class Character is Entity {
         
         // Animations
         if (velocity_x == 0 && velocity_y == 0) {
-            Renderer.draw_sprite(sprite_set.idle(_facing_x), x, y)
+            draw_sprite(sprite_set.idle(_facing_x), x, y, level.is_paused)
         } else {
-            Renderer.draw_sprite(sprite_set.walk(_facing_x), x, y)
+            draw_sprite(sprite_set.walk(_facing_x), x, y, level.is_paused)
         }
     }
 }
