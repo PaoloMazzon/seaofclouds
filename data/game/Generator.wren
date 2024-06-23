@@ -2,9 +2,9 @@ import "random" for Random
 
 // Generates a random sky level and returns the grid
 class Generator {
-    static GROUND_TILES { [1, 2, 3, 4] }
-    static DROP_TILES { [5, 6, 7, 8] }
-    static DECORATION_TILES { [31, 32, 33, 34, 35, 41, 42, 43, 44] }
+    static GROUND_TILE { 1 }
+    static DROP_TILE { 11 }
+    static DECORATION_TILES { [31, 32, 33, 34, 35, 41, 42, 43, 44, 45] }
 
     tileset_tex { _tileset_tex }
     tileset_tex=(s) { _tileset_tex = s }
@@ -43,12 +43,7 @@ class Generator {
     }
 
     is_ground(tile) {
-        for (current_tile in Generator.GROUND_TILES) {
-            if (current_tile == tile) {
-                return true
-            }
-        }
-        return false
+        return tile == 1
     }
 
     player_start_x { _start_tile[0] * _tile_width }
@@ -99,7 +94,7 @@ class Generator {
                 attempts = attempts + 1
             }
             island_spots.add(spot)
-            tileset_ground[spot[0], spot[1]] = get_tile(Generator.GROUND_TILES, rng)
+            tileset_ground[spot[0], spot[1]] = Generator.GROUND_TILE
         }
 
         // Fill out the islands
@@ -108,7 +103,7 @@ class Generator {
                 // Check each spot to see if this is close enough
                 for (spot in island_spots) {
                     if (Math.point_distance(spot[0], spot[1], x, y) < spot[2]) {
-                        tileset_ground[x, y] = get_tile(Generator.GROUND_TILES, rng)
+                        tileset_ground[x, y] = Generator.GROUND_TILE
                     }
                 }
             }
@@ -138,9 +133,9 @@ class Generator {
                     y = y + sign(y_displacement)
                     y_displacement = towards_zero(y_displacement)
                 }
-                tileset_ground[x, y] = get_tile(Generator.GROUND_TILES, rng)
-                tileset_ground[x, y - 1] = get_tile(Generator.GROUND_TILES, rng)
-                tileset_ground[x - 1, y] = get_tile(Generator.GROUND_TILES, rng)
+                tileset_ground[x, y] = Generator.GROUND_TILE
+                tileset_ground[x, y - 1] = Generator.GROUND_TILE
+                tileset_ground[x - 1, y] = Generator.GROUND_TILE
             }
         }
 
@@ -149,12 +144,71 @@ class Generator {
             for (x in 0..width - 1) {
                 // Drop-down walls
                 if (is_ground(tileset_ground[x, y - 1]) && tileset_ground[x, y] == 0) {
-                    tileset_background[x, y] = get_tile(Generator.DROP_TILES, rng)
+                    tileset_background[x, y] = Generator.DROP_TILE
                 }
 
                 // Small decoration tiles
                 if (is_ground(tileset_ground[x, y]) && rng.int(10) == 2) {
                     tileset_foreground[x, y] = get_tile(Generator.DECORATION_TILES, rng)
+                }
+            }
+        }
+
+        // Autotile pass
+        for (y in 1..height - 2) {
+            for (x in 1..width - 2) {
+                if (tileset_ground[x, y] != 0) {
+                    var above = tileset_ground[x, y - 1] != 0
+                    var below = tileset_ground[x, y + 1] != 0
+                    var left = tileset_ground[x - 1, y] != 0
+                    var right = tileset_ground[x + 1, y] != 0
+                    var drop_right = tileset_ground[x + 1, y] != Generator.DROP_TILE
+                    var drop_left = tileset_ground[x - 1, y] != Generator.DROP_TILE
+                    
+                    // Autotile the ground
+                    if (!below && !above && !left && !right) {
+                        tileset_ground[x, y] = 17
+                    } else if (!below && !above && left && right) {
+                        tileset_ground[x, y] = 10
+                    } else if (below && above && !left && !right) {
+                        tileset_ground[x, y] = 4
+                    } else if (below && !above && left && !right) {
+                        tileset_ground[x, y] = 5
+                    } else if (below && !above && !left && right) {
+                        tileset_ground[x, y] = 7
+                    } else if (!below && above && !left && right) {
+                        tileset_ground[x, y] = 8
+                    } else if (!below && above && left && !right) {
+                        tileset_ground[x, y] = 9
+                    } else if (!below && above && left && right) {
+                        tileset_ground[x, y] = 1
+                    } else if (below && above && !left && right) {
+                        tileset_ground[x, y] = 2
+                    } else if (below && above && left && !right) {
+                        tileset_ground[x, y] = 3
+                    } else if (below && !above && left && right) {
+                        tileset_ground[x, y] = 6
+                    } else if (below && above && left && right) {
+                        tileset_ground[x, y] = 16
+                    }
+                } else if (tileset_background[x, y] != 0) {
+                    var above = tileset_ground[x, y - 1] != 0
+                    var below = tileset_ground[x, y + 1] != 0
+                    var left = tileset_ground[x - 1, y] != 0
+                    var right = tileset_ground[x + 1, y] != 0
+                    var drop_right = tileset_background[x + 1, y] != 0
+                    var drop_left = tileset_background[x - 1, y] != 0
+
+                    // Autotile the drop tiles
+                    if (!below && ((drop_right && drop_left) || (left && right) || (left && drop_right) || (drop_left && right))) {
+                        tileset_background[x, y] = 12
+                    } else if (!below && (drop_right || right) && !drop_left && !left) {
+                        tileset_background[x, y] = 13
+                    } else if (!below && !drop_right && !right && (drop_left || left)) {
+                        tileset_background[x, y] = 14
+                    } else if (!below && !drop_right && !drop_left && !left && !right) {
+                        tileset_background[x, y] = 15
+                    }
                 }
             }
         }
