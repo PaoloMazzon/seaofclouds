@@ -100,8 +100,15 @@ class Game is Level {
         _paused = false
         _fade_in = Constants.FADE_TIME
         _fade_out = 0
+        _new_focal = null
     }
     rng { _rng }
+    player { _player }
+
+    // Sets the new focal point for when the player dies
+    set_replacement_focal(entity) {
+        _new_focal = entity
+    }
 
     // Triggers a skillcheck - fiber is called with the result, true for passed
     skill_check(difficulty, fiber) {
@@ -114,6 +121,11 @@ class Game is Level {
             _screen_shake = _screen_shake - Engine.delta
         }
         _stop_time = _stop_time - Engine.delta
+
+        // Find a new focal point if the player is dead
+        if (player.is_dead && _new_focal != null) {
+            set_focal_point(_new_focal.x, _new_focal.y, 1.2)
+        }
     }
 
     // Pauses game for a given period of time in seconds

@@ -1,6 +1,7 @@
 import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
+import "BlueSlime" for BlueSlime
 
 class Player is Character {
     construct new() { super() }
@@ -25,6 +26,11 @@ class Player is Character {
             // Debug
             if (Keyboard.key_pressed(Keyboard.KEY_O)) {
                 die()
+            }
+            if (Keyboard.key_pressed(Keyboard.KEY_L)) {
+                var slime = level.add_entity(BlueSlime)
+                slime.x = x
+                slime.y = y
             }
 
             level.set_focal_point(x, y, 1)

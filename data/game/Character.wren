@@ -1,11 +1,27 @@
 import "Constants" for Constants
 import "Attack" for Attack
 
+class Alarm {
+    construct new(time, fiber) {
+        _time = time
+        _fiber = fiber
+    }
+
+    // Returns true if the alarm is done
+    update() {
+        _time = _time - Engine.delta
+        if (_time <= 0) {
+            _fiber.call()
+            return true
+        }
+        return false
+    }
+}
+
 class SpriteSet {
-    construct new(walk, idle, hit, attack, ranged_attack, die) {
+    construct new(walk, idle, attack, ranged_attack, die) {
         _walk = walk
         _idle = idle
-        _hit = hit
         _attack = attack
         _ranged_attack = ranged_attack
         _die = die
@@ -15,8 +31,6 @@ class SpriteSet {
     walk=(s) { _walk = s }
     idle { _idle }
     idle=(s) { _idle = s }
-    hit { _hit }
-    hit=(s) { _hit = s }
     attack { _attack }
     attack=(s) { _attack = s }
     ranged_attack { _ranged_attack }
@@ -28,10 +42,19 @@ class SpriteSet {
         return SpriteSet.new(
             Assets.spr_player_walk.copy(),
             Assets.spr_player_idle.copy(),
-            Assets.spr_player_hit.copy(),
             Assets.spr_player_attack.copy(),
             Assets.spr_player_throw.copy(),
             Assets.spr_player_die.copy()
+        )
+    }
+
+    static BlueSlimeSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_blueslime_walk.copy(),
+            Assets.spr_blueslime_idle.copy(),
+            Assets.spr_blueslime_attack.copy(),
+            null,
+            Assets.spr_blueslime_die.copy()
         )
     }
 }
@@ -49,6 +72,7 @@ class Character is Entity {
         _attack_timer = 0
         _death_timer = 0
         _team = Constants.TEAM_NONE
+        _alarms = []
     }
 
     sprite_set { _sprite_set }
@@ -62,6 +86,11 @@ class Character is Entity {
     facing_left { _facing_x == -1 }
     facing_right { _facing_x == 1 }
     is_attacking { _attack_timer > 0 }
+
+    // Sets an alarm that will call a fiber at the end of it
+    set_alarm(time, fiber) {
+        _alarms.add(Alarm.new(time, fiber))
+    }
 
     process_physics(level) {
         if (is_dead) {
@@ -121,6 +150,15 @@ class Character is Entity {
             velocity_x = 0
             velocity_y = 0
             _attack_timer = _attack_timer - Engine.delta
+
+            // Alarms
+            for (alarm in _alarms) {
+                if (alarm.update()) {
+                    _alarms.remove(alarm)
+                }
+            }
+
+            // Death
             if (_death_timer > 0) {
                 _death_timer = _death_timer - Engine.delta
                 if (_death_timer <= 0) {

@@ -14,18 +14,6 @@
     },
     {
       "file": "player.png",
-      "name": "player_hit",
-      "origin_x": 16,
-      "origin_y": 16,
-      "x": 0,
-      "y": 128,
-      "w": 32,
-      "h": 32,
-      "frames": 4,
-      "delay": 0.2
-    },
-    {
-      "file": "player.png",
       "name": "player_idle",
       "origin_x": 16,
       "origin_y": 16,
@@ -66,11 +54,59 @@
       "origin_x": 16,
       "origin_y": 16,
       "x": 0,
-      "y": 160,
+      "y": 128,
       "w": 32,
       "h": 32,
       "frames": 16,
       "delay": 0.2
+    },
+    {
+      "file": "blueslime.png",
+      "name": "blueslime_walk",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "frames": 2,
+      "delay": 0.2
+    },
+    {
+      "file": "blueslime.png",
+      "name": "blueslime_idle",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "frames": 8,
+      "delay": 0.2
+    },
+    {
+      "file": "blueslime.png",
+      "name": "blueslime_die",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "frames": 9,
+      "delay": 0.1
+    },
+    {
+      "file": "blueslime.png",
+      "name": "blueslime_attack",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.1
     }
   ],
   "fonts": [
