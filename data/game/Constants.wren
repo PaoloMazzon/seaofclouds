@@ -1,6 +1,6 @@
 class Constants {
-    static GAME_WIDTH { 300 }
-    static GAME_HEIGHT { 200 }
+    static GAME_WIDTH { 300.0 }
+    static GAME_HEIGHT { 200.0 }
     static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
     static PLAYER_SPEED { 100 }
     static CLOUD_COUNT { 30 } // must be even
@@ -8,6 +8,9 @@ class Constants {
     static FADE_TIME { 0.75 }
     static SKILL_CHECK_FADE_IN_TIME { 0.5 }
     static SKILL_CHECK_SPEED { Num.tau * 1.1 }
+    static SKILL_CHECK_EASY { 1 }
+    static SKILL_CHECK_HARD { 3 }
+    static HIT_PAUSE { 0.2 }
     static TEAM_NONE { 0 }
     static TEAM_ENEMIES { 1 }
     static TEAM_PLAYER { 2 }

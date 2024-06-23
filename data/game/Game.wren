@@ -238,11 +238,13 @@ class Game is Level {
     pre_frame() {
         super.pre_frame()
 
-        if (!is_paused) {
+        if (!is_paused || (is_paused && in_skill_check)) {
             // Calculate camera's width and height
             var aspectRatio = Renderer.window_width / Renderer.window_height
-            _game_camera.width = (Constants.GAME_HEIGHT * aspectRatio) / _focal_zoom 
-            _game_camera.height = Constants.GAME_HEIGHT / _focal_zoom
+            var desired_width = (Constants.GAME_HEIGHT * aspectRatio) / _focal_zoom
+            var desired_height = Constants.GAME_HEIGHT / _focal_zoom
+            _game_camera.width = _game_camera.width + 0.05 * ((desired_width - _game_camera.width))
+            _game_camera.height = _game_camera.height + 0.05 * ((desired_height - _game_camera.height))
             _game_camera.w_on_screen = Renderer.window_width
             _game_camera.h_on_screen = Renderer.window_height
             _game_camera.x = _game_camera.x + 0.05 * ((_focal_x - (_game_camera.width / 2)) - _game_camera.x)

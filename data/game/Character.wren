@@ -118,15 +118,17 @@ class Character is Entity {
     is_dead { _death_timer > 0 }
 
     die() {
-        _death_timer = (sprite_set.die.frame_count) * sprite_set.die.delay
-        sprite_set.die.frame = 0
+        if (_death_timer <= 0) {
+            _death_timer = (sprite_set.die.frame_count) * sprite_set.die.delay
+            sprite_set.die.frame = 0
+        }
     }
 
     melee_attack(level) {
         if (_attack_timer <= 0) {
             _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
             _sprite_set.attack.frame = 0
-            Attack.create_attack(level, x, y, null, 0, 0, 0, Assets.tex_attack, sprite_set.attack.frame_count * sprite_set.attack.delay, _team)
+            Attack.create_attack(level, x, y, this, 0, 0, 0, Assets.tex_attack, sprite_set.attack.frame_count * sprite_set.attack.delay, _team)
         }
     }
 
@@ -138,6 +140,12 @@ class Character is Entity {
             return true
         }
         return false
+    }
+
+    // Triggers when an attack from the opposite team hits this character
+    on_hit(level) {
+        level.pause(Constants.HIT_PAUSE)
+        die()
     }
 
     create(level, tiled_data) {
@@ -155,6 +163,16 @@ class Character is Entity {
             for (alarm in _alarms) {
                 if (alarm.update()) {
                     _alarms.remove(alarm)
+                }
+            }
+
+            // Getting hit
+            for (attack in level.get_entities(Attack)) {
+                if (attack.team != Constants.TEAM_NONE && attack.team != _team) {
+                    if (colliding(attack)) {
+                        on_hit(level)
+                        level.remove_entity(attack)
+                    }
                 }
             }
 

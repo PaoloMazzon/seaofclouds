@@ -6,9 +6,19 @@ import "BlueSlime" for BlueSlime
 class Player is Character {
     construct new() { super() }
 
+    on_hit(level) {
+        var f = Fiber.new { |passed|
+            if (!passed) {
+                die()
+            }
+        }
+        level.skill_check(Constants.SKILL_CHECK_EASY, f)
+    }
+
     create(level, tiled_data) {
         super.create(level, tiled_data)
         sprite_set = SpriteSet.PlayerSpriteSet
+        team = Constants.TEAM_PLAYER
     }
 
     update(level) {
@@ -25,7 +35,7 @@ class Player is Character {
 
             // Debug
             if (Keyboard.key_pressed(Keyboard.KEY_O)) {
-                die()
+                on_hit(level)
             }
             if (Keyboard.key_pressed(Keyboard.KEY_L)) {
                 var slime = level.add_entity(BlueSlime)
@@ -33,7 +43,7 @@ class Player is Character {
                 slime.y = y
             }
 
-            level.set_focal_point(x, y, 1)
+            level.set_focal_point(x, y, level.in_skill_check || Keyboard.key(Keyboard.KEY_X) ? 2 : 1)
         }
     }
 }

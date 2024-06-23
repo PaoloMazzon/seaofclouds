@@ -7,6 +7,7 @@ class BlueSlime is Character {
         super() 
         _direction = 0
         _time = 0
+        team = Constants.TEAM_ENEMIES
     }
 
     // Picks a new direction to start moving in

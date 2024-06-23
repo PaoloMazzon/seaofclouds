@@ -18,6 +18,7 @@ class Attack is Entity {
     texture=(s) { _texture = s }
     lifespan=(s) { _lifespan = s }
     team=(s) { _team = s }
+    team { _team }
 
     static create_attack(level, x, y, tied_entity, direction, velocity_x, velocity_y, texture, lifespan, team) {
         var e = level.add_entity(Attack)
