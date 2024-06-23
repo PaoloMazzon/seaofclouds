@@ -1,5 +1,6 @@
 import "Constants" for Constants
 import "Character" for Character, SpriteSet
+import "Controls" for Controls
 
 class Player is Character {
     construct new() { super() }
@@ -12,9 +13,20 @@ class Player is Character {
     update(level) {
         super.update(level)
         if (!level.is_paused) {
-            velocity_x = Keyboard.keys_as_axis(Keyboard.KEY_LEFT, Keyboard.KEY_RIGHT) * Constants.PLAYER_SPEED
-            velocity_y = Keyboard.keys_as_axis(Keyboard.KEY_UP, Keyboard.KEY_DOWN) * Constants.PLAYER_SPEED
+            velocity_x = Controls.movement_x * Constants.PLAYER_SPEED
+            velocity_y = Controls.movement_y * Constants.PLAYER_SPEED
             process_physics(level)
+
+            // Attack
+            if (Controls.attack) {
+                melee_attack(level)
+            }
+
+            // Debug
+            if (Keyboard.key_pressed(Keyboard.KEY_O)) {
+                die()
+            }
+
             level.set_focal_point(x, y, 1)
         }
     }

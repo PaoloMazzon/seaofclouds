@@ -3,6 +3,7 @@ import "Player" for Player
 import "random" for Random
 import "Generator" for Generator
 import "Save" for Save
+import "Controls" for Controls
 
 class Cloud {
     construct new(rng, width, height) {
@@ -51,7 +52,7 @@ class SkillCheck {
             _pointer_position = _pointer_position + (Constants.SKILL_CHECK_SPEED * Engine.delta)
 
             // If the player attempts
-            if (Keyboard.key_pressed(Keyboard.KEY_SPACE)) {
+            if (Controls.skill_check) {
                 skill_check_done = true
                 if (_pointer_position >= _goal_position - _difficulty_tolerance && _pointer_position <= _goal_position + _difficulty_tolerance) {
                     _fiber.call(true)
@@ -152,8 +153,8 @@ class Game is Level {
         return _screen_shake > 0 && !is_paused
     }
 
-    // Ground tileset
-    tileset { _tileset }
+    // Collision tileset
+    tileset { _collision_tileset }
 
     set_focal_point(x, y, zoom) {
         _focal_x = x
@@ -177,6 +178,21 @@ class Game is Level {
         _tileset = tilesets["ground"]
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
+        
+        // Generate collision tileset
+        var arr = []
+        for (i in 0.._tileset.tiles_tall - 1) {
+            var inner = []
+            for (j in 0.._tileset.tiles_wide - 1) {
+                if (_tileset[j, i] == 0) {
+                    inner.add(1)
+                } else {
+                    inner.add(0)
+                }
+            }
+            arr.add(inner)
+        }
+        _collision_tileset = Tileset.new(arr, Assets.tex_tiles, 24, 16)
 
         // Tileset surface
         Renderer.use_cameras_on_surfaces = false
