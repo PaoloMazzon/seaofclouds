@@ -25,14 +25,57 @@ class Cloud {
     }
 }
 
+// Handles an individual skill check by triggering a fiber
 class SkillCheck {
     static SKILL_CHECK_EASY { 1 }
     static SKILL_CHECK_HARD { 3 }
 
-    construct new(difficulty, fiber) {
+    construct new(difficulty, fiber, rng) {
         _difficulty = difficulty
         _fiber = fiber
+        _fade_in_timer = Constants.SKILL_CHECK_FADE_IN_TIME
+        _pointer_position = rng.float(Num.tau)
+        _goal_position = _pointer_position + rng.float(Num.pi, Num.tau)
+        _difficulty_texture = difficulty == SkillCheck.SKILL_CHECK_EASY ? Assets.tex_skillcheckeasy : Assets.tex_skillcheckhard
+        _difficulty_tolerance = difficulty == SkillCheck.SKILL_CHECK_EASY ? 0.58 : 0.3
+    }
 
+    update(camera) {
+        var skill_check_done = false
+        _fade_in_timer = _fade_in_timer - Engine.delta
+
+        // Perform the skill check
+        if (_fade_in_timer <= 0) {
+            _pointer_position = _pointer_position + (Constants.SKILL_CHECK_SPEED * Engine.delta)
+
+            // If the player attempts
+            if (Keyboard.key_pressed(Keyboard.KEY_SPACE)) {
+                skill_check_done = true
+                if (_pointer_position >= _goal_position - _difficulty_tolerance && _pointer_position <= _goal_position + _difficulty_tolerance) {
+                    _fiber.call(true)
+                } else {
+                    _fiber.call(false)
+                }
+            }
+
+            // If the attempt passes
+            if (_pointer_position > _goal_position + _difficulty_tolerance && !skill_check_done) {
+                skill_check_done = true
+                _fiber.call(false)
+            }
+        }
+
+        // Draw skill check
+        var centerX = camera.width / 2
+        var centerY = camera.height / 2
+        var drawX = centerX - (Assets.tex_skillcheckcircle.width / 2)
+        var drawY = centerY - (Assets.tex_skillcheckcircle.height / 2)
+        Renderer.lock_cameras(camera)
+        Renderer.draw_texture(Assets.tex_skillcheckcircle, drawX, drawY)
+        Renderer.draw_texture(_difficulty_texture, drawX, drawY, 1, 1, _goal_position, Assets.tex_skillcheckcircle.width / 2, Assets.tex_skillcheckcircle.height / 2)
+        Renderer.draw_texture(Assets.tex_skillcheckpointer, drawX, drawY, 1, 1, _pointer_position, Assets.tex_skillcheckcircle.width / 2, Assets.tex_skillcheckcircle.height / 2)
+
+        return skill_check_done
     }
 }
 
@@ -56,7 +99,7 @@ class Game is Level {
 
     // Triggers a skillcheck - fiber is called with the result, true for passed
     skill_check(difficulty, fiber) {
-        _skill_check = SkillCheck.new(difficulty)
+        _skill_check = SkillCheck.new(difficulty, fiber, _rng)
     }
 
     // Handles internal things like screen shake and pausing
@@ -231,17 +274,19 @@ class Game is Level {
         // Top-level game stuff
         process_meta()
         if (_skill_check != null) {
-            _skill_check.update()
+            if (_skill_check.update(_ui_camera)){ 
+                _skill_check = null
+            }
         }
 
         // Fade in and out
         if (_fade_in > 0 || _fade_out > 0) {
             var percent = 0
             if (_fade_in > 0) {
-                percent = Math.serp(1 - (_fade_in / Constants.FADE_TIME), 0, 1)
+                percent = 1 - (_fade_in / Constants.FADE_TIME)
                 _fade_in = _fade_in - Engine.delta
             } else {
-                percent = Math.serp(_fade_out / Constants.FADE_TIME, 0, 1)
+                percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
             }
             
@@ -249,7 +294,7 @@ class Game is Level {
             Renderer.colour_mod = [0, 0, 0, 1]
             Renderer.clear()
             Renderer.blend_mode = Renderer.BLEND_MODE_SUBTRACT
-            Renderer.draw_circle(_window_surface.width / 2, _window_surface.height / 2, _window_surface.width * percent)
+            Renderer.draw_circle(_window_surface.width / 2, _window_surface.height / 2, ((_window_surface.width / 2) * 1.2) * percent)
             Renderer.blend_mode = Renderer.BLEND_MODE_BLEND
             Renderer.target = Renderer.RENDER_TARGET_DEFAULT
             Renderer.lock_cameras(_ui_camera)
@@ -262,6 +307,12 @@ class Game is Level {
         }
         if (Keyboard.key_pressed(Keyboard.KEY_U)) {
             pause(0.5)
+        }
+        if (Keyboard.key_pressed(Keyboard.KEY_J)) {
+            var f = Fiber.new { |success|
+                System.print(success)
+            }
+            skill_check(SkillCheck.SKILL_CHECK_HARD, f)
         }
 
         // Fullscreen

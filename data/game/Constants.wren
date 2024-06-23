@@ -5,5 +5,7 @@ class Constants {
     static PLAYER_SPEED { 100 }
     static CLOUD_COUNT { 30 } // must be even
     static SHAKE_INTENSITY { 3 }
-    static FADE_TIME { 1.5 }
+    static FADE_TIME { 0.75 }
+    static SKILL_CHECK_FADE_IN_TIME { 0.5 }
+    static SKILL_CHECK_SPEED { Num.tau * 1.3 }
 }
