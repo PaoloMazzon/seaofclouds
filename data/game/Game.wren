@@ -2,6 +2,7 @@ import "Constants" for Constants
 import "Player" for Player
 import "random" for Random
 import "Generator" for Generator
+import "Save" for Save
 
 class Cloud {
     construct new(rng, width, height) {
@@ -37,7 +38,8 @@ class SkillCheck {
         _pointer_position = rng.float(Num.tau)
         _goal_position = _pointer_position + rng.float(Num.pi, Num.tau)
         _difficulty_texture = difficulty == SkillCheck.SKILL_CHECK_EASY ? Assets.tex_skillcheckeasy : Assets.tex_skillcheckhard
-        _difficulty_tolerance = difficulty == SkillCheck.SKILL_CHECK_EASY ? 0.58 : 0.3
+        _difficulty_tolerance = difficulty == SkillCheck.SKILL_CHECK_EASY ? 0.386133 : 0.207036
+        Audio.play(Assets.aud_skillcheck, false, Save.volume, Save.volume)
     }
 
     update(camera) {
@@ -53,8 +55,10 @@ class SkillCheck {
                 skill_check_done = true
                 if (_pointer_position >= _goal_position - _difficulty_tolerance && _pointer_position <= _goal_position + _difficulty_tolerance) {
                     _fiber.call(true)
+                    Audio.play(Assets.aud_passedskillcheck, false, Save.volume, Save.volume)
                 } else {
                     _fiber.call(false)
+                    Audio.play(Assets.aud_failedskillcheck, false, Save.volume, Save.volume)
                 }
             }
 
@@ -62,6 +66,7 @@ class SkillCheck {
             if (_pointer_position > _goal_position + _difficulty_tolerance && !skill_check_done) {
                 skill_check_done = true
                 _fiber.call(false)
+                Audio.play(Assets.aud_failedskillcheck, false, Save.volume, Save.volume)
             }
         }
 
@@ -308,7 +313,13 @@ class Game is Level {
         if (Keyboard.key_pressed(Keyboard.KEY_U)) {
             pause(0.5)
         }
-        if (Keyboard.key_pressed(Keyboard.KEY_J)) {
+        if (Keyboard.key_pressed(Keyboard.KEY_E)) {
+            var f = Fiber.new { |success|
+                System.print(success)
+            }
+            skill_check(SkillCheck.SKILL_CHECK_EASY, f)
+        }
+        if (Keyboard.key_pressed(Keyboard.KEY_H)) {
             var f = Fiber.new { |success|
                 System.print(success)
             }

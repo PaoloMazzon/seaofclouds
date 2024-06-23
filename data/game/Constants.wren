@@ -7,5 +7,5 @@ class Constants {
     static SHAKE_INTENSITY { 3 }
     static FADE_TIME { 0.75 }
     static SKILL_CHECK_FADE_IN_TIME { 0.5 }
-    static SKILL_CHECK_SPEED { Num.tau * 1.3 }
+    static SKILL_CHECK_SPEED { Num.tau * 1.1 }
 }
