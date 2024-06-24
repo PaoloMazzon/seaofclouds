@@ -8,6 +8,7 @@ class Constants {
     static CONTROL_ATTACK { 4 }
     static CONTROL_PARRY { 5 }
     static CONTROL_THROW { 6 }
+    static CONTROL_CONFIRM { 7 }
     static ALTERNATOR_TIME { 0.1 } // for flickering
     static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
     static FADE_TIME { 0.75 }

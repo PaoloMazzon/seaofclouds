@@ -11,6 +11,11 @@ class BlueSlime is Character {
         team = Constants.TEAM_ENEMIES
     }
 
+    on_hit(level, attack) {
+        super.on_hit(level, attack)
+        level.add_particles(Assets.tex_slimeparticle, x, y, Math.point_angle(attack.x, attack.y, x, y), Num.pi * 0.3, 40, 1, Num.pi, 10)
+    }
+
     // Picks a new direction to start moving in
     start_direction(level) {
         if (Math.point_distance(level.player.x, level.player.y, x, y) < Constants.SLIME_AGGRO_RANGE) {

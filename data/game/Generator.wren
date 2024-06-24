@@ -50,15 +50,17 @@ class Generator {
 
     // Returns
     get_entity_locations(locations, x, y, rng) {
-        if (Math.point_distance(_start_tile[0], _start_tile[1], x, y) > Constants.SPAWN_GRACE_RANGE && rng.float(1000) > 995) {
+        if (Math.point_distance(_start_tile[0], _start_tile[1], x, y) > Constants.SPAWN_GRACE_RANGE) {
             locations.add([x * _tile_width + (_tile_width / 2), y * _tile_height + (_tile_height / 2)])
         }
         return locations
     }
 
     // Place enemies
-    place_enemies(level, locations) {
-        for (location in locations) {
+    place_enemies(level, count, rng, locations) {
+        for (i in 1..count) {
+            var location = rng.sample(locations)
+            locations.remove(location)
             var e = level.add_entity(BlueSlime)
             e.x = location[0]
             e.y = location[1]

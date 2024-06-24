@@ -76,10 +76,12 @@ class SkillCheck {
         var centerY = camera.height / 2
         var drawX = centerX - (Assets.tex_skillcheckcircle.width / 2)
         var drawY = centerY - (Assets.tex_skillcheckcircle.height / 2)
+        var spr_controls = Controls.on_gamepad ? Assets.spr_gamepadcontrols : Assets.spr_keyboardcontrols
         Renderer.lock_cameras(camera)
         Renderer.draw_texture(Assets.tex_skillcheckcircle, drawX, drawY)
         Renderer.draw_texture(_difficulty_texture, drawX, drawY, 1, 1, _goal_position, Assets.tex_skillcheckcircle.width / 2, Assets.tex_skillcheckcircle.height / 2)
         Renderer.draw_texture(Assets.tex_skillcheckpointer, drawX, drawY, 1, 1, _pointer_position, Assets.tex_skillcheckcircle.width / 2, Assets.tex_skillcheckcircle.height / 2)
+        Renderer.draw_sprite(spr_controls, Constants.CONTROL_CONFIRM, centerX - (spr_controls.width * Save.ui_scale * 0.5), centerY - (spr_controls.height * Save.ui_scale * 0.5))
 
         return skill_check_done
     }
@@ -89,7 +91,7 @@ class Particle {
     construct new(texture, x, y, direction, spread, speed, lifespan, spinspeed, rng) {
         _texture = texture
         _direction = direction + rng.float(-spread, spread)
-        _speed = speed
+        _speed = speed + rng.float(-speed * 0.1, speed * 0.1)
         _lifespan = lifespan
         _total_lifespan = lifespan
         _x = x
@@ -255,16 +257,16 @@ class Game is Level {
         _gen.tile_width = 24
         _gen.tile_height = 16
         _gen.tileset_tex = Assets.tex_tiles
-        _gen.island_radius_max = 9
-        _gen.island_radius_min = 4
+        _gen.island_radius_max = 10
+        _gen.island_radius_min = 3
         _gen.minimum_distance = _gen.island_radius_max * 1.5
-        var tilesets = _gen.generate_level(100, 100, 12, _rng.int())
+        var tilesets = _gen.generate_level(75, 75, 13, _rng.int())
         _tileset = tilesets["ground"]
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
 
         // Place enemies
-        _gen.place_enemies(this, tilesets["locations"])
+        _gen.place_enemies(this, _rng.int(15, 20), _rng, tilesets["locations"])
         
         // Generate collision tileset
         var arr = []

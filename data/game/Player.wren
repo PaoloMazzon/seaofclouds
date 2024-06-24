@@ -64,7 +64,7 @@ class Player is Character {
         var parry_icon_pos_y = start_y
         var axe_icon_pos_x = start_x + move_x + move_x
         var axe_icon_pos_y = start_y
-        var parry_frame = _parry_alarm != null ? (_parry_alarm.get_normalized_time() * 8).round : 8
+        var parry_frame = _in_parry ? 0 : (_parry_alarm != null ? (_parry_alarm.get_normalized_time() * 8).round : 8)
 
         // Draw the UI
         Renderer.draw_sprite(Assets.spr_swordicon, is_attacking ? 1 : 0, sword_icon_pos_x, sword_icon_pos_y)
