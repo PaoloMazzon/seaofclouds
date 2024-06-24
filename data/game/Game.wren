@@ -4,6 +4,7 @@ import "random" for Random
 import "Generator" for Generator
 import "Save" for Save
 import "Controls" for Controls
+import "Attack" for Attack
 
 class Cloud {
     construct new(rng, width, height) {
@@ -119,6 +120,42 @@ class Particle {
     }
 }
 
+class Prop {
+    construct new(x, y, rng) {
+        _sprite = Assets.spr_props
+        _sprite.origin_x = _sprite.width / 2
+        _sprite.origin_y = _sprite.height / 2
+        _frame = rng.sample([0, 1, 2, 3, 7, 4, 4, 4, 5, 5, 5, 6, 6, 6])
+        var list = [
+            Assets.tex_boxparticle,
+            Assets.tex_vaseparticle, 
+            Assets.tex_statueparticle, 
+            Assets.tex_chairparticle, 
+            Assets.tex_plantparticle, 
+            Assets.tex_plantparticle, 
+            Assets.tex_plantparticle, 
+            Assets.tex_rockparticle
+        ]
+        _particle = list[_frame]
+        _x = x
+        _y = y
+        _rng = rng
+    }
+
+    // Returns true if time to go
+    update(level) {
+        for (attack in level.get_entities(Attack)) {
+            if (Math.point_distance(attack.x, attack.y, _x, _y) < attack.hitbox.w) {
+                level.add_particles(_particle, _x, _y, Math.point_angle(attack.x, attack.y, _x, _y), Num.pi * 0.3, 50, 1, Num.pi, 8)
+                return true
+            }
+        }
+        
+        Renderer.draw_sprite(_sprite, _frame, _x, _y)
+        return false
+    }
+}
+
 class Game is Level {
     construct new() {
         _start_time = 0
@@ -137,9 +174,15 @@ class Game is Level {
         _fade_out = 0
         _new_focal = null
         _particles = []
+        _props = []
     }
     rng { _rng }
     player { _player }
+
+    // Adds a new prop
+    add_prop(x, y) {
+        _props.add(Prop.new(x, y, _rng))
+    }
 
     // Draws a parallax background
     draw_tiling_background(texture, parallax) {
@@ -265,8 +308,9 @@ class Game is Level {
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
 
-        // Place enemies
+        // Place stuff
         _gen.place_enemies(this, _rng.int(15, 20), _rng, tilesets["locations"])
+        _gen.place_props(this, _rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), _rng, tilesets["locations"])
         
         // Generate collision tileset
         var arr = []
@@ -393,6 +437,15 @@ class Game is Level {
         draw_tiling_background(Assets.tex_background, 0.95)
         Renderer.lock_cameras(_game_camera)
         Renderer.draw_texture(_tileset_surface, 0, 0)
+
+        // Props
+        var new_props = []
+        for (prop in _props) {
+            if (!prop.update(this)) {
+                new_props.add(prop)
+            }
+        }
+        _props = new_props
 
         // Entities
         super.update()

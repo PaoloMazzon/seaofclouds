@@ -67,6 +67,15 @@ class Generator {
         }
     }
 
+    // Places props
+    place_props(level, count, rng, locations) {
+        for (i in 1..count) {
+            var location = rng.sample(locations)
+            locations.remove(location)
+            level.add_prop(location[0], location[1])
+        }
+    }
+
     player_start_x { _start_tile[0] * _tile_width }
     player_start_y { _start_tile[1] * _tile_height }
 

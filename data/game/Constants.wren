@@ -32,6 +32,8 @@ class Constants {
     static PLAYER_PARRY_MOVEMENT_MODIFIER { 0.25 }
     static PLAYER_PARRY_IFRAMES { 1 } // time after a successful parry the player in invincible
     static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn
+    static MIN_PROPS { 30 }
+    static MAX_PROPS { 50 }
 
     // Ops
     static SLIME_TOP_SPEED { 70 }
