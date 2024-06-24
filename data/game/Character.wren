@@ -1,4 +1,5 @@
 import "Constants" for Constants
+import "Save" for Save
 import "Attack" for Attack
 
 class Alarm {
@@ -155,6 +156,9 @@ class Character is Entity {
     }
 
     melee_attack(level) {
+        if (is_dead) {
+            return
+        }
         if (_attack_timer <= 0) {
             _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
             _sprite_set.attack.frame = 0
@@ -166,6 +170,9 @@ class Character is Entity {
 
     // Meant to be overridden, returns true if successful attack so user can spawn attack entity
     ranged_attack(level) {
+        if (is_dead) {
+            return
+        }
         if (_attack_timer <= 0) {
             _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
             _sprite_set.attack.frame = 0
@@ -175,8 +182,9 @@ class Character is Entity {
     }
 
     // Triggers when an attack from the opposite team hits this character
-    on_hit(level) {
+    on_hit(level, attack) {
         level.pause(Constants.HIT_PAUSE)
+        Audio.play(Assets.aud_enemyhit, false, Save.volume, Save.volume)
         die()
     }
 
@@ -202,7 +210,7 @@ class Character is Entity {
             for (attack in level.get_entities(Attack)) {
                 if (attack.team != Constants.TEAM_NONE && attack.team != _team) {
                     if (colliding(attack)) {
-                        on_hit(level)
+                        on_hit(level, attack)
                         level.remove_entity(attack)
                     }
                 }

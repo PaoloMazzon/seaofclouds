@@ -11,9 +11,10 @@ class Player is Character {
         _in_parry = false
         _parry_alarm = null
         _has_axe = true
+        _post_death = 0
     }
 
-    on_hit(level) {
+    on_hit(level, attack) {
         if (is_invincible) {
             return
         }
@@ -38,6 +39,7 @@ class Player is Character {
             _parry_alarm = set_alarm(Constants.PLAYER_PARRY_COOLDOWN, f2)
         } else {
             die()
+            Audio.play(Assets.aud_failedskillcheck, false, Save.volume, Save.volume)
             Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
         }
     }
@@ -79,6 +81,25 @@ class Player is Character {
         team = Constants.TEAM_PLAYER
     }
 
+    death_camera(level) {
+        if (!is_dead) {
+            return
+        }
+        _post_death = _post_death + Engine.delta
+        if (_post_death >= 3) {
+            var entities = level.get_entities(Character)
+            var e = this
+            for (entity in entities) {
+                if (entity != this) {
+                    e = entity
+                }
+            }
+            level.set_focal_point(e.x + (Controls.movement_x * 30), e.y + (Controls.movement_y * 30), 1.5)
+        } else {
+            level.set_focal_point(x, y, 1.5)
+        }
+    }
+
     update(level) {
         super.update(level)
         if (!level.is_paused) {
@@ -116,19 +137,10 @@ class Player is Character {
                 sprite_override = null
                 _in_parry = false
             }
-
-            // Debug
-            if (Keyboard.key_pressed(Keyboard.KEY_O)) {
-                on_hit(level)
-            }
-            if (Keyboard.key_pressed(Keyboard.KEY_L)) {
-                var slime = level.add_entity(BlueSlime)
-                slime.x = x
-                slime.y = y
-            }
-
+        }
+        if (!is_dead) {
             // Focus on player
-            var zoom_level = level.in_skill_check || Keyboard.key(Keyboard.KEY_C) ? 2 : (_in_parry ? 1.2 : 1)
+            var zoom_level = level.in_skill_check ? 2 : (_in_parry ? 1.2 : 1)
             level.set_focal_point(x, y, zoom_level)
         }
     }

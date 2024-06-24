@@ -139,6 +139,30 @@ class Game is Level {
     rng { _rng }
     player { _player }
 
+    // Draws a parallax background
+    draw_tiling_background(texture, parallax) {
+        var cx = 0
+        var cy = 0
+        var cwidth = 0
+        var cheight = 0
+        cx = _parallax_camera.x
+        cy = _parallax_camera.y
+        cwidth = _parallax_camera.width
+        cheight = _parallax_camera.height
+
+        var tile_start_x = cx * parallax
+        var tile_start_y = cy * parallax
+        tile_start_x = (tile_start_x + (((cx - tile_start_x) / texture.width).floor * texture.width)) - texture.width
+        tile_start_y = (tile_start_y + (((cy - tile_start_y) / texture.height).floor * texture.height)) - texture.height
+        var horizontal = (cwidth / texture.width).ceil + 1
+        var vertical = (cheight / texture.height).ceil + 1
+        for (y in 0..vertical) {
+            for (x in 0..horizontal) {
+                Renderer.draw_texture(texture, tile_start_x + (x * texture.width), tile_start_y + (y * texture.height))
+            }
+        }
+    }
+
     // Sets the new focal point for when the player dies
     set_replacement_focal(entity) {
         _new_focal = entity
@@ -238,6 +262,9 @@ class Game is Level {
         _tileset = tilesets["ground"]
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
+
+        // Place enemies
+        _gen.place_enemies(this, tilesets["locations"])
         
         // Generate collision tileset
         var arr = []
@@ -278,11 +305,16 @@ class Game is Level {
         // Setup cameras
         _game_camera = Camera.new()
         _ui_camera = Camera.new()
+        _parallax_camera = Camera.new()
         var aspectRatio = Renderer.window_width / Renderer.window_height
         _game_camera.width = Constants.GAME_HEIGHT * aspectRatio
         _game_camera.height = Constants.GAME_HEIGHT
+        _parallax_camera.width = Constants.GAME_HEIGHT * aspectRatio * 2
+        _parallax_camera.height = Constants.GAME_HEIGHT * 2
         _game_camera.x = _player.x - (_game_camera.width / 2)
         _game_camera.y = _player.y - (_game_camera.height / 2)
+        _parallax_camera.x = _player.x - (_parallax_camera.width / 2)
+        _parallax_camera.y = _player.y - (_parallax_camera.height / 2)
         set_focal_point(_player.x, _player.y, 1)
         _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
     }
@@ -324,11 +356,17 @@ class Game is Level {
             _game_camera.y = _player.y - (_game_camera.height / 2)
         } 
 
+        // UI Camera
         _ui_camera.width = Renderer.window_width
         _ui_camera.height = Renderer.window_height
         _ui_camera.w_on_screen = Renderer.window_width
         _ui_camera.h_on_screen = Renderer.window_height
 
+        // Parallax camera
+        _parallax_camera.x = _parallax_camera.x + 0.05 * ((_focal_x - (_parallax_camera.width / 2)) - _parallax_camera.x)
+        _parallax_camera.y = _parallax_camera.y + 0.05 * ((_focal_y - (_parallax_camera.height / 2)) - _parallax_camera.y)
+
+        _parallax_camera.update()
         _ui_camera.update()
         _game_camera.update()
 
@@ -349,10 +387,14 @@ class Game is Level {
         for (cloud in _clouds_background) {
             cloud.draw(is_paused)
         }
+        Renderer.lock_cameras(_parallax_camera)
+        draw_tiling_background(Assets.tex_background, 0.95)
+        Renderer.lock_cameras(_game_camera)
         Renderer.draw_texture(_tileset_surface, 0, 0)
 
         // Entities
         super.update()
+        player.death_camera(this)
         for (cloud in _clouds_foreground) {
             cloud.draw(is_paused)
         }

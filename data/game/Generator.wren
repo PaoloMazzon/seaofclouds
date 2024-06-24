@@ -1,3 +1,5 @@
+import "BlueSlime" for BlueSlime
+import "Constants" for Constants
 import "random" for Random
 
 // Generates a random sky level and returns the grid
@@ -46,6 +48,23 @@ class Generator {
         return tile == 1
     }
 
+    // Returns
+    get_entity_locations(locations, x, y, rng) {
+        if (Math.point_distance(_start_tile[0], _start_tile[1], x, y) > Constants.SPAWN_GRACE_RANGE && rng.float(1000) > 995) {
+            locations.add([x * _tile_width + (_tile_width / 2), y * _tile_height + (_tile_height / 2)])
+        }
+        return locations
+    }
+
+    // Place enemies
+    place_enemies(level, locations) {
+        for (location in locations) {
+            var e = level.add_entity(BlueSlime)
+            e.x = location[0]
+            e.y = location[1]
+        }
+    }
+
     player_start_x { _start_tile[0] * _tile_width }
     player_start_y { _start_tile[1] * _tile_height }
 
@@ -55,6 +74,7 @@ class Generator {
     // Call this to make a level
     generate_level(width, height, island_count, seed) {
         var rng = Random.new(seed)
+        var locations = []
         var tileset_array_1 = []
         var tileset_array_2 = []
         var tileset_array_3 = []
@@ -154,6 +174,11 @@ class Generator {
             }
         }
 
+        // Pick start and end tile
+        _start_tile = rng.sample(island_spots)
+        island_spots.remove(_start_tile)
+        _end_tile = rng.sample(island_spots)
+
         // Autotile pass
         for (y in 1..height - 2) {
             for (x in 1..width - 2) {
@@ -191,6 +216,8 @@ class Generator {
                     } else if (below && above && left && right) {
                         tileset_ground[x, y] = 16
                     }
+
+                    get_entity_locations(locations, x, y, rng)
                 } else if (tileset_background[x, y] != 0) {
                     var above = tileset_ground[x, y - 1] != 0
                     var below = tileset_ground[x, y + 1] != 0
@@ -213,10 +240,6 @@ class Generator {
             }
         }
 
-        _start_tile = rng.sample(island_spots)
-        island_spots.remove(_start_tile)
-        _end_tile = rng.sample(island_spots)
-
-        return {"ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
+        return {"ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground, "locations": locations}
     }
 }
