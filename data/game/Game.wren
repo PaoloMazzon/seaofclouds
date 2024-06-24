@@ -224,6 +224,7 @@ class Game is Level {
     create() {
         super.create()
         _rng = Random.new()
+        Save.ui_scale = 2
 
         // Generate level
         _gen = Generator.new()
@@ -333,6 +334,7 @@ class Game is Level {
 
         // Update window surface if resized
         if (_window_surface.width != Renderer.window_width || _window_surface.height != Renderer.window_height) {
+            _window_surface.free()
             _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
         }
     }
@@ -365,6 +367,10 @@ class Game is Level {
             }
             _particles = new_particles
         }
+
+        // Player UI
+        Renderer.lock_cameras(_ui_camera)
+        player.draw_ui(this)
 
         // Top-level game stuff
         process_meta()
@@ -432,5 +438,7 @@ class Game is Level {
 
     destroy() {
         super.destroy()
+        _window_surface.free()
+        _tileset_surface.free()
     }
 }

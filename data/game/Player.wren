@@ -9,6 +9,8 @@ class Player is Character {
         super()
         _parry_available = true
         _in_parry = false
+        _parry_alarm = null
+        _has_axe = true
     }
 
     on_hit(level) {
@@ -31,12 +33,44 @@ class Player is Character {
             _parry_available = false
             var f2 = Fiber.new { |passed|
                 _parry_available = true
+                _parry_alarm = null
             }
-            set_alarm(Constants.PLAYER_PARRY_COOLDOWN, f2)
+            _parry_alarm = set_alarm(Constants.PLAYER_PARRY_COOLDOWN, f2)
         } else {
             die()
             Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
         }
+    }
+
+    // Draws the player ui, called by level
+    draw_ui(level) {
+        var icon_width = Assets.spr_parryicon.width
+        var icon_height = Assets.spr_parryicon.height
+        var control_width = Assets.spr_gamepadcontrols.width
+        var control_height = Assets.spr_gamepadcontrols.height
+        var spr_controls = Controls.on_gamepad ? Assets.spr_gamepadcontrols : Assets.spr_keyboardcontrols
+
+        // Find position of everything
+        var start_x = icon_width * Save.ui_scale
+        var start_y = Renderer.window_height - ((icon_height * Save.ui_scale * 2) + (control_height * Save.ui_scale * 0.5))
+        var move_x = (icon_width * Save.ui_scale * 1.2)
+        var control_offset_x = (icon_width * Save.ui_scale * 0.5) - (control_width * Save.ui_scale * 0.5)
+        var control_offset_y = (icon_height * Save.ui_scale) - (Save.ui_scale * 2)
+        var sword_icon_pos_x = start_x
+        var sword_icon_pos_y = start_y
+        var parry_icon_pos_x = start_x + move_x
+        var parry_icon_pos_y = start_y
+        var axe_icon_pos_x = start_x + move_x + move_x
+        var axe_icon_pos_y = start_y
+        var parry_frame = _parry_alarm != null ? (_parry_alarm.get_normalized_time() * 8).round : 8
+
+        // Draw the UI
+        Renderer.draw_sprite(Assets.spr_swordicon, is_attacking ? 1 : 0, sword_icon_pos_x, sword_icon_pos_y)
+        Renderer.draw_sprite(spr_controls, Constants.CONTROL_ATTACK, sword_icon_pos_x + control_offset_x, sword_icon_pos_y + control_offset_y)
+        Renderer.draw_sprite(Assets.spr_parryicon, parry_frame, parry_icon_pos_x, parry_icon_pos_y)
+        Renderer.draw_sprite(spr_controls, Constants.CONTROL_PARRY, parry_icon_pos_x + control_offset_x, parry_icon_pos_y + control_offset_y)
+        Renderer.draw_sprite(Assets.spr_axeicon, _has_axe ? 1 : 0, axe_icon_pos_x, axe_icon_pos_y)
+        Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, axe_icon_pos_x + control_offset_x, axe_icon_pos_y + control_offset_y)
     }
 
     create(level, tiled_data) {

@@ -1,6 +1,13 @@
 class Constants {
     static GAME_WIDTH { 300.0 }
     static GAME_HEIGHT { 200.0 }
+    static CONTROL_LEFT { 0 }
+    static CONTROL_RIGHT { 3 }
+    static CONTROL_UP { 1 }
+    static CONTROL_DOWN { 2 }
+    static CONTROL_ATTACK { 4 }
+    static CONTROL_PARRY { 5 }
+    static CONTROL_THROW { 6 }
     static ALTERNATOR_TIME { 0.1 } // for flickering
     static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
     static PLAYER_SPEED { 100 }

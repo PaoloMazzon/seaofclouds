@@ -5,6 +5,7 @@ class Alarm {
     construct new(time, fiber) {
         _time = time
         _fiber = fiber
+        _max = time
     }
 
     // Returns true if the alarm is done
@@ -15,6 +16,11 @@ class Alarm {
             return true
         }
         return false
+    }
+
+    // Returns a value from 0-1 where 1 is this alarm is about to go off and 0 it just got set
+    get_normalized_time() {
+        return 1 - (_time / _max)
     }
 }
 
@@ -107,9 +113,9 @@ class Character is Entity {
         set_alarm(time, f)
     }
 
-    // Sets an alarm that will call a fiber at the end of it
+    // Sets an alarm that will call a fiber at the end of it, returns the alarm
     set_alarm(time, fiber) {
-        _alarms.add(Alarm.new(time, fiber))
+        return _alarms.add(Alarm.new(time, fiber))
     }
 
     process_physics(level) {
