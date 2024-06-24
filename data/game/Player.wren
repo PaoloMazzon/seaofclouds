@@ -44,6 +44,11 @@ class Player is Character {
         }
     }
 
+    // Wave function for the death camera you died thing
+    death_wave(time) {
+        return time > 25 ? 0 : (2.7182818).pow(-0.2 * (time - 3.7202)) * (3 * (time - 3.7202)).sin
+    }
+
     // Draws the player ui, called by level
     draw_ui(level) {
         var icon_width = Assets.spr_parryicon.width
@@ -73,6 +78,16 @@ class Player is Character {
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_PARRY, parry_icon_pos_x + control_offset_x, parry_icon_pos_y + control_offset_y)
         Renderer.draw_sprite(Assets.spr_axeicon, _has_axe ? 1 : 0, axe_icon_pos_x, axe_icon_pos_y)
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, axe_icon_pos_x + control_offset_x, axe_icon_pos_y + control_offset_y)
+
+        // Post death screen
+        if (_post_death >= 1.5) {
+            var draw_x = (Renderer.window_width / 2) - (Assets.tex_youdied.width * Save.ui_scale * 0.5)
+            var draw_y = (Renderer.window_height * 0.2) - (Assets.tex_youdied.height * Save.ui_scale * 0.5) + (death_wave(10 * (_post_death - 1.5)) * Assets.tex_youdied.height * Save.ui_scale)
+            var c_x = draw_x + (165 * Save.ui_scale)
+            var c_y = draw_y + (81 * Save.ui_scale)
+            Renderer.draw_texture(Assets.tex_youdied, draw_x, draw_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+            Renderer.draw_sprite(spr_controls, Constants.CONTROL_RESTART, c_x, c_y)
+        }
     }
 
     create(level, tiled_data) {
@@ -86,6 +101,7 @@ class Player is Character {
             return
         }
         _post_death = _post_death + Engine.delta
+
         if (_post_death >= 3) {
             var entities = level.get_entities(Character)
             var e = this

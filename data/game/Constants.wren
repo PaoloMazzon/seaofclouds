@@ -9,6 +9,7 @@ class Constants {
     static CONTROL_PARRY { 5 }
     static CONTROL_THROW { 6 }
     static CONTROL_CONFIRM { 7 }
+    static CONTROL_RESTART { 8 }
     static ALTERNATOR_TIME { 0.1 } // for flickering
     static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
     static FADE_TIME { 0.75 }
@@ -30,7 +31,7 @@ class Constants {
     static PLAYER_PARRY_COOLDOWN { 2 }
     static PLAYER_PARRY_MOVEMENT_MODIFIER { 0.25 }
     static PLAYER_PARRY_IFRAMES { 1 } // time after a successful parry the player in invincible
-    static SPAWN_GRACE_RANGE { 10 } // how far enemies must be from player spawn
+    static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn
 
     // Ops
     static SLIME_TOP_SPEED { 70 }
