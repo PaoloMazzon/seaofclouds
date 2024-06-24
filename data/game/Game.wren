@@ -147,6 +147,7 @@ class Prop {
         for (attack in level.get_entities(Attack)) {
             if (Math.point_distance(attack.x, attack.y, _x, _y) < attack.hitbox.w) {
                 level.add_particles(_particle, _x, _y, Math.point_angle(attack.x, attack.y, _x, _y), Num.pi * 0.3, 50, 1, Num.pi, 8)
+                Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
                 return true
             }
         }

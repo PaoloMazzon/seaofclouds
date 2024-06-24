@@ -35,10 +35,18 @@ class Attack is Entity {
         h.x_offset = texture.width / 2
         h.y_offset = texture.height / 2
         e.hitbox = h
+        return e
+    }
+
+    is_gone { _is_gone }
+
+    kill() {
+        _is_gone = true
     }
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
+        _is_gone = false
     }
 
     update(level) {
@@ -48,8 +56,10 @@ class Attack is Entity {
             if (_tied_entity != null) {
                 x = _tied_entity.x
                 y = _tied_entity.y
-                if (_tied_entity.is_dead) {
+                var c = Engine.get_class("Character::Character")
+                if (_tied_entity is c && _tied_entity.is_dead) {
                     level.remove_entity(this)
+                    _is_gone = true
                 }
             }
 
@@ -57,6 +67,7 @@ class Attack is Entity {
             _lifespan = _lifespan - Engine.delta
             if (_lifespan < 0) {
                 level.remove_entity(this)
+                _is_gone = true
             }
 
             // Move

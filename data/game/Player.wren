@@ -2,7 +2,68 @@ import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
 import "BlueSlime" for BlueSlime
+import "Attack" for Attack
 import "Save" for Save
+
+class ThrowingAxe is Entity {
+    construct new() {
+        super()
+        _x_speed = 0
+        _y_speed = 0
+        _being_thrown = true
+        _attack
+    }
+
+    x_speed { _x_speed }
+    x_speed=(s) { _x_speed = s }
+    y_speed { _y_speed }
+    y_speed=(s) { _y_speed = s }
+    attack { _attack }
+    attack=(s) { _attack = s }
+
+    create(level, tiled_data) {
+        super.create(level, tiled_data)
+        sprite = Assets.spr_throwingaxe
+        sprite.origin_x = sprite.width / 2
+        sprite.origin_y = sprite.height / 2
+        Assets.spr_floatingaxe.origin_x = sprite.width / 2
+        Assets.spr_floatingaxe.origin_y = sprite.height / 2
+        hitbox = Hitbox.new_rectangle(sprite.width, sprite.height)
+        hitbox.x_offset = -sprite.origin_x
+        hitbox.y_offset = -sprite.origin_y
+        Audio.play(Assets.aud_playerthrow, false, Save.volume, Save.volume)
+    }
+
+    update(level) {
+        if (_being_thrown) {
+            // Decelerate
+            _x_speed = _x_speed - (_x_speed.sign * (Constants.THROWING_AXE_DECELERATION * Engine.delta))
+            _y_speed = _y_speed - (_y_speed.sign * (Constants.THROWING_AXE_DECELERATION * Engine.delta))
+            x = x + _x_speed * Engine.delta
+            y = y + _y_speed * Engine.delta
+
+            // Turn into an item if slow enough or hit a wall
+            if (level.tileset.collision(hitbox, x, y) || (_x_speed.pow(2) + _y_speed.pow(2)).sqrt < 30 || _attack.is_gone) {
+                _being_thrown = false
+                Audio.play(Assets.aud_axeland, false, Save.volume, Save.volume)
+                level.shake_screen(Constants.WEAPON_HIT_SHAKE, 0.5)
+                level.add_particles(Assets.tex_dirtparticle, x, y, 0, Num.tau, 15, 1, Num.tau, 8)
+                level.add_particles(Assets.tex_brokengroundparticle, x, y + 3, 0, 0, 1, 1, 0, 1)
+                if (!attack.is_gone) {
+                    level.remove_entity(attack)
+                }
+            }
+        } else {
+            sprite = Assets.spr_floatingaxe
+
+            if (colliding(level.player)) {
+                level.remove_entity(this)
+                Audio.play(Assets.aud_pickupaxe, false, Save.volume, Save.volume)
+                level.player.return_axe()
+            }
+        }
+    }
+}
 
 class Player is Character {
     construct new() {
@@ -12,6 +73,10 @@ class Player is Character {
         _parry_alarm = null
         _has_axe = true
         _post_death = 0
+    }
+
+    return_axe() {
+        _has_axe = true
     }
 
     on_hit(level, attack) {
@@ -136,6 +201,25 @@ class Player is Character {
                 }
                 set_alarm(sprite_set.attack.delay * 3, f)
                 Audio.play(Assets.aud_playerattack, false, Save.volume, Save.volume)
+            }
+            
+            // Throw
+            if (Controls.throw_axe && _has_axe && !_in_parry && !is_attacking && ranged_attack(level)) {
+                var f = Fiber.new {
+                    var axe = level.add_entity(ThrowingAxe)
+                    var multiplier = 1
+                    var x_dir = moving_x == 0 && moving_y == 0 ? facing : moving_x
+                    axe.x = x + facing * 4
+                    axe.y = y - 4
+                    if (x_dir != 0 && moving_y != 0) {
+                        multiplier = 2.sqrt / 2
+                    }
+                    axe.x_speed = x_dir * Constants.THROWING_AXE_SPEED * multiplier
+                    axe.y_speed = moving_y * Constants.THROWING_AXE_SPEED * multiplier
+                    axe.attack = Attack.create_attack(level, axe.x, axe.y, axe, 0, 0, 0, Assets.tex_attack, (Constants.THROWING_AXE_SPEED / Constants.THROWING_AXE_DECELERATION).sqrt, Constants.TEAM_PLAYER)
+                }
+                _has_axe = false
+                set_alarm(sprite_set.ranged_attack.delay * 11, f)
             }
 
             // Parrying

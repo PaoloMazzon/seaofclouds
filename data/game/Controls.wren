@@ -19,6 +19,7 @@ class ControlsImpl {
     }
     skill_check { Keyboard.key_pressed(Keyboard.KEY_SPACE) || Gamepad.button_pressed(0, Gamepad.BUTTON_A) }
     attack { Keyboard.key_pressed(Keyboard.KEY_Z) || Gamepad.button_pressed(0, Gamepad.BUTTON_X) }
+    throw_axe { Keyboard.key_pressed(Keyboard.KEY_C) || Gamepad.button_pressed(0, Gamepad.BUTTON_Y) }
     parry { Keyboard.key(Keyboard.KEY_X) || Gamepad.button(0, Gamepad.BUTTON_B) }
     restart { Keyboard.key_pressed(Keyboard.KEY_R) || Gamepad.button_pressed(0, Gamepad.BUTTON_BACK) }
     on_gamepad { Gamepad.is_connected(0) }

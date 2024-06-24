@@ -70,6 +70,8 @@ class Character is Entity {
     construct new() { 
         super()
         _facing_x = 1
+        _moving_x = 0
+        _moving_y = 0
         _velocity_x = 0
         _velocity_y = 0
         _sprite_set = null
@@ -85,6 +87,7 @@ class Character is Entity {
         _invincible = false
         _alternator = false
         _alternator_time = 0
+        _ranged_attack = false
     }
 
     sprite_set { _sprite_set }
@@ -100,6 +103,8 @@ class Character is Entity {
     facing { _facing_x }
     is_attacking { _attack_timer > 0 }
     is_invincible { _invincible }
+    moving_x { _moving_x }
+    moving_y { _moving_y }
 
     // Sets a sprite to be used instead of anything else, setting this to null will go back to normal
     sprite_override=(sprite) { _sprite_override = sprite }
@@ -130,6 +135,8 @@ class Character is Entity {
         } else if (velocity_x < 0) {
             _facing_x = -1
         }
+        _moving_x = velocity_x.sign
+        _moving_y = velocity_y.sign
 
         var new_x = x + (velocity_x * Engine.delta)
         if (!level.tileset.collision(hitbox, new_x, y)) {
@@ -157,9 +164,10 @@ class Character is Entity {
 
     melee_attack(level) {
         if (is_dead) {
-            return
+            return false
         }
         if (_attack_timer <= 0) {
+            _ranged_attack = false
             _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
             _sprite_set.attack.frame = 0
             Attack.create_attack(level, x, y, this, 0, 0, 0, Assets.tex_attack, sprite_set.attack.frame_count * sprite_set.attack.delay, _team)
@@ -171,11 +179,12 @@ class Character is Entity {
     // Meant to be overridden, returns true if successful attack so user can spawn attack entity
     ranged_attack(level) {
         if (is_dead) {
-            return
+            return false
         }
         if (_attack_timer <= 0) {
-            _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
-            _sprite_set.attack.frame = 0
+            _ranged_attack = true
+            _attack_timer = sprite_set.ranged_attack.frame_count * sprite_set.ranged_attack.delay
+            _sprite_set.ranged_attack.frame = 0
             return true
         }
         return false
@@ -183,6 +192,9 @@ class Character is Entity {
 
     // Triggers when an attack from the opposite team hits this character
     on_hit(level, attack) {
+        if (is_dead) {
+            return
+        }
         level.pause(Constants.HIT_PAUSE)
         Audio.play(Assets.aud_enemyhit, false, Save.volume, Save.volume)
         die()
@@ -211,6 +223,7 @@ class Character is Entity {
                 if (attack.team != Constants.TEAM_NONE && attack.team != _team) {
                     if (colliding(attack)) {
                         on_hit(level, attack)
+                        attack.kill()
                         level.remove_entity(attack)
                     }
                 }
@@ -261,8 +274,8 @@ class Character is Entity {
                 _sprite_override.scale_x = _facing_x
                 draw_sprite(_sprite_override, x, y, level.is_paused)
             } else if (is_attacking) {
-                sprite_set.attack.scale_x = _facing_x
-                draw_sprite(sprite_set.attack, x, y, level.is_paused)
+                (_ranged_attack ? sprite_set.ranged_attack : sprite_set.attack).scale_x = _facing_x
+                draw_sprite(_ranged_attack ? sprite_set.ranged_attack : sprite_set.attack, x, y, level.is_paused)
             } else if (velocity_x == 0 && velocity_y == 0) {
                 sprite_set.idle.scale_x = _facing_x
                 draw_sprite(sprite_set.idle, x, y, level.is_paused)

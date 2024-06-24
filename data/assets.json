@@ -58,7 +58,7 @@
       "w": 32,
       "h": 32,
       "frames": 16,
-      "delay": 0.2
+      "delay": 0.1
     },
     {
       "file": "player.png",

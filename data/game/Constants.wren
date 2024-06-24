@@ -22,6 +22,8 @@ class Constants {
 
     //////////////////////////// Balance ////////////////////////////
     // Speeds are in unit/seconds and time is all seconds
+    static THROWING_AXE_SPEED { 150 }
+    static THROWING_AXE_DECELERATION { 50 }
     static PLAYER_SPEED { 100 }
     static SHAKE_INTENSITY { 3 }
     static SKILL_CHECK_FADE_IN_TIME { 0.5 }
