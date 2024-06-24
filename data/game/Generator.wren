@@ -1,4 +1,5 @@
 import "BlueSlime" for BlueSlime
+import "Ranger" for Ranger
 import "Constants" for Constants
 import "random" for Random
 
@@ -61,7 +62,7 @@ class Generator {
         for (i in 1..count) {
             var location = rng.sample(locations)
             locations.remove(location)
-            var e = level.add_entity(BlueSlime)
+            var e = level.add_entity(rng.sample([Ranger, BlueSlime]))
             e.x = location[0]
             e.y = location[1]
         }

@@ -64,6 +64,16 @@ class SpriteSet {
             Assets.spr_blueslime_die.copy()
         )
     }
+
+    static RangerSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_ranger_walk.copy(),
+            Assets.spr_ranger_idle.copy(),
+            null,
+            Assets.spr_ranger_attack.copy(),
+            Assets.spr_ranger_die.copy()
+        )
+    }
 }
 
 class Character is Entity {

@@ -73,6 +73,54 @@
       "delay": 0.05
     },
     {
+      "file": "ranger.png",
+      "name": "ranger_walk",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.2
+    },
+    {
+      "file": "ranger.png",
+      "name": "ranger_idle",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "frames": 16,
+      "delay": 0.2
+    },
+    {
+      "file": "ranger.png",
+      "name": "ranger_die",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "frames": 24,
+      "delay": 0.1
+    },
+    {
+      "file": "ranger.png",
+      "name": "ranger_attack",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "frames": 10,
+      "delay": 0.1
+    },
+    {
       "file": "blueslime.png",
       "name": "blueslime_walk",
       "origin_x": 16,

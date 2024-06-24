@@ -40,4 +40,6 @@ class Constants {
     // Ops
     static SLIME_TOP_SPEED { 70 }
     static SLIME_AGGRO_RANGE { 75 }
+    static RANGER_WALK_SPEED { 60 }
+    static RANGER_AGGRO_RANGE { 75 }
 }

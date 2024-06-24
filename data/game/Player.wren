@@ -223,7 +223,7 @@ class Player is Character {
             }
 
             // Parrying
-            if (Controls.parry && _parry_available) {
+            if (Controls.parry && !is_attacking && _parry_available) {
                 if (sprite_override == null) {
                     sprite_override = Assets.spr_player_parry
                     Assets.spr_player_parry.frame = 0
