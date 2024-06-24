@@ -61,6 +61,18 @@
       "delay": 0.2
     },
     {
+      "file": "player.png",
+      "name": "player_parry",
+      "origin_x": 16,
+      "origin_y": 16,
+      "x": 0,
+      "y": 160,
+      "w": 32,
+      "h": 32,
+      "frames": 4,
+      "delay": 0.05
+    },
+    {
       "file": "blueslime.png",
       "name": "blueslime_walk",
       "origin_x": 16,

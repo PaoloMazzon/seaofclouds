@@ -85,12 +85,45 @@ class SkillCheck {
     }
 }
 
+class Particle {
+    construct new(texture, x, y, direction, spread, speed, lifespan, spinspeed, rng) {
+        _texture = texture
+        _direction = direction + rng.float(-spread, spread)
+        _speed = speed
+        _lifespan = lifespan
+        _total_lifespan = lifespan
+        _x = x
+        _y = y
+        _rotation = 0
+        _spinspeed = spinspeed
+    }
+
+    // Returns true if time to go
+    update() {
+        _lifespan = _lifespan - Engine.delta
+        var percent = _lifespan / _total_lifespan
+        
+        _x = _x + (_direction.cos * _speed * Engine.delta * percent)
+        _y = _y + (_direction.sin * _speed * Engine.delta * percent)
+        _rotation = _rotation + (_spinspeed * Engine.delta)
+
+        var tw = _texture.width / 2
+        var th = _texture.height / 2
+        Renderer.colour_mod = [1, 1, 1, percent]
+        Renderer.draw_texture(_texture, _x - tw, _y - th, 1, 1, _rotation, tw, th)
+        Renderer.colour_mod = [1, 1, 1, 1]
+        
+        return _lifespan <= 0
+    }
+}
+
 class Game is Level {
     construct new() {
         _start_time = 0
         _title_length = 0
         _stop_time = 0
         _screen_shake = 0
+        _shake_intensity_modifier = 1
         _skill_check = null
         _clouds_foreground = []
         _clouds_background = []
@@ -101,6 +134,7 @@ class Game is Level {
         _fade_in = Constants.FADE_TIME
         _fade_out = 0
         _new_focal = null
+        _particles = []
     }
     rng { _rng }
     player { _player }
@@ -144,6 +178,13 @@ class Game is Level {
         _stop_time = 0
     }
 
+    // Adds particles to the level
+    add_particles(texture, x, y, direction, spread, speed, lifespan, spinspeed, count) {
+        for (i in 0..count - 1) {
+            _particles.add(Particle.new(texture, x, y, direction, spread, speed, lifespan, spinspeed, _rng))
+        }
+    }
+
     // Toggles the pause
     toggle_pause() {
         _paused = !_paused
@@ -152,6 +193,12 @@ class Game is Level {
     // Shakes the screen for a given amount of time in seconds
     shake_screen(time) {
         _screen_shake = time
+        _shake_intensity_modifier = 1
+    }
+
+    shake_screen(time, intensity_modifier) {
+        _screen_shake = time
+        _shake_intensity_modifier = intensity_modifier
     }
 
     // Returns true if a skill check is currently happening
@@ -208,9 +255,13 @@ class Game is Level {
 
         // Tileset surface
         Renderer.use_cameras_on_surfaces = false
-        _tileset_surface = _tileset.draw_to_surface()
-        _background_tileset_surface = _background_tileset.draw_to_surface()
-        _foreground_tileset_surface = _foreground_tileset.draw_to_surface()
+        Renderer.colour_mod = [1, 1, 1, 1]
+        _tileset_surface = _background_tileset.draw_to_surface()
+        Renderer.target = _tileset_surface
+        _tileset.draw()
+        _foreground_tileset.draw()
+        Renderer.target = Renderer.RENDER_TARGET_DEFAULT
+
         
         // Clouds
         for (i in 1..(Constants.CLOUD_COUNT / 2)) {
@@ -251,8 +302,8 @@ class Game is Level {
             _game_camera.y = _game_camera.y + 0.05 * ((_focal_y - (_game_camera.height / 2)) - _game_camera.y)
 
             if (is_shaking) {
-                _game_camera.x = _game_camera.x + _rng.float(-Constants.SHAKE_INTENSITY, Constants.SHAKE_INTENSITY)
-                _game_camera.y = _game_camera.y + _rng.float(-Constants.SHAKE_INTENSITY, Constants.SHAKE_INTENSITY)
+                _game_camera.x = _game_camera.x + _rng.float(-Constants.SHAKE_INTENSITY * _shake_intensity_modifier, Constants.SHAKE_INTENSITY * _shake_intensity_modifier)
+                _game_camera.y = _game_camera.y + _rng.float(-Constants.SHAKE_INTENSITY * _shake_intensity_modifier, Constants.SHAKE_INTENSITY * _shake_intensity_modifier)
             }
         }
 
@@ -296,14 +347,23 @@ class Game is Level {
         for (cloud in _clouds_background) {
             cloud.draw(is_paused)
         }
-        Renderer.draw_texture(_background_tileset_surface, 0, 0)
         Renderer.draw_texture(_tileset_surface, 0, 0)
-        Renderer.draw_texture(_foreground_tileset_surface, 0, 0)
 
         // Entities
         super.update()
         for (cloud in _clouds_foreground) {
             cloud.draw(is_paused)
+        }
+
+        // Particles
+        if (!is_paused) {
+            var new_particles = []
+            for (particle in _particles) {
+                if (!particle.update()) {
+                    new_particles.add(particle)
+                }
+            }
+            _particles = new_particles
         }
 
         // Top-level game stuff
@@ -312,6 +372,11 @@ class Game is Level {
             if (_skill_check.update(_ui_camera)){ 
                 _skill_check = null
             }
+        }
+
+        // Restart
+        if ((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) {
+            _fade_out = Constants.FADE_TIME
         }
 
         // Fade in and out
@@ -323,6 +388,9 @@ class Game is Level {
             } else {
                 percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
+                if (_fade_out <= 0) {
+                    Engine.switch_level(Game.new())
+                }
             }
             
             Renderer.target = _window_surface

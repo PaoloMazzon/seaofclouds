@@ -71,8 +71,13 @@ class Character is Entity {
         hitbox.y_offset = 3
         _attack_timer = 0
         _death_timer = 0
+        _has_died = false
         _team = Constants.TEAM_NONE
         _alarms = []
+        _sprite_override = null
+        _invincible = false
+        _alternator = false
+        _alternator_time = 0
     }
 
     sprite_set { _sprite_set }
@@ -85,7 +90,22 @@ class Character is Entity {
     team=(s) { _team = s }
     facing_left { _facing_x == -1 }
     facing_right { _facing_x == 1 }
+    facing { _facing_x }
     is_attacking { _attack_timer > 0 }
+    is_invincible { _invincible }
+
+    // Sets a sprite to be used instead of anything else, setting this to null will go back to normal
+    sprite_override=(sprite) { _sprite_override = sprite }
+    sprite_override { _sprite_override }
+
+    // Makes a character invincible for a short time
+    make_invincible(time) {
+        _invincible = true
+        var f = Fiber.new {
+            _invincible = false
+        }
+        set_alarm(time, f)
+    }
 
     // Sets an alarm that will call a fiber at the end of it
     set_alarm(time, fiber) {
@@ -115,12 +135,16 @@ class Character is Entity {
         }
     }
 
-    is_dead { _death_timer > 0 }
+    is_dead { _has_died }
 
     die() {
+        if (is_invincible) {
+            return
+        }
         if (_death_timer <= 0) {
             _death_timer = (sprite_set.die.frame_count) * sprite_set.die.delay
             sprite_set.die.frame = 0
+            _has_died = true
         }
     }
 
@@ -129,7 +153,9 @@ class Character is Entity {
             _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
             _sprite_set.attack.frame = 0
             Attack.create_attack(level, x, y, this, 0, 0, 0, Assets.tex_attack, sprite_set.attack.frame_count * sprite_set.attack.delay, _team)
+            return true
         }
+        return false
     }
 
     // Meant to be overridden, returns true if successful attack so user can spawn attack entity
@@ -183,6 +209,13 @@ class Character is Entity {
                     level.remove_entity(this)
                 }
             }
+
+            // Alternator
+            _alternator_time = _alternator_time + Engine.delta
+            if (_alternator_time > Constants.ALTERNATOR_TIME) {
+                _alternator_time = _alternator_time % Constants.ALTERNATOR_TIME
+                _alternator = !_alternator
+            }
         }
     }
 
@@ -197,13 +230,23 @@ class Character is Entity {
     draw(level) {
         // Animations
         if (is_dead) {
+            if (level.is_paused) {
+                Renderer.colour_mod = [0, 0, 0, 1]
+            }
             if (sprite_set.die.frame == sprite_set.die.frame_count - 1) {
                 Renderer.draw_sprite(sprite_set.die, sprite_set.die.frame, x, y)
             } else {
                 draw_sprite(sprite_set.die, x, y, level.is_paused)
             }
+            Renderer.colour_mod = [1, 1, 1, 1]
         } else if (sprite_set.die.frame != sprite_set.die.frame_count - 1) {
-            if (is_attacking) {
+            if (is_invincible && _alternator) {
+                Renderer.colour_mod = [0, 0, 0, 0]
+            }
+            if (_sprite_override != null) {
+                _sprite_override.scale_x = _facing_x
+                draw_sprite(_sprite_override, x, y, level.is_paused)
+            } else if (is_attacking) {
                 sprite_set.attack.scale_x = _facing_x
                 draw_sprite(sprite_set.attack, x, y, level.is_paused)
             } else if (velocity_x == 0 && velocity_y == 0) {
@@ -213,6 +256,7 @@ class Character is Entity {
                 sprite_set.walk.scale_x = _facing_x
                 draw_sprite(sprite_set.walk, x, y, level.is_paused)
             }
+            Renderer.colour_mod = [1, 1, 1, 1]
         }
     }
 }
