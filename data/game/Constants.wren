@@ -52,4 +52,6 @@ class Constants {
     static RANGER_ARROW_LIFETIME { 3 }
     static RANGER_MIN_SHOOT_COOLDOWN { 0.75 } // time between shots
     static RANGER_MAX_SHOOT_COOLDOWN { 1.5 }
+    static RANGER_SEARCH_TIME_MIN { 3 }
+    static RANGER_SEARCH_TIME_MAX { 5 }
 }

@@ -63,7 +63,8 @@ class Ranger is Character {
         super.update(level)
         if (!level.is_paused) {
             // Always on guard for the player
-            if (Math.point_distance(level.player.x, level.player.y, x, y) < Constants.RANGER_AGGRO_RANGE) {
+            var dist = Math.point_distance(level.player.x, level.player.y, x, y)
+            if (dist < Constants.RANGER_AGGRO_RANGE) {
                 _state = Ranger.STATE_SHOOT
             }
 
@@ -81,13 +82,32 @@ class Ranger is Character {
                     velocity_y = Constants.RANGER_WALK_SPEED * _direction.sin
                 }
             } else if (_state == Ranger.STATE_SHOOT) {
-                if (Math.point_distance(level.player.x, level.player.y, x, y) >= Constants.RANGER_AGGRO_RANGE) {
+                // If they go out of range switch to chase
+                if (dist >= Constants.RANGER_AGGRO_RANGE) {
                     _state = Ranger.STATE_CHASE
+                    _time = _rng.float(Constants.RANGER_SEARCH_TIME_MIN, Constants.RANGER_SEARCH_TIME_MAX)
                 }
+
+                // Record last known position
                 _player_last_known_x = level.player.x
                 _player_last_known_y = level.player.y
-            } else if (_state == Ranger.STATE_CHASE) {
 
+                // Shoot in intervals
+                // TODO: This
+            } else if (_state == Ranger.STATE_CHASE) {
+                // Run towards last known locations
+                if (Math.point_distance(_player_last_known_x, _player_last_known_y, x, y) > 5) {
+                    var angle = Math.point_angle(x, y, _player_last_known_x, _player_last_known_y)
+                    velocity_x = Constants.RANGER_RUN_SPEED * angle.cos
+                    velocity_y = Constants.RANGER_RUN_SPEED * angle.sin
+                }
+
+                // Switch back to wander if search over
+                _time = _time - Engine.delta
+                if (_time <= 0) {
+                    _state = Ranger.STATE_WANDER
+                    start_direction()
+                }
             }
             process_physics(level)
         }
