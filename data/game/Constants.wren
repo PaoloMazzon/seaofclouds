@@ -1,4 +1,6 @@
+// Speeds are in unit/seconds and time is all seconds
 class Constants {
+    //////////////////////////// Internal ////////////////////////////
     static GAME_WIDTH { 300.0 }
     static GAME_HEIGHT { 200.0 }
     static CONTROL_LEFT { 0 }
@@ -10,18 +12,21 @@ class Constants {
     static CONTROL_THROW { 6 }
     static CONTROL_CONFIRM { 7 }
     static CONTROL_RESTART { 8 }
-    static ALTERNATOR_TIME { 0.1 } // for flickering
-    static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
-    static FADE_TIME { 0.75 }
-    static CLOUD_COUNT { 30 } // must be even
     static SKILL_CHECK_EASY { 1 }
     static SKILL_CHECK_HARD { 3 }
     static TEAM_NONE { 0 }
     static TEAM_ENEMIES { 1 }
     static TEAM_PLAYER { 2 }
 
+    //////////////////////////// Graphics ////////////////////////////
+    static ALTERNATOR_TIME { 0.1 } // for flickering
+    static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
+    static FADE_TIME { 0.75 }
+    static CLOUD_COUNT { 30 } // must be even
+    static MIN_PROPS { 30 }
+    static MAX_PROPS { 50 }
+
     //////////////////////////// Balance ////////////////////////////
-    // Speeds are in unit/seconds and time is all seconds
     static THROWING_AXE_SPEED { 150 }
     static THROWING_AXE_DECELERATION { 50 }
     static PLAYER_SPEED { 100 }
@@ -32,16 +37,19 @@ class Constants {
     static WEAPON_HIT_SHAKE { 0.1 }
     static PLAYER_PARRY_COOLDOWN { 2 }
     static PLAYER_PARRY_MOVEMENT_MODIFIER { 0.25 }
-    static PLAYER_PARRY_IFRAMES { 1 } // time after a successful parry the player in invincible
-    static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn
-    static MIN_PROPS { 30 }
-    static MAX_PROPS { 50 }
+    static PLAYER_PARRY_IFRAMES { 1 } // amount of time after a successful parry the player is invincible
+    static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
 
-    // Ops
+    //////////////////////////// Slime balance ////////////////////////////
     static SLIME_TOP_SPEED { 70 }
     static SLIME_AGGRO_RANGE { 75 }
-    static RANGER_WALK_SPEED { 60 }
+
+    //////////////////////////// Ranger balance ////////////////////////////
+    static RANGER_WALK_SPEED { 50 }
+    static RANGER_RUN_SPEED { 80 }
     static RANGER_AGGRO_RANGE { 120 }
-    static ENEMY_ARROW_SPEED { 150 }
-    static ENEMY_ARROW_LIFETIME { 3 }
+    static RANGER_ARROW_SPEED { 200 }
+    static RANGER_ARROW_LIFETIME { 3 }
+    static RANGER_MIN_SHOOT_COOLDOWN { 0.75 } // time between shots
+    static RANGER_MAX_SHOOT_COOLDOWN { 1.5 }
 }
