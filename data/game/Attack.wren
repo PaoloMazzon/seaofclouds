@@ -12,10 +12,12 @@ class Attack is Entity {
         _team = Constants.TEAM_NONE
     }
     tied_entity=(s) { _tied_entity = s }
+    tied_entity { _tied_entity }
     direction=(s) { _direction = s }
     velocity_x=(s) { _velocity_x = s }
     velocity_y=(s) { _velocity_y = s }
     texture=(s) { _texture = s }
+    texture { _texture }
     lifespan=(s) { _lifespan = s }
     team=(s) { _team = s }
     team { _team }
@@ -61,6 +63,11 @@ class Attack is Entity {
                     level.remove_entity(this)
                     _is_gone = true
                 }
+            } else {
+                // Move
+                x = x + _velocity_x * Engine.delta
+                y = y + _velocity_y * Engine.delta
+                System.print(x)
             }
 
             // Lifespan timer
@@ -69,15 +76,11 @@ class Attack is Entity {
                 level.remove_entity(this)
                 _is_gone = true
             }
-
-            // Move
-            x = x + (_velocity_x * _direction.cos)
-            y = y + (_velocity_y * _direction.sin)
         }
     }
 
     draw(level) {
         super.draw(level)
-        Renderer.draw_texture(_texture, x - (_texture.width / 2), y - (_texture.height / 2))
+        Renderer.draw_texture(_texture, x - (_texture.width / 2), y - (_texture.height / 2), 1, 1, _direction, (_texture.width / 2), (_texture.height / 2))
     }
 }

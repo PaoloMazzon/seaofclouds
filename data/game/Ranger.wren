@@ -1,6 +1,7 @@
 import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
+import "Attack" for Attack
 
 class Ranger is Character {
     construct new() { 
@@ -21,7 +22,14 @@ class Ranger is Character {
     start_direction(level) {
         if (Math.point_distance(level.player.x, level.player.y, x, y) < Constants.RANGER_AGGRO_RANGE) {
             if (ranged_attack(level)) {
-                // TODO: Spawn arrow to shoot player
+                var f = Fiber.new {
+                    var angle = Math.point_angle(x, y, level.player.x, level.player.y)
+                    var s_x = x + (4 * angle.cos)
+                    var s_y = y + (4 * angle.sin)
+                    System.print(s_x)
+                    Attack.create_attack(level, s_x, s_y, null, angle, Constants.ENEMY_ARROW_SPEED * angle.cos, Constants.ENEMY_ARROW_SPEED * angle.sin, Assets.tex_arrow, Constants.ENEMY_ARROW_LIFETIME, Constants.TEAM_ENEMIES)
+                }
+                set_alarm(sprite_set.ranged_attack.delay * 7, f)
             }
             _walk = false
         } else {

@@ -91,6 +91,14 @@ class Player is Character {
                     Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
                 } else {
                     make_invincible(Constants.PLAYER_PARRY_IFRAMES)
+                    if (attack.tied_entity == null) {
+                        var angle = Math.point_angle(x, y, attack.x, attack.y)
+                        level.add_particles(attack.texture, x, y, angle, 0.2, 40, 1, 20, 1)
+                        var f = Fiber.new {
+                            Audio.play(Assets.aud_parry, false, Save.volume, Save.volume)
+                        }
+                        set_alarm(0.001, f)
+                    }
                 }
             }
             level.skill_check(Constants.SKILL_CHECK_EASY, f)
