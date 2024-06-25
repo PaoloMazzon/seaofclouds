@@ -54,4 +54,5 @@ class Constants {
     static RANGER_MAX_SHOOT_COOLDOWN { 1.5 }
     static RANGER_SEARCH_TIME_MIN { 3 }
     static RANGER_SEARCH_TIME_MAX { 5 }
+    static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing it will wait before shooting
 }

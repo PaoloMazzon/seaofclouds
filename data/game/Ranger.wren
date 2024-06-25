@@ -2,6 +2,7 @@ import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
 import "Attack" for Attack
+import "Save" for Save
 
 class Ranger is Character {
     static STATE_WANDER { 0 }
@@ -17,18 +18,21 @@ class Ranger is Character {
         _player_last_known_x = 0
         _player_last_known_y = 0
         _state = Ranger.STATE_WANDER
+        _shoot_cooldown = 0
+        _initial_shot_delay = 0
     }
 
     ranged_attack(level) {
-        if (super.ranged_attack(level)) {
+        if (!level.player.is_dead && super.ranged_attack(level)) {
             var f = Fiber.new {
                 var angle = Math.point_angle(x, y, level.player.x, level.player.y)
                 var s_x = x + (4 * angle.cos)
                 var s_y = y + (4 * angle.sin)
                 System.print(s_x)
-                Attack.create_attack(level, s_x, s_y, null, angle, Constants.ENEMY_ARROW_SPEED * angle.cos, Constants.ENEMY_ARROW_SPEED * angle.sin, Assets.tex_arrow, Constants.ENEMY_ARROW_LIFETIME, Constants.TEAM_ENEMIES)
+                Attack.create_attack(level, s_x, s_y, null, angle, Constants.RANGER_ARROW_SPEED * angle.cos, Constants.RANGER_ARROW_SPEED * angle.sin, Assets.tex_arrow, Constants.RANGER_ARROW_LIFETIME, Constants.TEAM_ENEMIES)
             }
             set_alarm(sprite_set.ranged_attack.delay * 7, f)
+            Audio.play(Assets.aud_bowshot, false, Save.volume, Save.volume)
         }
     }
 
@@ -66,6 +70,9 @@ class Ranger is Character {
             var dist = Math.point_distance(level.player.x, level.player.y, x, y)
             if (dist < Constants.RANGER_AGGRO_RANGE) {
                 _state = Ranger.STATE_SHOOT
+                if (_initial_shot_delay <= 0 && _state != Ranger.STATE_SHOOT) {
+                    _initial_shot_delay = Constants.RANGER_INITIAL_SHOT_DELAY
+                }
             }
 
             if (_state == Ranger.STATE_WANDER) {
@@ -93,7 +100,12 @@ class Ranger is Character {
                 _player_last_known_y = level.player.y
 
                 // Shoot in intervals
-                // TODO: This
+                _shoot_cooldown = _shoot_cooldown - Engine.delta
+                _initial_shot_delay = _initial_shot_delay - Engine.delta
+                if (_shoot_cooldown <= 0 && _initial_shot_delay <= 0) {
+                    _shoot_cooldown = _rng.float(Constants.RANGER_MIN_SHOOT_COOLDOWN, Constants.RANGER_MAX_SHOOT_COOLDOWN)
+                    ranged_attack(level)
+                }
             } else if (_state == Ranger.STATE_CHASE) {
                 // Run towards last known locations
                 if (Math.point_distance(_player_last_known_x, _player_last_known_y, x, y) > 5) {
