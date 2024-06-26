@@ -4,6 +4,21 @@ class SaveImpl {
         _ui_scale = 1
     }
 
+    // Called at the start of the game
+    load() {
+
+    }
+
+    // Should be called at the end of runs
+    save() {
+
+    }
+
+    // Called when the game is restarted
+    restart() {
+
+    }
+
     volume { _volume }
     volume=(s) { _volume = s }
     ui_scale { _ui_scale }
@@ -23,3 +38,4 @@ class SaveImpl {
 }
 
 var Save = SaveImpl.new()
+Save.load()

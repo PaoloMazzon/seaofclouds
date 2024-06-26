@@ -4,6 +4,7 @@ import "Constants" for Constants
 import "random" for Random
 import "NPC" for NPC
 import "Spikes" for Spikes
+import "Character" for Character
 
 // Generates a random sky level and returns the grid
 class Generator {
@@ -184,6 +185,15 @@ class Generator {
         }
     }
 
+    give_knickknack(level, rng) {
+        var characters = level.get_entities(Character)
+        var char = rng.sample(characters)
+        while (char is NPC) {
+            char = rng.sample(characters)
+        }
+        char.give_knickknack()
+    }
+
     place_npcs(level, locations, rng) {
         var location = rng.sample(locations)
         locations.remove(location)
@@ -304,6 +314,7 @@ class Generator {
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
         place_traps(level, rng.int(Constants.MIN_TRAPS, Constants.MAX_TRAPS + 1), rng, locations)
+        give_knickknack(level, rng)
 
         return {"collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
     }

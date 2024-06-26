@@ -1,6 +1,7 @@
 import "Constants" for Constants
 import "Save" for Save
 import "Attack" for Attack
+import "Knickknack" for Knickknack
 
 class Alarm {
     construct new(time, fiber) {
@@ -139,6 +140,7 @@ class Character is Entity {
         _alternator_time = 0
         _ranged_attack = false
         _sprite_timer = 0
+        _has_knickknack = false
     }
 
     sprite_set { _sprite_set }
@@ -161,6 +163,11 @@ class Character is Entity {
     // Sets a sprite to be used instead of anything else, setting this to null will go back to normal
     sprite_override=(sprite) { _sprite_override = sprite }
     sprite_override { _sprite_override }
+
+    // Assigns this character the knickknack
+    give_knickknack() {
+        _has_knickknack = true
+    }
 
     // Makes a character invincible for a short time
     make_invincible(time) {
@@ -204,7 +211,7 @@ class Character is Entity {
     is_dead { _has_died }
 
     die() {
-        if (is_invincible) {
+        if (is_invincible || is_dead) {
             return
         }
         if (_death_timer <= 0) {
@@ -265,6 +272,12 @@ class Character is Entity {
         level.pause(Constants.HIT_PAUSE)
         Audio.play(Assets.aud_enemyhit, false, Save.volume, Save.volume)
         die()
+        // Spawn the knickknack if this entity has it
+        if (_has_knickknack) {
+            var knickknack = level.add_entity(Knickknack)
+            knickknack.x = x
+            knickknack.y = y
+        }
     }
 
     create(level, tiled_data) {
@@ -338,6 +351,12 @@ class Character is Entity {
             if (is_invincible && _alternator) {
                 Renderer.colour_mod = [0, 0, 0, 0]
             }
+
+            // Draw knickknack highlight
+            if (_has_knickknack) {
+                draw_sprite(Assets.spr_telegraph, x, y, level.is_paused)
+            }
+
             if (_sprite_override != null) {
                 _sprite_override.scale_x = _facing_x
                 draw_sprite(_sprite_override, x, y, level.is_paused)

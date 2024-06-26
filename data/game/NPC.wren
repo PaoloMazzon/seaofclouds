@@ -10,6 +10,8 @@ class NPC is Character {
         _max_time = 0
         _start_x = 0
         _start_y = 0
+        _speech_animation = 0
+        _happy = false
         team = Constants.TEAM_ENEMIES
     }
 
@@ -52,8 +54,10 @@ class NPC is Character {
             if (_time > 0) {
                 _time = is_telegraphing ? _time : _time - Engine.delta
                 var percent = 1
-                velocity_x = Constants.SLIME_TOP_SPEED * percent * _direction.cos
-                velocity_y = Constants.SLIME_TOP_SPEED * percent * _direction.sin
+                if (Math.point_distance(x, y, level.player.x, level.player.y) >= 40) {
+                    velocity_x = Constants.SLIME_TOP_SPEED * percent * _direction.cos
+                    velocity_y = Constants.SLIME_TOP_SPEED * percent * _direction.sin
+                }
 
                 if (_time <= 0) {
                     var f = Fiber.new {
@@ -62,7 +66,35 @@ class NPC is Character {
                     set_alarm(_rng.float(0.5, 3), f)
                 }
             }
+            if (Math.point_distance(x, y, level.player.x, level.player.y) < 40) {
+                if (level.has_knickknack && !_happy) {
+                    _happy = true
+                    level.remove_knickknack()
+                    // TODO: Take the item and spawn a chest with an item
+                } else {
+                    _speech_animation = _speech_animation + Engine.delta > 0.5 ? 0.5 : _speech_animation + Engine.delta
+                }
+            } else {
+                _speech_animation = 0
+            }
+
             process_physics(level)
+        }
+    }
+
+    draw(level) {
+        super.draw(level)
+
+        if (_happy && !is_dead) {
+            _speech_animation = _speech_animation + Engine.delta > 0.5 ? 0.5 : _speech_animation + Engine.delta
+            Renderer.colour_mod = [1, 1, 1, (_speech_animation * 2)]
+            Renderer.draw_texture(Assets.tex_happy, x - 12, y - (22 * (_speech_animation * 2)))
+            Renderer.colour_mod = [1, 1, 1, 1]
+        } else if (_speech_animation > 0 && !is_dead) {
+            Renderer.colour_mod = [1, 1, 1, (_speech_animation * 2)]
+            Renderer.draw_texture(Assets.tex_speechbubble, x - 12, y - (22 * (_speech_animation * 2)))
+            Renderer.draw_texture(level.knickknack_textures[level.knickknack_id], x - 10, y - (22 * (_speech_animation * 2)) + 3)
+            Renderer.colour_mod = [1, 1, 1, 1]
         }
     }
 }

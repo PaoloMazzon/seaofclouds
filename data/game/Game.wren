@@ -181,9 +181,24 @@ class Game is Level {
         _particles = []
         _props = []
         _stage = 1
+        _rng = Random.new()
+        _has_knickknack = false
+        _knickknack_id = _rng.int(11)
     }
     rng { _rng }
     player { _player }
+    knickknack_id { _knickknack_id }
+    has_knickknack { _has_knickknack }
+
+    grab_knickknack() {
+        _has_knickknack = true
+    }
+
+    remove_knickknack() {
+        _has_knickknack = false
+    }
+
+    knickknack_textures { [Assets.tex_knickknacks1, Assets.tex_knickknacks2, Assets.tex_knickknacks3, Assets.tex_knickknacks4, Assets.tex_knickknacks5, Assets.tex_knickknacks6, Assets.tex_knickknacks7, Assets.tex_knickknacks8, Assets.tex_knickknacks9, Assets.tex_knickknacks10, Assets.tex_knickknacks11] }
 
     // Adds a new prop
     add_prop(x, y) {
@@ -300,8 +315,11 @@ class Game is Level {
 
     create() {
         super.create()
-        _rng = Random.new()
         Save.ui_scale = 2
+
+        // Random housekeeping
+        Assets.spr_telegraph.origin_x = Assets.spr_telegraph.width / 2
+        Assets.spr_telegraph.origin_y = Assets.spr_telegraph.height / 2
 
         // Generate level
         _gen = Generator.new()
@@ -325,8 +343,6 @@ class Game is Level {
         _tileset.draw()
         _foreground_tileset.draw()
         _collision_tileset.draw()
-        System.print("collisions %(_collision_tileset.width)/%(_collision_tileset.height)")
-        System.print("ground %(_tileset.width)/%(_tileset.height)")
         Renderer.target = Renderer.RENDER_TARGET_DEFAULT
 
         
@@ -473,6 +489,7 @@ class Game is Level {
         // Restart
         if ((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) {
             _fade_out = Constants.FADE_TIME
+
         }
 
         // Fade in and out
@@ -485,6 +502,7 @@ class Game is Level {
                 percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
                 if (_fade_out <= 0) {
+                    Save.restart()
                     Engine.switch_level(Game.new())
                 }
             }

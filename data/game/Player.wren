@@ -79,6 +79,11 @@ class Player is Character {
         _has_axe = true
     }
 
+    die() {
+        super.die()
+        Save.save()
+    }
+
     on_hit(level, attack) {
         if (is_invincible) {
             return
@@ -136,12 +141,14 @@ class Player is Character {
         var move_x = (icon_width * Save.ui_scale * 1.2)
         var control_offset_x = (icon_width * Save.ui_scale * 0.5) - (control_width * Save.ui_scale * 0.5)
         var control_offset_y = (icon_height * Save.ui_scale) - (Save.ui_scale * 2)
-        var sword_icon_pos_x = start_x
+        var sword_icon_pos_x = start_x + move_x
         var sword_icon_pos_y = start_y
-        var parry_icon_pos_x = start_x + move_x
+        var parry_icon_pos_x = start_x + move_x + move_x
         var parry_icon_pos_y = start_y
-        var axe_icon_pos_x = start_x + move_x + move_x
+        var axe_icon_pos_x = start_x + move_x + move_x + move_x
         var axe_icon_pos_y = start_y
+        var knickknack_icon_pos_x = start_x - (Save.ui_scale * 8)
+        var knickknack_icon_pos_y = start_y - (Save.ui_scale * 6)
         var parry_frame = _in_parry ? 0 : (_parry_alarm != null ? (_parry_alarm.get_normalized_time() * 8).round : 8)
 
         // Draw the UI
@@ -151,6 +158,10 @@ class Player is Character {
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_PARRY, parry_icon_pos_x + control_offset_x, parry_icon_pos_y + control_offset_y)
         Renderer.draw_sprite(Assets.spr_axeicon, _has_axe ? 1 : 0, axe_icon_pos_x, axe_icon_pos_y)
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, axe_icon_pos_x + control_offset_x, axe_icon_pos_y + control_offset_y)
+        Renderer.draw_texture(Assets.tex_knickknackui, knickknack_icon_pos_x, knickknack_icon_pos_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+        if (level.has_knickknack) {
+            Renderer.draw_texture(level.knickknack_textures[level.knickknack_id], knickknack_icon_pos_x + (Save.ui_scale * 3 * 4), knickknack_icon_pos_y + (Save.ui_scale * 3 * 4), Save.ui_scale * 3, Save.ui_scale * 3, 0, 0, 0)
+        }
 
         // Post death screen
         if (_post_death >= 1.5) {
