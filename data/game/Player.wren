@@ -334,6 +334,24 @@ class Player is Character {
                 c.x = x
                 c.y = y
             }
+
+            // Leave level icon
+            if (Math.point_distance(x, y, level.end_x, level.end_y) < 30) {
+                Assets.spr_gamepadcontrols.scale_x = 1/3
+                Assets.spr_gamepadcontrols.scale_y = 1/3
+                Assets.spr_keyboardcontrols.scale_x = 1/3
+                Assets.spr_keyboardcontrols.scale_y = 1/3
+                var spr_controls = Controls.on_gamepad ? Assets.spr_gamepadcontrols : Assets.spr_keyboardcontrols
+                Renderer.draw_sprite(spr_controls, Constants.CONTROL_CONFIRM, x - (Assets.spr_keyboardcontrols.width / 6), y + 9 - (Assets.spr_keyboardcontrols.height / 6))
+                Assets.spr_gamepadcontrols.scale_x = Save.ui_scale
+                Assets.spr_gamepadcontrols.scale_y = Save.ui_scale
+                Assets.spr_keyboardcontrols.scale_x = Save.ui_scale
+                Assets.spr_keyboardcontrols.scale_y = Save.ui_scale
+
+                if (Controls.confirm) {
+                    level.next_level()
+                }
+            }
         }
         if (!is_dead) {
             // Focus on player

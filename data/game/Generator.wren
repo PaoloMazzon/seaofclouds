@@ -301,10 +301,19 @@ class Generator {
         // Dropdown wall effect
         add_decoration(tileset_ground, tileset_background, tileset_foreground, rng)
 
-        // Pick start and end tile
+        // Pick start island
         _start_tile = rng.sample(island_spots)
         island_spots.remove(_start_tile)
-        _end_tile = rng.sample(island_spots)
+
+        // End island shouldnt be near start
+        var farthest = island_spots[0]
+        for (spot in island_spots) {
+            if (Math.point_distance(farthest[0], farthest[1], _start_tile[0], _start_tile[1]) < Math.point_distance(spot[0], spot[1], _start_tile[0], _start_tile[1])) {
+                farthest = spot
+            }
+        }
+        _end_tile = farthest
+        island_spots.remove(_end_tile)
 
         // Autotile pass
         autotile(tileset_ground, tileset_background, locations, rng)
@@ -315,6 +324,11 @@ class Generator {
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
         place_traps(level, rng.int(Constants.MIN_TRAPS, Constants.MAX_TRAPS + 1), rng, locations)
         give_knickknack(level, rng)
+
+        // Place start and end ladder
+        tileset_foreground[_start_tile[0], _start_tile[1]] = 71
+        tileset_foreground[_end_tile[0], _end_tile[1]] = 72
+        tileset_foreground[_end_tile[0], _end_tile[1] - 1] = 62
 
         return {"collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
     }

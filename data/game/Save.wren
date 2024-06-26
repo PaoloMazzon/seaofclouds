@@ -61,6 +61,7 @@ class SaveImpl {
         _volume = 1
         _ui_scale = 1
         _items = Items.new()
+        _stage = 1
     }
 
     // Called at the start of the game
@@ -76,12 +77,15 @@ class SaveImpl {
     // Called when the game is restarted
     restart() {
         _items.restart()
+        _stage = 1
     }
 
 
     items { _items }
     volume { _volume }
     volume=(s) { _volume = s }
+    stage { _stage }
+    stage=(s) { _stage = s }
     ui_scale { _ui_scale }
     ui_scale=(s) { 
         _ui_scale = s

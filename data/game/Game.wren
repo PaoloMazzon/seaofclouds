@@ -180,16 +180,25 @@ class Game is Level {
         _new_focal = null
         _particles = []
         _props = []
-        _stage = 1
         _rng = Random.new()
         _has_knickknack = false
         _knickknack_id = _rng.int(11)
         _in_chest = false
+        _next_level = false
     }
     rng { _rng }
     player { _player }
     knickknack_id { _knickknack_id }
     has_knickknack { _has_knickknack }
+    end_x { _gen.ending_spot_x }
+    end_y { _gen.ending_spot_y }
+
+    // Move to next level
+    next_level() {
+        _fade_out = Constants.FADE_TIME
+        _next_level = true
+        Save.stage = Save.stage + 1
+    }
 
     grab_knickknack() {
         _has_knickknack = true
@@ -314,8 +323,6 @@ class Game is Level {
         return _screen_shake > 0 && !is_paused
     }
 
-    stage { _stage }
-
     // Collision tileset
     tileset { _collision_tileset }
 
@@ -366,8 +373,8 @@ class Game is Level {
 
         // Create player
         _player = add_entity(Player)
-        _player.x = _gen.player_start_x
-        _player.y = _gen.player_start_y
+        _player.x = _gen.player_start_x + 12
+        _player.y = _gen.player_start_y + 8
 
         // Setup cameras
         _game_camera = Camera.new()
@@ -501,7 +508,6 @@ class Game is Level {
         // Restart
         if ((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) {
             _fade_out = Constants.FADE_TIME
-
         }
 
         // Fade in and out
@@ -514,7 +520,9 @@ class Game is Level {
                 percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
                 if (_fade_out <= 0) {
-                    Save.restart()
+                    if (!_next_level) {
+                        Save.restart()
+                    }
                     Engine.switch_level(Game.new())
                 }
             }

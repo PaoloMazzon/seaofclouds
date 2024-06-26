@@ -56,7 +56,7 @@ class NPC is Character {
             if (_time > 0) {
                 _time = is_telegraphing ? _time : _time - Engine.delta
                 var percent = 1
-                if (Math.point_distance(x, y, level.player.x, level.player.y) >= 40) {
+                if (Math.point_distance(x, y, level.player.x, level.player.y) >= 40 || _happy) {
                     velocity_x = Constants.NPC_TOP_SPEED * percent * _direction.cos
                     velocity_y = Constants.NPC_TOP_SPEED * percent * _direction.sin
                 }
