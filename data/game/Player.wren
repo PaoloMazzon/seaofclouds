@@ -240,7 +240,10 @@ class Player is Character {
                 if (Assets.spr_player_parry.frame == 3) {
                     Assets.spr_player_parry.frame = 3
                 }
-                _in_parry = true
+                var f = Fiber.new {
+                    _in_parry = true
+                }
+                set_alarm(0.15, f)
             } else {
                 sprite_override = null
                 _in_parry = false

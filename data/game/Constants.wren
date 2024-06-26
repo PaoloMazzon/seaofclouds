@@ -40,6 +40,15 @@ class Constants {
     static PLAYER_PARRY_IFRAMES { 1 } // amount of time after a successful parry the player is invincible
     static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
 
+    //////////////////////////// NPC balance ////////////////////////////
+    static NPC_TOP_SPEED { 10 }
+    static NPC_MAX_WANDER_DISTANCE { 75 }
+
+    //////////////////////////// Trap balance ////////////////////////////
+    static SPIKES_DELAY { 1 }
+    static MAX_TRAPS { 15 }
+    static MIN_TRAPS { 5 }
+
     //////////////////////////// Slime balance ////////////////////////////
     static SLIME_TOP_SPEED { 70 }
     static SLIME_AGGRO_RANGE { 75 }

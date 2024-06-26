@@ -2,6 +2,8 @@ import "BlueSlime" for BlueSlime
 import "Ranger" for Ranger
 import "Constants" for Constants
 import "random" for Random
+import "NPC" for NPC
+import "Spikes" for Spikes
 
 // Generates a random sky level and returns the grid
 class Generator {
@@ -74,6 +76,16 @@ class Generator {
             var location = rng.sample(locations)
             locations.remove(location)
             level.add_prop(location[0], location[1])
+        }
+    }
+
+    place_traps(level, count, rng, locations) {
+        for (i in 1..count) {
+            var location = rng.sample(locations)
+            locations.remove(location)
+            var spikes = level.add_entity(Spikes)
+            spikes.x = location[0]
+            spikes.y = location[1]
         }
     }
 
@@ -170,6 +182,13 @@ class Generator {
                 }
             }
         }
+    }
+
+    place_npcs(level, locations, rng) {
+        var location = rng.sample(locations)
+        locations.remove(location)
+        var npc = level.add_entity(NPC)
+        npc.set_start_location(location[0], location[1])
     }
 
     player_start_x { _start_tile[0] * _tile_width }
@@ -280,9 +299,11 @@ class Generator {
         // Autotile pass
         autotile(tileset_ground, tileset_background, locations, rng)
 
-        // Place enemies and props
+        // Place entities and such
         place_enemies(level, rng.int(15, 20), rng, locations)
+        place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
+        place_traps(level, rng.int(Constants.MIN_TRAPS, Constants.MAX_TRAPS + 1), rng, locations)
 
         return {"collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
     }

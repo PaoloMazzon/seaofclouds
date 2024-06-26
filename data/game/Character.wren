@@ -74,6 +74,46 @@ class SpriteSet {
             Assets.spr_ranger_die.copy()
         )
     }
+
+    static NPC1SpriteSet {
+        return SpriteSet.new(
+            Assets.spr_npc1_walk.copy(),
+            Assets.spr_npc1_idle.copy(),
+            null,
+            null,
+            Assets.spr_npc1_die.copy()
+        )
+    }
+
+    static NPC2SpriteSet {
+        return SpriteSet.new(
+            Assets.spr_npc2_walk.copy(),
+            Assets.spr_npc2_idle.copy(),
+            null,
+            null,
+            Assets.spr_npc2_die.copy()
+        )
+    }
+
+    static NPC3SpriteSet {
+        return SpriteSet.new(
+            Assets.spr_npc3_walk.copy(),
+            Assets.spr_npc3_idle.copy(),
+            null,
+            null,
+            Assets.spr_npc3_die.copy()
+        )
+    }
+
+    static NPC4SpriteSet {
+        return SpriteSet.new(
+            Assets.spr_npc4_walk.copy(),
+            Assets.spr_npc4_idle.copy(),
+            null,
+            null,
+            Assets.spr_npc4_die.copy()
+        )
+    }
 }
 
 class Character is Entity {
