@@ -6,6 +6,113 @@ import "NPC" for NPC
 import "Spikes" for Spikes
 import "Character" for Character
 
+class Structures {
+    construct new(foreground, collisions, width, height, minimum_size) {
+        _foreground = foreground
+        _collisions = collisions
+        _width = width
+        _height = height
+        _minimum_size = minimum_size
+    }
+    foreground { _foreground }
+    collisions { _collisions }
+    width { _width }
+    height { _height }
+    minimum_size { _minimum_size }
+
+    static STRUCTURE_HOUSE_1 {
+        var foreground = [
+            [57, 58, 59, 60],
+            [67, 68, 69, 70],
+            [77, 78, 79, 80],
+            [87, 88, 89, 90],
+            [97, 98, 99, 100]
+        ]
+
+        var collisions = [
+            [0, 58, 59, 60],
+            [0, 68, 69, 70],
+            [0, 78, 79, 80],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ]
+        return Structures.new(foreground, collisions, 4, 5, 4)
+    }
+    
+    static STRUCTURE_HOUSE_2 {
+        var foreground = [
+            [101, 102, 103, 104],
+            [111, 112, 113, 114],
+            [121, 122, 123, 124],
+            [131, 132, 133, 134],
+        ]
+
+        var collisions = [
+            [0, 0, 0, 0],
+            [0, 112, 113, 0],
+            [0, 122, 123, 0],
+            [0, 0, 0, 0],
+        ]
+        return Structures.new(foreground, collisions, 4, 4, 4)
+    }
+
+    static STRUCTURE_PROP_1 {
+        var foreground = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+
+        var collisions = [
+            [0, 81, 0, 0],
+            [0, 91, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+        return Structures.new(foreground, collisions, 4, 4, 4)
+    }
+
+    static STRUCTURE_PROP_2 {
+        var foreground = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+
+        var collisions = [
+            [0, 82, 0, 0],
+            [0, 92, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+        return Structures.new(foreground, collisions, 4, 4, 4)
+    }
+
+    static STRUCTURE_PROP_3 {
+        var foreground = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+
+        var collisions = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 83, 0],
+            [0, 0, 93, 0],
+        ]
+        return Structures.new(foreground, collisions, 4, 4, 4)
+    }
+
+    static get_random_structure(rng) {
+        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_PROP_1, Structures.STRUCTURE_PROP_2, Structures.STRUCTURE_PROP_3]
+        return rng.sample(list)
+    }
+}
+
 // Generates a random sky level and returns the grid
 class Generator {
     static GROUND_TILE { 1 }
@@ -201,6 +308,59 @@ class Generator {
         npc.set_start_location(location[0], location[1])
     }
 
+    is_minimum_distance(structures, new_structure, spot) {
+        for (structure in structures) {
+            if (Math.point_distance(structure[0][0], structure[0][1], spot[0], spot[1]) < structure[1] + new_structure.minimum_size) {
+                return false
+            }
+        }
+        return true
+    }
+
+    place_structures(level, foreground, collisions, island_spots, rng, locations) {
+        var count = rng.int(Constants.MIN_STRUCTURES, Constants.MAX_STRUCTURES + 1)
+        var structure_spots = []
+        
+        // Pick x random spots to put the structures
+        for (i in 1..count) {
+            // Attempt to find a spot for a structure
+            var attempts = 0
+            var spot = rng.sample(island_spots)
+            var structure = Structures.get_random_structure(rng)
+            while (attempts < 10 && structure.minimum_size > spot[2] && is_minimum_distance(structure_spots, structure, spot)) {
+                attempts = attempts + 1
+                spot = rng.sample(island_spots)
+                structure = Structures.get_random_structure(rng)
+            }
+            
+            // Make sure the island is big enough
+            if (structure.minimum_size <= spot[2] && is_minimum_distance(structure_spots, structure, spot)) {
+                // Place the structure
+                structure_spots.add([spot, structure.minimum_size])
+                island_spots.remove(spot)
+                var start_x = spot[0] - (structure.width / 2).floor
+                var start_y = spot[1] - (structure.height / 2).floor
+                var tile_width = foreground.tile_width
+                var tile_height = foreground.tile_height
+                for (y in 0..structure.height - 1) {
+                    for (x in 0..structure.width - 1) {
+                        foreground[x + start_x, y + start_y] = structure.foreground[y][x]
+                        collisions[x + start_x, y + start_y] = structure.collisions[y][x]
+
+                        // Remove location from locations list
+                        for (l in locations) {
+                            var place = [((x + start_x) * tile_width) + (tile_width / 2), ((y + start_y) * tile_height) + (tile_height / 2)]
+                            if (l[0] == place[0] && l[1] == place[1]) {
+                                locations.remove(l)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     player_start_x { _start_tile[0] * _tile_width }
     player_start_y { _start_tile[1] * _tile_height }
 
@@ -319,6 +479,7 @@ class Generator {
         autotile(tileset_ground, tileset_background, locations, rng)
 
         // Place entities and such
+        place_structures(level, tileset_foreground, collisions, island_spots, rng, locations)
         place_enemies(level, rng.int(15, 20), rng, locations)
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)

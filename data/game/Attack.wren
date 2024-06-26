@@ -40,6 +40,15 @@ class Attack is Entity {
         return e
     }
 
+    unbind() {
+        _tied_entity = null
+    }
+
+    set_pos(new_x, new_y) {
+        x = new_x
+        y = new_y
+    }
+
     is_gone { _is_gone }
 
     kill() {

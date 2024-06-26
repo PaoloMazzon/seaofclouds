@@ -143,6 +143,8 @@ class Character is Entity {
         _has_knickknack = false
         _dont_flicker = false
         _sprite_effect = null
+        _melee_attack = null
+        _melee_attack_texture = null
     }
 
     sprite_effect { _sprite_effect }
@@ -163,6 +165,9 @@ class Character is Entity {
     is_invincible { _invincible }
     moving_x { _moving_x }
     moving_y { _moving_y }
+    melee_attack_entity { _melee_attack }
+    melee_attack_texture { _melee_attack_texture }
+    melee_attack_texture=(s) { _melee_attack_texture = s }
 
     // Sets a sprite to be used instead of anything else, setting this to null will go back to normal
     sprite_override=(sprite) { _sprite_override = sprite }
@@ -239,7 +244,7 @@ class Character is Entity {
             var f = Fiber.new {
                 if (!is_dead) {
                     _ranged_attack = false
-                    Attack.create_attack(level, x, y, this, 0, 0, 0, Assets.tex_attack, (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay, _team)
+                    _melee_attack = Attack.create_attack(level, x, y, this, 0, 0, 0, _melee_attack_texture, (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay, _team)
                     _attack_timer = (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay
                 }
             }
@@ -333,6 +338,11 @@ class Character is Entity {
             if (_alternator_time > Constants.ALTERNATOR_TIME) {
                 _alternator_time = _alternator_time % Constants.ALTERNATOR_TIME
                 _alternator = !_alternator
+            }
+
+            // Update melee attack entity
+            if (_melee_attack != null && _melee_attack.is_gone) {
+                _melee_attack = null
             }
         }
     }

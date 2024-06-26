@@ -217,6 +217,7 @@ class Player is Character {
         super.create(level, tiled_data)
         sprite_set = SpriteSet.PlayerSpriteSet
         team = Constants.TEAM_PLAYER
+        melee_attack_texture = Assets.tex_attack
     }
 
     death_camera(level) {
@@ -263,7 +264,7 @@ class Player is Character {
             process_physics(level)
 
             // Attack
-            if (Controls.attack && !_in_parry && melee_attack(level, 2)) {
+            if (Controls.attack && !_in_parry && !is_attacking && !is_telegraphing && melee_attack(level, 2)) {
                 var f = Fiber.new {
                     level.shake_screen(Constants.WEAPON_HIT_SHAKE, 0.5)
                     level.add_particles(Assets.tex_dirtparticle, x + (8 * facing), y, 0, Num.tau, 15, 1, Num.tau, 8)
@@ -271,6 +272,10 @@ class Player is Character {
                 }
                 set_alarm(sprite_set.attack.delay * 3, f)
                 Audio.play(Assets.aud_playerattack, false, Save.volume, Save.volume)
+            }
+            if (melee_attack_entity != null) {
+                melee_attack_entity.unbind()
+                melee_attack_entity.set_pos(x + (facing * 7), y - 5)
             }
             
             // Throw

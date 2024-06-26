@@ -27,6 +27,8 @@ class Constants {
     static MIN_PROPS { 30 }
     static MAX_PROPS { 50 }
     static SHAKE_INTENSITY { 3 }
+    static MAX_STRUCTURES { 5 }
+    static MIN_STRUCTURES { 3 }
 
     //////////////////////////// Balance ////////////////////////////
     static SKILL_CHECK_FADE_IN_TIME { 0.5 }

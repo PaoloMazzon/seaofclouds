@@ -36,6 +36,7 @@ class BlueSlime is Character {
             start_direction(level)
         }
         set_alarm(_rng.float(), f)
+        melee_attack_texture = Assets.tex_slimeattack
     }
 
     update(level) {
