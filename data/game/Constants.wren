@@ -17,6 +17,7 @@ class Constants {
     static TEAM_NONE { 0 }
     static TEAM_ENEMIES { 1 }
     static TEAM_PLAYER { 2 }
+    static FLOATING_TEXT_DURATION { 2 }
 
     //////////////////////////// Graphics ////////////////////////////
     static ALTERNATOR_TIME { 0.1 } // for flickering
@@ -25,20 +26,29 @@ class Constants {
     static CLOUD_COUNT { 30 } // must be even
     static MIN_PROPS { 30 }
     static MAX_PROPS { 50 }
+    static SHAKE_INTENSITY { 3 }
 
     //////////////////////////// Balance ////////////////////////////
-    static THROWING_AXE_SPEED { 150 }
-    static THROWING_AXE_DECELERATION { 50 }
-    static PLAYER_SPEED { 100 }
-    static SHAKE_INTENSITY { 3 }
     static SKILL_CHECK_FADE_IN_TIME { 0.5 }
     static SKILL_CHECK_SPEED { Num.tau * 1.1 }
     static HIT_PAUSE { 0.2 }
     static WEAPON_HIT_SHAKE { 0.1 }
+    static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
+
+    //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }
     static PLAYER_PARRY_MOVEMENT_MODIFIER { 0.25 }
     static PLAYER_PARRY_IFRAMES { 1 } // amount of time after a successful parry the player is invincible
-    static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
+    static THROWING_AXE_SPEED { 150 }
+    static THROWING_AXE_DECELERATION { 50 }
+    static PLAYER_SPEED { 100 }
+
+    //////////////////////////// Items ////////////////////////////
+    static ITEM_DASH_SPEED { 150 }
+    static ITEM_DASH_DURATION { 0.5 }
+    static ITEM_BOOTS_SPEED { 8 }
+    static ITEMS_WHETSTONE_FACTOR { 0.90 } // percent of parry cooldown to keep
+    static ITEMS_MAGNET_AXE_SPEED { 20 } // how fast the axe returns to you
 
     //////////////////////////// NPC balance ////////////////////////////
     static NPC_TOP_SPEED { 40 }

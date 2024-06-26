@@ -141,8 +141,12 @@ class Character is Entity {
         _ranged_attack = false
         _sprite_timer = 0
         _has_knickknack = false
+        _dont_flicker = false
+        _sprite_effect = null
     }
 
+    sprite_effect { _sprite_effect }
+    sprite_effect=(s) { _sprite_effect = s }
     sprite_set { _sprite_set }
     sprite_set=(s) { _sprite_set = s }
     velocity_x { _velocity_x }
@@ -175,7 +179,13 @@ class Character is Entity {
         var f = Fiber.new {
             _invincible = false
         }
+        _dont_flicker = false
         set_alarm(time, f)
+    }
+
+    make_invincible_no_flicker(time) {
+        make_invincible(time)
+        _dont_flicker = true
     }
 
     // Sets an alarm that will call a fiber at the end of it, returns the alarm
@@ -348,7 +358,7 @@ class Character is Entity {
             }
             Renderer.colour_mod = [1, 1, 1, 1]
         } else if (sprite_set.die.frame != sprite_set.die.frame_count - 1) {
-            if (is_invincible && _alternator) {
+            if (is_invincible && _alternator && !_dont_flicker) {
                 Renderer.colour_mod = [0, 0, 0, 0]
             }
 
@@ -370,6 +380,10 @@ class Character is Entity {
                 sprite_set.walk.scale_x = _facing_x
                 draw_sprite(sprite_set.walk, x, y, level.is_paused)
             }
+            if (sprite_effect != null) {
+                draw_sprite(sprite_effect, x - 16, y - 16, level.is_paused)
+            }
+
             Renderer.colour_mod = [1, 1, 1, 1]
         }
     }

@@ -336,11 +336,11 @@
           "size": 24
       },
       {
-          "file": "merriweather.ttf",
-          "name": "merriweather16",
+          "file": "kennypixel.ttf",
+          "name": "kennypixel",
           "ustart": 32,
           "uend": 128,
-          "size": 16
+          "size": 12
       }
   ],
   "bitmap_fonts": [

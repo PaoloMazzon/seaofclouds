@@ -184,6 +184,7 @@ class Game is Level {
         _rng = Random.new()
         _has_knickknack = false
         _knickknack_id = _rng.int(11)
+        _in_chest = false
     }
     rng { _rng }
     player { _player }
@@ -245,6 +246,9 @@ class Game is Level {
             _screen_shake = _screen_shake - Engine.delta
         }
         _stop_time = _stop_time - Engine.delta
+        if (_stop_time <= 0) {
+            _in_chest = false
+        }
 
         // Find a new focal point if the player is dead
         if (player.is_dead && _new_focal != null) {
@@ -256,6 +260,14 @@ class Game is Level {
     pause(time) {
         _stop_time = time
     }
+
+    // Pauses for chests specifically
+    chest_open(time) {
+        _stop_time = time
+        _in_chest = true
+    }
+
+    in_chest { _in_chest }
 
     // Pauses indefinetely
     pause() {
@@ -377,7 +389,7 @@ class Game is Level {
     pre_frame() {
         super.pre_frame()
 
-        if (!is_paused || (is_paused && in_skill_check)) {
+        if (!is_paused || (is_paused && in_skill_check) || (is_paused && in_chest)) {
             // Calculate camera's width and height
             var aspectRatio = Renderer.window_width / Renderer.window_height
             var desired_width = (Constants.GAME_HEIGHT * aspectRatio) / _focal_zoom

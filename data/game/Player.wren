@@ -3,7 +3,8 @@ import "Character" for Character, SpriteSet
 import "Controls" for Controls
 import "BlueSlime" for BlueSlime
 import "Attack" for Attack
-import "Save" for Save
+import "Save" for Save, Items
+import "Chest" for Chest
 
 class ThrowingAxe is Entity {
     construct new() {
@@ -56,6 +57,12 @@ class ThrowingAxe is Entity {
         } else {
             sprite = Assets.spr_floatingaxe
 
+            // Move if the player has a magnet
+            var move_speed = Constants.ITEMS_MAGNET_AXE_SPEED * Save.items[Items.MAGNET_INDEX]
+            var angle = Math.point_angle(x, y, level.player.x, level.player.y - 2)
+            x = x + (move_speed * Engine.delta * angle.cos)
+            y = y + (move_speed * Engine.delta * angle.sin)
+
             if (colliding(level.player)) {
                 level.remove_entity(this)
                 Audio.play(Assets.aud_pickupaxe, false, Save.volume, Save.volume)
@@ -73,11 +80,16 @@ class Player is Character {
         _parry_alarm = null
         _has_axe = true
         _post_death = 0
+        _dash_duration = 0
+        _dash_alarm = null
+        _dash_available = true
     }
 
     return_axe() {
         _has_axe = true
     }
+
+    in_dash { _dash_duration > 0 }
 
     die() {
         super.die()
@@ -114,7 +126,8 @@ class Player is Character {
                 _parry_available = true
                 _parry_alarm = null
             }
-            _parry_alarm = set_alarm(Constants.PLAYER_PARRY_COOLDOWN, f2)
+            var item_multiplier = Save.items.has_item(Items.WHETSTONE_INDEX) ? Constants.ITEMS_WHETSTONE_FACTOR.pow(Save.items[Items.WHETSTONE_INDEX]) : 1
+            _parry_alarm = set_alarm(Constants.PLAYER_PARRY_COOLDOWN * item_multiplier, f2)
         } else {
             die()
             Audio.play(Assets.aud_failedskillcheck, false, Save.volume, Save.volume)
@@ -147,9 +160,17 @@ class Player is Character {
         var parry_icon_pos_y = start_y
         var axe_icon_pos_x = start_x + move_x + move_x + move_x
         var axe_icon_pos_y = start_y
+        var dash_icon_pos_x = start_x + move_x + move_x + move_x + move_x
+        var dash_icon_pos_y = start_y
         var knickknack_icon_pos_x = start_x - (Save.ui_scale * 8)
         var knickknack_icon_pos_y = start_y - (Save.ui_scale * 6)
         var parry_frame = _in_parry ? 0 : (_parry_alarm != null ? (_parry_alarm.get_normalized_time() * 8).round : 8)
+        var dash_frame = _dash_alarm != null ? (_dash_alarm.get_normalized_time() * 8).round : 8
+        var top_left = (icon_height * Save.ui_scale)
+        var banner_current_x = start_x
+        var banner_move_x = Assets.spr_itemdisplay.width * Save.ui_scale
+        var item_start_x = (12 * Save.ui_scale)
+        var item_start_y = (12 * Save.ui_scale)
 
         // Draw the UI
         Renderer.draw_sprite(Assets.spr_swordicon, is_attacking ? 1 : 0, sword_icon_pos_x, sword_icon_pos_y)
@@ -158,10 +179,28 @@ class Player is Character {
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_PARRY, parry_icon_pos_x + control_offset_x, parry_icon_pos_y + control_offset_y)
         Renderer.draw_sprite(Assets.spr_axeicon, _has_axe ? 1 : 0, axe_icon_pos_x, axe_icon_pos_y)
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, axe_icon_pos_x + control_offset_x, axe_icon_pos_y + control_offset_y)
+        if (Save.items.has_item(Items.DASH_INDEX)) {
+            Renderer.draw_sprite(spr_controls, Constants.CONTROL_CONFIRM, dash_icon_pos_x + control_offset_x, dash_icon_pos_y + control_offset_y)
+            Renderer.draw_sprite(Assets.spr_dashicon, dash_frame, dash_icon_pos_x, dash_icon_pos_y)
+        }
         Renderer.draw_texture(Assets.tex_knickknackui, knickknack_icon_pos_x, knickknack_icon_pos_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
         if (level.has_knickknack) {
             Renderer.draw_texture(level.knickknack_textures[level.knickknack_id], knickknack_icon_pos_x + (Save.ui_scale * 3 * 4), knickknack_icon_pos_y + (Save.ui_scale * 3 * 4), Save.ui_scale * 3, Save.ui_scale * 3, 0, 0, 0)
         }
+
+        // Items
+        Renderer.draw_sprite(Assets.spr_itemdisplay, 0, banner_current_x, top_left)
+        banner_current_x = banner_current_x + banner_move_x
+        for (i in 0..Items.ITEM_COUNT - 1) {
+            if (Save.items.item_count(i) > 0) {
+                for (j in 1..Save.items.item_count(i)) {
+                    Renderer.draw_sprite(Assets.spr_itemdisplay, 1, banner_current_x, top_left)
+                    Renderer.draw_sprite(Assets.spr_items, i, banner_current_x + item_start_x, top_left + item_start_y)
+                    banner_current_x = banner_current_x + banner_move_x
+                }
+            }
+        }
+        Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)
 
         // Post death screen
         if (_post_death >= 1.5) {
@@ -203,11 +242,23 @@ class Player is Character {
     update(level) {
         super.update(level)
         if (!level.is_paused) {
-            velocity_x = Controls.movement_x * Constants.PLAYER_SPEED
-            velocity_y = Controls.movement_y * Constants.PLAYER_SPEED
-            if (_in_parry) {
-                velocity_x = velocity_x * Constants.PLAYER_PARRY_MOVEMENT_MODIFIER
-                velocity_y = velocity_y * Constants.PLAYER_PARRY_MOVEMENT_MODIFIER
+            if (!in_dash) {
+                var speed = Constants.PLAYER_SPEED + (Save.items[Items.BOOTS_INDEX] * Constants.ITEM_BOOTS_SPEED)
+                velocity_x = Controls.movement_x * speed
+                velocity_y = Controls.movement_y * speed
+                if (_in_parry) {
+                    velocity_x = velocity_x * Constants.PLAYER_PARRY_MOVEMENT_MODIFIER
+                    velocity_y = velocity_y * Constants.PLAYER_PARRY_MOVEMENT_MODIFIER
+                }
+            } else {
+                var multiplier = 1
+                var x_dir = moving_x == 0 && moving_y == 0 ? facing : moving_x
+                if (x_dir != 0 && moving_y != 0) {
+                    multiplier = 2.sqrt / 2
+                }
+                var speed = Constants.ITEM_DASH_SPEED + (Save.items[Items.BOOTS_INDEX] * Constants.ITEM_BOOTS_SPEED)
+                velocity_x = x_dir * speed * multiplier
+                velocity_y = moving_y * speed * multiplier
             }
             process_physics(level)
 
@@ -258,6 +309,30 @@ class Player is Character {
             } else {
                 sprite_override = null
                 _in_parry = false
+            }
+
+            // Dash
+            if (_dash_available && _dash_duration <= 0 && !is_attacking && !_in_parry && Controls.confirm && Save.items.has_item(Items.DASH_INDEX)) {
+                _dash_duration = Constants.ITEM_DASH_DURATION
+                _dash_available = false
+                make_invincible_no_flicker(Constants.ITEM_DASH_DURATION)
+                var f = Fiber.new {
+                    _dash_available = true
+                    _dash_alarm = null
+                }
+                var item_multiplier = Save.items[Items.DASH_INDEX] > 1 ? Constants.ITEMS_WHETSTONE_FACTOR.pow(Save.items[Items.DASH_INDEX] - 1) : 1
+                _dash_alarm = set_alarm(Constants.PLAYER_PARRY_COOLDOWN * item_multiplier, f)
+                Audio.play(Assets.aud_playerdash, false, Save.volume, Save.volume)
+            } else {
+                _dash_duration = _dash_duration - Engine.delta
+            }
+            sprite_effect = in_dash ? Assets.spr_sheild : null
+
+            // Debug
+            if (Keyboard.key_pressed(Keyboard.KEY_0)) {
+                var c = level.add_entity(Chest)
+                c.x = x
+                c.y = y
             }
         }
         if (!is_dead) {

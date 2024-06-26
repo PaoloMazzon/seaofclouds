@@ -2,6 +2,7 @@ import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
 import "Save" for Save
+import "Chest" for Chest
 
 class NPC is Character {
     construct new() { 
@@ -72,7 +73,9 @@ class NPC is Character {
                     _happy = true
                     level.remove_knickknack()
                     Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)
-                    // TODO: Take the item and spawn a chest with an item
+                    var e = level.add_entity(Chest)
+                    e.x = x
+                    e.y = y
                 } else {
                     _speech_animation = _speech_animation + Engine.delta > 0.5 ? 0.5 : _speech_animation + Engine.delta
                 }
