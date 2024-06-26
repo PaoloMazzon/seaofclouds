@@ -72,7 +72,7 @@ class Chest is Entity {
                 }
                 Renderer.draw_sprite(Assets.spr_items, _item, x - 4, y - 8 + Engine.time.sin)
 
-                if (!_given_item && _timer >= _item_give_delay + _item_movement + _item_oscillate + _chest_open_delay) {
+                if (!_given_item && _timer >= _item_give_delay + _item_movement + _item_oscillate + _chest_open_delay && !level.player.is_dead) {
                     _given_item = true
                     Save.items.give_item(_item)
                     Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)

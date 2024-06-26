@@ -56,6 +56,25 @@ class Structures {
         return Structures.new(foreground, collisions, 4, 4, 4)
     }
 
+    static STRUCTURE_HOUSE_3 {
+        var foreground = [
+            [107, 108, 0, 0],
+            [117, 118, 119, 120],
+            [0, 128, 129, 130],
+            [0, 138, 139, 140],
+            [0, 148, 149, 150],
+        ]
+
+        var collisions = [
+            [107, 108, 0, 0],
+            [117, 118, 119, 120],
+            [0, 128, 129, 130],
+            [0, 138, 139, 140],
+            [0, 0, 0, 0],
+        ]
+        return Structures.new(foreground, collisions, 4, 5, 5)
+    }
+
     static STRUCTURE_PROP_1 {
         var foreground = [
             [0, 0, 0, 0],
@@ -108,7 +127,7 @@ class Structures {
     }
 
     static get_random_structure(rng) {
-        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_PROP_1, Structures.STRUCTURE_PROP_2, Structures.STRUCTURE_PROP_3]
+        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_HOUSE_3, Structures.STRUCTURE_PROP_1, Structures.STRUCTURE_PROP_2, Structures.STRUCTURE_PROP_3]
         return rng.sample(list)
     }
 }
@@ -285,7 +304,7 @@ class Generator {
                 }
 
                 // Small decoration tiles
-                if (is_ground(tileset_ground[x, y]) && rng.int(10) == 2) {
+                if (is_ground(tileset_ground[x, y]) && rng.int(5) == 2) {
                     tileset_foreground[x, y] = get_tile(Generator.DECORATION_TILES, rng)
                 }
             }

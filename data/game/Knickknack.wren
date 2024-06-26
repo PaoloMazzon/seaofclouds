@@ -15,7 +15,7 @@ class Knickknack is Entity {
         super.update(level)
 
         if (!level.is_paused) {
-            if (_time > 2 && Math.point_distance(x, y, level.player.x, level.player.y) < 10) {
+            if (_time > 2 && Math.point_distance(x, y, level.player.x, level.player.y) < 10 && !level.player.is_dead) {
                 level.remove_entity(this)
                 level.grab_knickknack()
                 Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)

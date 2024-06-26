@@ -40,11 +40,9 @@ class ThrowingAxe is Entity {
             // Decelerate
             _x_speed = _x_speed - (_x_speed.sign * (Constants.THROWING_AXE_DECELERATION * Engine.delta))
             _y_speed = _y_speed - (_y_speed.sign * (Constants.THROWING_AXE_DECELERATION * Engine.delta))
-            x = x + _x_speed * Engine.delta
-            y = y + _y_speed * Engine.delta
 
             // Turn into an item if slow enough or hit a wall
-            if (level.tileset.collision(hitbox, x, y) || (_x_speed.pow(2) + _y_speed.pow(2)).sqrt < 30 || _attack.is_gone) {
+            if (level.tileset.collision(hitbox, x + _x_speed * Engine.delta, y + _y_speed * Engine.delta) || (_x_speed.pow(2) + _y_speed.pow(2)).sqrt < 30 || _attack.is_gone) {
                 _being_thrown = false
                 Audio.play(Assets.aud_axeland, false, Save.volume, Save.volume)
                 level.shake_screen(Constants.WEAPON_HIT_SHAKE, 0.5)
@@ -53,6 +51,9 @@ class ThrowingAxe is Entity {
                 if (!attack.is_gone) {
                     level.remove_entity(attack)
                 }
+            } else {
+                x = x + _x_speed * Engine.delta
+                y = y + _y_speed * Engine.delta
             }
         } else {
             sprite = Assets.spr_floatingaxe
@@ -63,7 +64,7 @@ class ThrowingAxe is Entity {
             x = x + (move_speed * Engine.delta * angle.cos)
             y = y + (move_speed * Engine.delta * angle.sin)
 
-            if (colliding(level.player)) {
+            if (Math.point_distance(x, y, level.player.x, level.player.y) < 10) {
                 level.remove_entity(this)
                 Audio.play(Assets.aud_pickupaxe, false, Save.volume, Save.volume)
                 level.player.return_axe()
@@ -284,7 +285,7 @@ class Player is Character {
                     var axe = level.add_entity(ThrowingAxe)
                     var multiplier = 1
                     var x_dir = moving_x == 0 && moving_y == 0 ? facing : moving_x
-                    axe.x = x + facing * 4
+                    axe.x = x + facing
                     axe.y = y - 4
                     if (x_dir != 0 && moving_y != 0) {
                         multiplier = 2.sqrt / 2
