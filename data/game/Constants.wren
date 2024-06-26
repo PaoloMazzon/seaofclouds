@@ -41,11 +41,11 @@ class Constants {
     static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
 
     //////////////////////////// NPC balance ////////////////////////////
-    static NPC_TOP_SPEED { 10 }
+    static NPC_TOP_SPEED { 40 }
     static NPC_MAX_WANDER_DISTANCE { 75 }
 
     //////////////////////////// Trap balance ////////////////////////////
-    static SPIKES_DELAY { 1 }
+    static SPIKES_DELAY { 0.5 }
     static MAX_TRAPS { 15 }
     static MIN_TRAPS { 5 }
 

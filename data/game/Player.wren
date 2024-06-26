@@ -85,7 +85,7 @@ class Player is Character {
     }
 
     on_hit(level, attack) {
-        if (is_invincible) {
+        if (is_invincible || is_dead) {
             return
         }
         if (_in_parry) {
@@ -212,7 +212,7 @@ class Player is Character {
             process_physics(level)
 
             // Attack
-            if (Controls.attack && !_in_parry && melee_attack(level)) {
+            if (Controls.attack && !_in_parry && melee_attack(level, 2)) {
                 var f = Fiber.new {
                     level.shake_screen(Constants.WEAPON_HIT_SHAKE, 0.5)
                     level.add_particles(Assets.tex_dirtparticle, x + (8 * facing), y, 0, Num.tau, 15, 1, Num.tau, 8)

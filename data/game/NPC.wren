@@ -1,6 +1,7 @@
 import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
+import "Save" for Save
 
 class NPC is Character {
     construct new() { 
@@ -55,8 +56,8 @@ class NPC is Character {
                 _time = is_telegraphing ? _time : _time - Engine.delta
                 var percent = 1
                 if (Math.point_distance(x, y, level.player.x, level.player.y) >= 40) {
-                    velocity_x = Constants.SLIME_TOP_SPEED * percent * _direction.cos
-                    velocity_y = Constants.SLIME_TOP_SPEED * percent * _direction.sin
+                    velocity_x = Constants.NPC_TOP_SPEED * percent * _direction.cos
+                    velocity_y = Constants.NPC_TOP_SPEED * percent * _direction.sin
                 }
 
                 if (_time <= 0) {
@@ -70,6 +71,7 @@ class NPC is Character {
                 if (level.has_knickknack && !_happy) {
                     _happy = true
                     level.remove_knickknack()
+                    Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)
                     // TODO: Take the item and spawn a chest with an item
                 } else {
                     _speech_animation = _speech_animation + Engine.delta > 0.5 ? 0.5 : _speech_animation + Engine.delta
@@ -87,13 +89,15 @@ class NPC is Character {
 
         if (_happy && !is_dead) {
             _speech_animation = _speech_animation + Engine.delta > 0.5 ? 0.5 : _speech_animation + Engine.delta
-            Renderer.colour_mod = [1, 1, 1, (_speech_animation * 2)]
-            Renderer.draw_texture(Assets.tex_happy, x - 12, y - (22 * (_speech_animation * 2)))
+            var percent = Math.serp(_speech_animation * 2, 0, 1)
+            Renderer.colour_mod = [1, 1, 1, percent]
+            Renderer.draw_texture(Assets.tex_happy, x - 12, y - (12 + (10 * percent)))
             Renderer.colour_mod = [1, 1, 1, 1]
         } else if (_speech_animation > 0 && !is_dead) {
-            Renderer.colour_mod = [1, 1, 1, (_speech_animation * 2)]
-            Renderer.draw_texture(Assets.tex_speechbubble, x - 12, y - (22 * (_speech_animation * 2)))
-            Renderer.draw_texture(level.knickknack_textures[level.knickknack_id], x - 10, y - (22 * (_speech_animation * 2)) + 3)
+            var percent = Math.serp(_speech_animation * 2, 0, 1)
+            Renderer.colour_mod = [1, 1, 1, percent]
+            Renderer.draw_texture(Assets.tex_speechbubble, x - 12, y - (12 + (10 * percent)))
+            Renderer.draw_texture(level.knickknack_textures[level.knickknack_id], x - 10, y - (12 + (10 * percent)) + 3)
             Renderer.colour_mod = [1, 1, 1, 1]
         }
     }

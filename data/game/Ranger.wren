@@ -20,6 +20,7 @@ class Ranger is Character {
         _state = Ranger.STATE_WANDER
         _shoot_cooldown = 0
         _initial_shot_delay = 0
+        _bowshot_sound = null
     }
 
     ranged_attack(level) {
@@ -33,8 +34,13 @@ class Ranger is Character {
                 }
             }
             set_alarm(sprite_set.ranged_attack.delay * 7, f)
-            Audio.play(Assets.aud_bowshot, false, Save.volume, Save.volume)
+            _bowshot_sound = Audio.play(Assets.aud_bowshot, false, Save.volume, Save.volume)
         }
+    }
+
+    die() {
+        super.die()
+        // _bowshot_sound.stop() - might cause crashes not sure
     }
 
     on_hit(level, attack) {

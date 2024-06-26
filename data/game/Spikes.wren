@@ -1,4 +1,5 @@
 import "Attack" for Attack
+import "Save" for Save
 import "Constants" for Constants
 
 class Spikes is Entity {
@@ -35,6 +36,7 @@ class Spikes is Entity {
 
             if (colliding(level.player) && !level.player.is_dead && _wait_timer <= 0 && _attack_timer <= 0) {
                 _wait_timer = Constants.SPIKES_DELAY
+                Audio.play(Assets.aud_spikes, false, Save.volume, Save.volume)
             }
         }
 
