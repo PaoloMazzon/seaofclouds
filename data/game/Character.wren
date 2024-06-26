@@ -98,6 +98,7 @@ class Character is Entity {
         _alternator = false
         _alternator_time = 0
         _ranged_attack = false
+        _sprite_timer = 0
     }
 
     sprite_set { _sprite_set }
@@ -112,6 +113,7 @@ class Character is Entity {
     facing_right { _facing_x == 1 }
     facing { _facing_x }
     is_attacking { _attack_timer > 0 }
+    is_telegraphing { _attack_timer <= 0 && _sprite_timer > 0 }
     is_invincible { _invincible }
     moving_x { _moving_x }
     moving_y { _moving_y }
@@ -172,18 +174,32 @@ class Character is Entity {
         }
     }
 
-    melee_attack(level) {
+    melee_attack(level, delay_frames) {
         if (is_dead) {
             return false
         }
         if (_attack_timer <= 0) {
-            _ranged_attack = false
-            _attack_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
+            var f = Fiber.new {
+                if (!is_dead) {
+                    _ranged_attack = false
+                    Attack.create_attack(level, x, y, this, 0, 0, 0, Assets.tex_attack, (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay, _team)
+                    _attack_timer = (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay
+                }
+            }
+            _sprite_timer = sprite_set.attack.frame_count * sprite_set.attack.delay
             _sprite_set.attack.frame = 0
-            Attack.create_attack(level, x, y, this, 0, 0, 0, Assets.tex_attack, sprite_set.attack.frame_count * sprite_set.attack.delay, _team)
+            if (delay_frames > 0) {
+                set_alarm(delay_frames * sprite_set.attack.delay, f)
+            } else {
+                f.call()
+            }
             return true
         }
         return false
+    }
+
+    melee_attack(level) {
+        return melee_attack(level, 0)
     }
 
     // Meant to be overridden, returns true if successful attack so user can spawn attack entity
@@ -194,6 +210,7 @@ class Character is Entity {
         if (_attack_timer <= 0) {
             _ranged_attack = true
             _attack_timer = sprite_set.ranged_attack.frame_count * sprite_set.ranged_attack.delay
+            _sprite_timer = _attack_timer
             _sprite_set.ranged_attack.frame = 0
             return true
         }
@@ -220,6 +237,7 @@ class Character is Entity {
             velocity_x = 0
             velocity_y = 0
             _attack_timer = _attack_timer - Engine.delta
+            _sprite_timer = _sprite_timer - Engine.delta
 
             // Alarms
             for (alarm in _alarms) {
@@ -283,7 +301,7 @@ class Character is Entity {
             if (_sprite_override != null) {
                 _sprite_override.scale_x = _facing_x
                 draw_sprite(_sprite_override, x, y, level.is_paused)
-            } else if (is_attacking) {
+            } else if (_sprite_timer > 0) {
                 (_ranged_attack ? sprite_set.ranged_attack : sprite_set.attack).scale_x = _facing_x
                 draw_sprite(_ranged_attack ? sprite_set.ranged_attack : sprite_set.attack, x, y, level.is_paused)
             } else if (velocity_x == 0 && velocity_y == 0) {

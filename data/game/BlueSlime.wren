@@ -20,7 +20,7 @@ class BlueSlime is Character {
     start_direction(level) {
         if (Math.point_distance(level.player.x, level.player.y, x, y) < Constants.SLIME_AGGRO_RANGE) {
             _direction = Math.point_angle(x, y, level.player.x, level.player.y)
-            melee_attack(level)
+            melee_attack(level, 5)
         } else {
             _direction = _rng.float(Num.tau)
         }
@@ -42,10 +42,12 @@ class BlueSlime is Character {
         super.update(level)
         if (!level.is_paused) {
             if (_time > 0) {
-                _time = _time - Engine.delta
+                _time = is_telegraphing ? _time : _time - Engine.delta
                 var percent = ((1 - (_time / _max_time)) - 1).pow(2)
-                velocity_x = Constants.SLIME_TOP_SPEED * percent * _direction.cos
-                velocity_y = Constants.SLIME_TOP_SPEED * percent * _direction.sin
+                if (!is_telegraphing) {
+                    velocity_x = Constants.SLIME_TOP_SPEED * percent * _direction.cos
+                    velocity_y = Constants.SLIME_TOP_SPEED * percent * _direction.sin
+                }
 
                 if (_time <= 0) {
                     var f = Fiber.new {

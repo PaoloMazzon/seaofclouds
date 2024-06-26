@@ -77,6 +77,101 @@ class Generator {
         }
     }
 
+    generate_collision_map(ground_tileset) {
+        // Generate collision tileset
+        var arr = []
+        for (i in 0..ground_tileset.tiles_tall - 1) {
+            var inner = []
+            for (j in 0..ground_tileset.tiles_wide - 1) {
+                if (ground_tileset[j, i] == 0) {
+                    inner.add(160)
+                } else {
+                    inner.add(0)
+                }
+            }
+            arr.add(inner)
+        }
+        return Tileset.new(arr, Assets.tex_tiles, ground_tileset.tile_width, ground_tileset.tile_height)
+    }
+
+    autotile(tileset_ground, tileset_background, locations, rng) {
+        for (y in 1..tileset_background.tiles_tall - 2) {
+            for (x in 1..tileset_background.tiles_wide - 2) {
+                if (tileset_ground[x, y] != 0) {
+                    var above = tileset_ground[x, y - 1] != 0
+                    var below = tileset_ground[x, y + 1] != 0
+                    var left = tileset_ground[x - 1, y] != 0
+                    var right = tileset_ground[x + 1, y] != 0
+                    var drop_right = tileset_ground[x + 1, y] != Generator.DROP_TILE
+                    var drop_left = tileset_ground[x - 1, y] != Generator.DROP_TILE
+                    
+                    // Autotile the ground
+                    if (!below && !above && !left && !right) {
+                        tileset_ground[x, y] = 17
+                    } else if (!below && !above && left && right) {
+                        tileset_ground[x, y] = 10
+                    } else if (below && above && !left && !right) {
+                        tileset_ground[x, y] = 4
+                    } else if (below && !above && left && !right) {
+                        tileset_ground[x, y] = 5
+                    } else if (below && !above && !left && right) {
+                        tileset_ground[x, y] = 7
+                    } else if (!below && above && !left && right) {
+                        tileset_ground[x, y] = 8
+                    } else if (!below && above && left && !right) {
+                        tileset_ground[x, y] = 9
+                    } else if (!below && above && left && right) {
+                        tileset_ground[x, y] = 1
+                    } else if (below && above && !left && right) {
+                        tileset_ground[x, y] = 2
+                    } else if (below && above && left && !right) {
+                        tileset_ground[x, y] = 3
+                    } else if (below && !above && left && right) {
+                        tileset_ground[x, y] = 6
+                    } else if (below && above && left && right) {
+                        tileset_ground[x, y] = 16
+                    }
+
+                    get_entity_locations(locations, x, y, rng)
+                } else if (tileset_background[x, y] != 0) {
+                    var above = tileset_ground[x, y - 1] != 0
+                    var below = tileset_ground[x, y + 1] != 0
+                    var left = tileset_ground[x - 1, y] != 0
+                    var right = tileset_ground[x + 1, y] != 0
+                    var drop_right = tileset_background[x + 1, y] != 0
+                    var drop_left = tileset_background[x - 1, y] != 0
+
+                    // Autotile the drop tiles
+                    if (!below && ((drop_right && drop_left) || (left && right) || (left && drop_right) || (drop_left && right))) {
+                        tileset_background[x, y] = 12
+                    } else if (!below && (drop_right || right) && !drop_left && !left) {
+                        tileset_background[x, y] = 13
+                    } else if (!below && !drop_right && !right && (drop_left || left)) {
+                        tileset_background[x, y] = 14
+                    } else if (!below && !drop_right && !drop_left && !left && !right) {
+                        tileset_background[x, y] = 15
+                    }
+                }
+            }
+        }
+    }
+
+    add_decoration(tileset_ground, tileset_background, tileset_foreground, rng) {
+        for (y in 1..tileset_background.tiles_tall - 1) {
+            for (x in 1..tileset_background.tiles_wide - 1) {
+                // Drop-down walls
+                if (is_ground(tileset_ground[x, y - 1]) && tileset_ground[x, y] == 0) {
+                    tileset_background[x, y] = Generator.DROP_TILE
+                }
+
+                // Small decoration tiles
+                if (is_ground(tileset_ground[x, y]) && rng.int(10) == 2) {
+                    tileset_foreground[x, y] = get_tile(Generator.DECORATION_TILES, rng)
+                }
+            }
+        }
+    }
+
     player_start_x { _start_tile[0] * _tile_width }
     player_start_y { _start_tile[1] * _tile_height }
 
@@ -84,8 +179,8 @@ class Generator {
     ending_spot_y { _end_tile[1] * _tile_height }
 
     // Call this to make a level
-    generate_level(width, height, island_count, seed) {
-        var rng = Random.new(seed)
+    generate_level(width, height, island_count, level) {
+        var rng = level.rng
         var locations = []
         var tileset_array_1 = []
         var tileset_array_2 = []
@@ -171,20 +266,11 @@ class Generator {
             }
         }
 
-        // Add little wall/background effect
-        for (y in 1..height - 1) {
-            for (x in 0..width - 1) {
-                // Drop-down walls
-                if (is_ground(tileset_ground[x, y - 1]) && tileset_ground[x, y] == 0) {
-                    tileset_background[x, y] = Generator.DROP_TILE
-                }
+        // Generate collision tileset
+        var collisions = generate_collision_map(tileset_ground)
 
-                // Small decoration tiles
-                if (is_ground(tileset_ground[x, y]) && rng.int(10) == 2) {
-                    tileset_foreground[x, y] = get_tile(Generator.DECORATION_TILES, rng)
-                }
-            }
-        }
+        // Dropdown wall effect
+        add_decoration(tileset_ground, tileset_background, tileset_foreground, rng)
 
         // Pick start and end tile
         _start_tile = rng.sample(island_spots)
@@ -192,66 +278,12 @@ class Generator {
         _end_tile = rng.sample(island_spots)
 
         // Autotile pass
-        for (y in 1..height - 2) {
-            for (x in 1..width - 2) {
-                if (tileset_ground[x, y] != 0) {
-                    var above = tileset_ground[x, y - 1] != 0
-                    var below = tileset_ground[x, y + 1] != 0
-                    var left = tileset_ground[x - 1, y] != 0
-                    var right = tileset_ground[x + 1, y] != 0
-                    var drop_right = tileset_ground[x + 1, y] != Generator.DROP_TILE
-                    var drop_left = tileset_ground[x - 1, y] != Generator.DROP_TILE
-                    
-                    // Autotile the ground
-                    if (!below && !above && !left && !right) {
-                        tileset_ground[x, y] = 17
-                    } else if (!below && !above && left && right) {
-                        tileset_ground[x, y] = 10
-                    } else if (below && above && !left && !right) {
-                        tileset_ground[x, y] = 4
-                    } else if (below && !above && left && !right) {
-                        tileset_ground[x, y] = 5
-                    } else if (below && !above && !left && right) {
-                        tileset_ground[x, y] = 7
-                    } else if (!below && above && !left && right) {
-                        tileset_ground[x, y] = 8
-                    } else if (!below && above && left && !right) {
-                        tileset_ground[x, y] = 9
-                    } else if (!below && above && left && right) {
-                        tileset_ground[x, y] = 1
-                    } else if (below && above && !left && right) {
-                        tileset_ground[x, y] = 2
-                    } else if (below && above && left && !right) {
-                        tileset_ground[x, y] = 3
-                    } else if (below && !above && left && right) {
-                        tileset_ground[x, y] = 6
-                    } else if (below && above && left && right) {
-                        tileset_ground[x, y] = 16
-                    }
+        autotile(tileset_ground, tileset_background, locations, rng)
 
-                    get_entity_locations(locations, x, y, rng)
-                } else if (tileset_background[x, y] != 0) {
-                    var above = tileset_ground[x, y - 1] != 0
-                    var below = tileset_ground[x, y + 1] != 0
-                    var left = tileset_ground[x - 1, y] != 0
-                    var right = tileset_ground[x + 1, y] != 0
-                    var drop_right = tileset_background[x + 1, y] != 0
-                    var drop_left = tileset_background[x - 1, y] != 0
+        // Place enemies and props
+        place_enemies(level, rng.int(15, 20), rng, locations)
+        place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
 
-                    // Autotile the drop tiles
-                    if (!below && ((drop_right && drop_left) || (left && right) || (left && drop_right) || (drop_left && right))) {
-                        tileset_background[x, y] = 12
-                    } else if (!below && (drop_right || right) && !drop_left && !left) {
-                        tileset_background[x, y] = 13
-                    } else if (!below && !drop_right && !right && (drop_left || left)) {
-                        tileset_background[x, y] = 14
-                    } else if (!below && !drop_right && !drop_left && !left && !right) {
-                        tileset_background[x, y] = 15
-                    }
-                }
-            }
-        }
-
-        return {"ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground, "locations": locations}
+        return {"collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
     }
 }

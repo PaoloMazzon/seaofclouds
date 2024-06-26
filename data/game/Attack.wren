@@ -67,7 +67,6 @@ class Attack is Entity {
                 // Move
                 x = x + _velocity_x * Engine.delta
                 y = y + _velocity_y * Engine.delta
-                System.print(x)
             }
 
             // Lifespan timer

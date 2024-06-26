@@ -25,11 +25,12 @@ class Ranger is Character {
     ranged_attack(level) {
         if (!level.player.is_dead && super.ranged_attack(level)) {
             var f = Fiber.new {
-                var angle = Math.point_angle(x, y, level.player.x, level.player.y)
-                var s_x = x + (4 * angle.cos)
-                var s_y = y + (4 * angle.sin)
-                System.print(s_x)
-                Attack.create_attack(level, s_x, s_y, null, angle, Constants.RANGER_ARROW_SPEED * angle.cos, Constants.RANGER_ARROW_SPEED * angle.sin, Assets.tex_arrow, Constants.RANGER_ARROW_LIFETIME, Constants.TEAM_ENEMIES)
+                if (!is_dead) {
+                    var angle = Math.point_angle(x, y, level.player.x, level.player.y)
+                    var s_x = x + (4 * angle.cos)
+                    var s_y = y + (4 * angle.sin)
+                    Attack.create_attack(level, s_x, s_y, null, angle, Constants.RANGER_ARROW_SPEED * angle.cos, Constants.RANGER_ARROW_SPEED * angle.sin, Assets.tex_arrow, Constants.RANGER_ARROW_LIFETIME, Constants.TEAM_ENEMIES)
+                }
             }
             set_alarm(sprite_set.ranged_attack.delay * 7, f)
             Audio.play(Assets.aud_bowshot, false, Save.volume, Save.volume)

@@ -147,7 +147,11 @@ class Prop {
         for (attack in level.get_entities(Attack)) {
             if (Math.point_distance(attack.x, attack.y, _x, _y) < attack.hitbox.w) {
                 level.add_particles(_particle, _x, _y, Math.point_angle(attack.x, attack.y, _x, _y), Num.pi * 0.3, 50, 1, Num.pi, 8)
-                Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
+                if (_frame == 4 || _frame == 5 || _frame == 6) {
+                    Audio.play(Assets.aud_plantcut, false, Save.volume, Save.volume)
+                } else {
+                    Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
+                }
                 return true
             }
         }
@@ -176,6 +180,7 @@ class Game is Level {
         _new_focal = null
         _particles = []
         _props = []
+        _stage = 1
     }
     rng { _rng }
     player { _player }
@@ -282,6 +287,8 @@ class Game is Level {
         return _screen_shake > 0 && !is_paused
     }
 
+    stage { _stage }
+
     // Collision tileset
     tileset { _collision_tileset }
 
@@ -304,29 +311,11 @@ class Game is Level {
         _gen.island_radius_max = 10
         _gen.island_radius_min = 3
         _gen.minimum_distance = _gen.island_radius_max * 1.5
-        var tilesets = _gen.generate_level(75, 75, 13, _rng.int())
+        var tilesets = _gen.generate_level(75, 75, 13, this)
         _tileset = tilesets["ground"]
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
-
-        // Place stuff
-        _gen.place_enemies(this, _rng.int(15, 20), _rng, tilesets["locations"])
-        _gen.place_props(this, _rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), _rng, tilesets["locations"])
-        
-        // Generate collision tileset
-        var arr = []
-        for (i in 0.._tileset.tiles_tall - 1) {
-            var inner = []
-            for (j in 0.._tileset.tiles_wide - 1) {
-                if (_tileset[j, i] == 0) {
-                    inner.add(1)
-                } else {
-                    inner.add(0)
-                }
-            }
-            arr.add(inner)
-        }
-        _collision_tileset = Tileset.new(arr, Assets.tex_tiles, 24, 16)
+        _collision_tileset = tilesets["collisions"]
 
         // Tileset surface
         Renderer.use_cameras_on_surfaces = false
@@ -335,6 +324,9 @@ class Game is Level {
         Renderer.target = _tileset_surface
         _tileset.draw()
         _foreground_tileset.draw()
+        _collision_tileset.draw()
+        System.print("collisions %(_collision_tileset.width)/%(_collision_tileset.height)")
+        System.print("ground %(_tileset.width)/%(_tileset.height)")
         Renderer.target = Renderer.RENDER_TARGET_DEFAULT
 
         
