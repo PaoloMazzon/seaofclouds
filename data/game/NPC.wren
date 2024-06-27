@@ -15,6 +15,7 @@ class NPC is Character {
         _speech_animation = 0
         _happy = false
         team = Constants.TEAM_ENEMIES
+        score_value = Constants.NPC_SCORE_VALUE
     }
 
     on_hit(level, attack) {

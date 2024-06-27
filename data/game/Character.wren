@@ -145,8 +145,11 @@ class Character is Entity {
         _sprite_effect = null
         _melee_attack = null
         _melee_attack_texture = null
+        _score_value = 0
     }
 
+    score_value { _score_value }
+    score_value=(s) { _score_value = s }
     sprite_effect { _sprite_effect }
     sprite_effect=(s) { _sprite_effect = s }
     sprite_set { _sprite_set }
@@ -233,6 +236,7 @@ class Character is Entity {
             _death_timer = (sprite_set.die.frame_count) * sprite_set.die.delay
             sprite_set.die.frame = 0
             _has_died = true
+            Save.score = Save.score + score_value
         }
     }
 

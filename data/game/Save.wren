@@ -62,6 +62,7 @@ class SaveImpl {
         _ui_scale = 1
         _items = Items.new()
         _stage = 1
+        _score = 0
     }
 
     // Called at the start of the game
@@ -78,12 +79,15 @@ class SaveImpl {
     restart() {
         _items.restart()
         _stage = 1
+        _score = 0
     }
 
 
     items { _items }
     volume { _volume }
     volume=(s) { _volume = s }
+    score { _score }
+    score=(s) { _score = s }
     stage { _stage }
     stage=(s) { _stage = s }
     ui_scale { _ui_scale }
@@ -105,6 +109,8 @@ class SaveImpl {
         Assets.spr_itemdisplay.scale_y = _ui_scale
         Assets.spr_items.scale_x = _ui_scale
         Assets.spr_items.scale_y = _ui_scale
+        Assets.spr_digits.scale_x = _ui_scale
+        Assets.spr_digits.scale_y = _ui_scale
     }
 }
 

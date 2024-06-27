@@ -55,6 +55,7 @@ class Constants {
     //////////////////////////// NPC balance ////////////////////////////
     static NPC_TOP_SPEED { 40 }
     static NPC_MAX_WANDER_DISTANCE { 75 }
+    static NPC_SCORE_VALUE { -10 }
 
     //////////////////////////// Trap balance ////////////////////////////
     static SPIKES_DELAY { 0.5 }
@@ -64,6 +65,7 @@ class Constants {
     //////////////////////////// Slime balance ////////////////////////////
     static SLIME_TOP_SPEED { 70 }
     static SLIME_AGGRO_RANGE { 75 }
+    static SLIME_SCORE_VALUE { 5 }
 
     //////////////////////////// Ranger balance ////////////////////////////
     static RANGER_WALK_SPEED { 50 }
@@ -76,4 +78,5 @@ class Constants {
     static RANGER_SEARCH_TIME_MIN { 3 }
     static RANGER_SEARCH_TIME_MAX { 5 }
     static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing it will wait before shooting
+    static RANGER_SCORE_VALUE { 15 }
 }

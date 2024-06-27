@@ -21,6 +21,7 @@ class Ranger is Character {
         _shoot_cooldown = 0
         _initial_shot_delay = 0
         _bowshot_sound = null
+        score_value = Constants.RANGER_SCORE_VALUE
     }
 
     ranged_attack(level) {

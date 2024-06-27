@@ -141,6 +141,16 @@ class Player is Character {
         return time > 25 ? 0 : (2.7182818).pow(-0.2 * (time - 3.7202)) * (3 * (time - 3.7202)).sin
     }
 
+    // Draws numbers using the digits sprite
+    draw_digits(num, x, y) {
+        var move_x = Save.ui_scale * 5 * 3
+        for (character in num.toString) {
+            var digit = Num.fromString(character)
+            Renderer.draw_sprite(Assets.spr_digits, digit, x, y)
+            x = x + move_x
+        }
+    }
+
     // Draws the player ui, called by level
     draw_ui(level) {
         var icon_width = Assets.spr_parryicon.width
