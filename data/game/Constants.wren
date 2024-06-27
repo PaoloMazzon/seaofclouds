@@ -37,6 +37,18 @@ class Constants {
     static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
     static ENEMY_HIT_IFRAMES { 1 }
 
+    //////////////////////////// Level generation by stage ////////////////////////////
+    static ISLAND_RADIUS_MAX { [10, 10, 10, 10, 10, 10] }
+    static ISLAND_RADIUS_MIN { [3, 3, 3, 3, 3, 3] }
+    static ISLAND_MINIMUM_DISTANCE { [15, 15, 15, 15, 15, 15] }
+    static LEVEL_WIDTH { [50, 75, 75, 75, 75, 75] }
+    static LEVEL_HEIGHT { [50, 75, 75, 75, 75, 75] }
+    static LEVEL_ISLAND_COUNT { [13, 13, 13, 13, 13, 13] }
+    static LEVEL_ENEMY_MAX { [20, 20, 20, 20, 20, 20] }
+    static LEVEL_ENEMY_MIN { [15, 15, 15, 15, 15, 15] }
+    static LEVEL_TRAP_MAX { [0, 10, 10, 10, 10, 10] }
+    static LEVEL_TRAP_MIN { [0, 5, 5, 5, 5, 5] }
+
     //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }
     static PLAYER_PARRY_MOVEMENT_MODIFIER { 0.25 }
@@ -60,8 +72,6 @@ class Constants {
 
     //////////////////////////// Trap balance ////////////////////////////
     static SPIKES_DELAY { 0.5 }
-    static MAX_TRAPS { 15 }
-    static MIN_TRAPS { 5 }
 
     //////////////////////////// Slime balance ////////////////////////////
     static SLIME_TOP_SPEED { 70 }

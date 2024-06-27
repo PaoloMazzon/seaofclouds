@@ -326,6 +326,7 @@ class Game is Level {
 
     // Collision tileset
     tileset { _collision_tileset }
+    foreground_tileset { _foreground_tileset }
 
     set_focal_point(x, y, zoom) {
         _focal_x = x
@@ -346,10 +347,10 @@ class Game is Level {
         _gen.tile_width = 24
         _gen.tile_height = 16
         _gen.tileset_tex = Assets.tex_tiles
-        _gen.island_radius_max = 10
-        _gen.island_radius_min = 3
-        _gen.minimum_distance = _gen.island_radius_max * 1.5
-        var tilesets = _gen.generate_level(75, 75, 13, this)
+        _gen.island_radius_max = Constants.ISLAND_RADIUS_MAX[Save.stage - 1]//10
+        _gen.island_radius_min = Constants.ISLAND_RADIUS_MIN[Save.stage - 1]//3
+        _gen.minimum_distance = Constants.ISLAND_MINIMUM_DISTANCE[Save.stage - 1]//_gen.island_radius_max * 1.5
+        var tilesets = _gen.generate_level(Constants.LEVEL_WIDTH[Save.stage - 1], Constants.LEVEL_HEIGHT[Save.stage - 1], Constants.LEVEL_ISLAND_COUNT[Save.stage - 1], this)
         _tileset = tilesets["ground"]
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]

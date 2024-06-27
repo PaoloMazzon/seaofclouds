@@ -97,6 +97,7 @@ class Player is Character {
 
     die() {
         super.die()
+        Save.check_highscore()
         Save.save()
     }
 

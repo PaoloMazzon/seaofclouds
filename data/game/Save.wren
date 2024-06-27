@@ -54,6 +54,22 @@ class Items {
     give_item(id) {
         _items[id] = _items[id] + 1
     }
+
+    copy() {
+        var items = Items.new()
+        for (index in 0..Items.ITEM_COUNT - 1) {
+            items[index] = item_count(index)
+        }
+        return items
+    }
+
+    save_to_string() {
+        return ""
+    }
+
+    static load_from_string(string) {
+        return Items.new()
+    }
 }
 
 class SaveImpl {
@@ -67,6 +83,19 @@ class SaveImpl {
         _shake_intensity = 3
         _shake_modifier = 1
         _fullscreen = false
+        _best_run_parries = 0
+        _best_run_kills = 0
+        _best_run_items = ""
+        _best_run_highest_stage = 0
+        _best_run_props_destroyed = 0
+        _best_run_npcs_killed = 0
+        _best_run_axes_thrown = 0
+        _total_parries = 0
+        _total_kills = 0
+        _total_highest_stage = 0
+        _total_props_destroyed = 0
+        _total_npcs_killed = 0
+        _total_axes_thrown = 0
     }
 
     // Called at the start of the game
@@ -75,8 +104,29 @@ class SaveImpl {
         _volume = ini.get_num("game", "volume", 1)
         _ui_scale = ini.get_num("game", "ui_scale", 2)
         _highscore = ini.get_num("game", "highscore", 0)
+        _best_run_parries = ini.get_num("game", "best_run_parries", 0)
+        _best_run_kills = ini.get_num("game", "best_run_kills", 0)
+        _best_run_items = Items.load_from_string(ini.get_string("game", "best_run_items", ""))
+        _best_run_highest_stage = ini.get_num("game", "best_run_highest_stage", 0)
+        _best_run_props_destroyed = ini.get_num("game", "best_run_props_destroyed", 0)
+        _best_run_npcs_killed = ini.get_num("game", "best_run_npcs_killed", 0)
+        _best_run_axes_thrown = ini.get_num("game", "best_run_axes_thrown", 0)
         _shake_modifier = ini.get_num("game", "shake_modifier", 1)
         _fullscreen = ini.get_bool("game", "fullscreen", false)
+    }
+
+    // Checks if a highscore was achieved and records the run
+    check_highscore() { 
+        if (score > highscore) {
+            _highscore = _score
+            _best_run_parries = _total_parries
+            _best_run_kills = _total_kills
+            _best_run_items = _items.copy()
+            _best_run_highest_stage = _total_highest_stage
+            _best_run_props_destroyed = _total_props_destroyed
+            _best_run_npcs_killed = _total_npcs_killed
+            _best_run_axes_thrown = _total_axes_thrown
+        }
     }
 
     // Should be called at the end of runs
@@ -84,7 +134,14 @@ class SaveImpl {
         var ini = INI.open("save.ini")
         ini.set_num("game", "volume", _volume)
         ini.set_num("game", "ui_scale", _ui_scale)
-        ini.set_num("game", "highscore", _highscore)
+        ini.set_string("game", "best_run_items", _best_run_items.save_to_string())
+        ini.set_num("game", "highscore", highscore)
+        ini.set_num("game", "best_run_parries", best_run_parries)   
+        ini.set_num("game", "best_run_kills", best_run_kills) 
+        ini.set_num("game", "best_run_highest_stage", best_run_highest_stage) 
+        ini.set_num("game", "best_run_props_destroyed", best_run_props_destroyed)   
+        ini.set_num("game", "best_run_npcs_killed", best_run_npcs_killed)   
+        ini.set_num("game", "best_run_axes_thrown", best_run_axes_thrown)   
         ini.set_num("game", "shake_modifier", _shake_modifier)
         ini.set_bool("game", "fullscreen", _fullscreen)
         ini.flush("save.ini")
@@ -97,6 +154,24 @@ class SaveImpl {
         _score = 0
     }
 
+    best_run_parries { _best_run_parries }
+    best_run_kills { _best_run_kills }
+    best_run_highest_stage { _best_run_highest_stage }
+    best_run_props_destroyed { _best_run_props_destroyed }
+    best_run_npcs_killed { _best_run_npcs_killed }
+    best_run_axes_thrown { _best_run_axes_thrown }
+    total_parries { _total_parries }
+    total_parries=(s) { _total_parries = s }
+    total_kills { _total_kills }
+    total_kills=(s) { _total_kills = s }
+    total_highest_stage { _total_highest_stage }
+    total_highest_stage=(s) { _total_highest_stage = s }
+    total_props_destroyed { _total_props_destroyed }
+    total_props_destroyed=(s) { _total_props_destroyed = s }
+    total_npcs_killed { _total_npcs_killed }
+    total_npcs_killed=(s) { _total_npcs_killed = s }
+    total_axes_thrown { _total_axes_thrown }
+    total_axes_thrown=(s) { _total_axes_thrown = s }
     highscore=(s) { _highscore = s }
     highscore { _highscore }
     fullscreen=(s) { _fullscreen = s }

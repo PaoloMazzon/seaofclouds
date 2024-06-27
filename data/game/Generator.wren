@@ -5,6 +5,7 @@ import "random" for Random
 import "NPC" for NPC
 import "Spikes" for Spikes
 import "Character" for Character
+import "Save" for Save
 
 class Structures {
     construct new(foreground, collisions, width, height, minimum_size) {
@@ -77,8 +78,8 @@ class Structures {
 
     static STRUCTURE_PROP_1 {
         var foreground = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
+            [0, 81, 0, 0],
+            [0, 91, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ]
@@ -94,8 +95,8 @@ class Structures {
 
     static STRUCTURE_PROP_2 {
         var foreground = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
+            [0, 82, 0, 0],
+            [0, 92, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ]
@@ -113,8 +114,8 @@ class Structures {
         var foreground = [
             [0, 0, 0, 0],
             [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
+            [0, 0, 83, 0],
+            [0, 0, 93, 0],
         ]
 
         var collisions = [
@@ -188,10 +189,19 @@ class Generator {
 
     // Place enemies
     place_enemies(level, count, rng, locations) {
+        var enemy_list_by_stage = [
+            [BlueSlime],
+            [BlueSlime, BlueSlime, BlueSlime, Ranger],
+            [],
+            [],
+            [],
+            []
+        ]
+
         for (i in 1..count) {
             var location = rng.sample(locations)
             locations.remove(location)
-            var e = level.add_entity(rng.sample([BlueSlime]))
+            var e = level.add_entity(rng.sample(enemy_list_by_stage[Save.stage - 1]))
             e.x = location[0]
             e.y = location[1]
         }
@@ -207,10 +217,23 @@ class Generator {
     }
 
     place_traps(level, count, rng, locations) {
+        var trap_list_by_stage = [
+            [],
+            [Spikes],
+            [],
+            [],
+            [],
+            []
+        ]
+
+        if (trap_list_by_stage[Save.stage - 1].count == 0) {
+            return
+        }
+
         for (i in 1..count) {
             var location = rng.sample(locations)
             locations.remove(location)
-            var spikes = level.add_entity(Spikes)
+            var spikes = level.add_entity(rng.sample(trap_list_by_stage[Save.stage - 1]))
             spikes.x = location[0]
             spikes.y = location[1]
         }
@@ -499,10 +522,10 @@ class Generator {
 
         // Place entities and such
         place_structures(level, tileset_foreground, collisions, island_spots, rng, locations)
-        place_enemies(level, rng.int(15, 20), rng, locations)
+        place_enemies(level, rng.int(Constants.LEVEL_ENEMY_MIN[Save.stage - 1], Constants.LEVEL_ENEMY_MAX[Save.stage - 1]), rng, locations)
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
-        place_traps(level, rng.int(Constants.MIN_TRAPS, Constants.MAX_TRAPS + 1), rng, locations)
+        place_traps(level, rng.int(Constants.LEVEL_TRAP_MIN[Save.stage - 1], Constants.LEVEL_TRAP_MAX[Save.stage - 1]), rng, locations)
         give_knickknack(level, rng)
 
         // Place start and end ladder

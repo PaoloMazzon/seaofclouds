@@ -1,4 +1,5 @@
-Astro.ini
 *.exe
 *.dll
+*.ini
+*.zip
 astroerror.txt

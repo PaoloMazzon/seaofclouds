@@ -78,6 +78,14 @@ class Attack is Entity {
                 y = y + _velocity_y * Engine.delta
             }
 
+            // Collisions with buildings
+            var tile_x = (x / level.tileset.tile_width).floor
+            var tile_y = (y / level.tileset.tile_height).floor
+            if (_tied_entity == null && level.tileset[tile_x, tile_y] != 0 && level.tileset[tile_x, tile_y] == level.foreground_tileset[tile_x, tile_y]) {
+                level.remove_entity(this)
+                _is_gone = true
+            }
+
             // Lifespan timer
             _lifespan = _lifespan - Engine.delta
             if (_lifespan < 0) {
