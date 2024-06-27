@@ -21,7 +21,7 @@ class Constants {
 
     //////////////////////////// Graphics ////////////////////////////
     static ALTERNATOR_TIME { 0.1 } // for flickering
-    static SKY_COLOUR { [95 / 255, 205 / 255, 228 / 255, 255] }
+    static SKY_COLOUR { [0, 0, 0, 1] }
     static FADE_TIME { 0.75 }
     static CLOUD_COUNT { 30 } // must be even
     static MIN_PROPS { 30 }
@@ -55,6 +55,7 @@ class Constants {
     static NPC_TOP_SPEED { 40 }
     static NPC_MAX_WANDER_DISTANCE { 75 }
     static NPC_SCORE_VALUE { 10 }
+    static NPC_GIVE_ITEM_SCORE { 50 }
 
     //////////////////////////// Trap balance ////////////////////////////
     static SPIKES_DELAY { 0.5 }

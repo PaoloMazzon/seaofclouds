@@ -59,7 +59,7 @@ class Items {
 class SaveImpl {
     construct new() {
         _volume = 1
-        _ui_scale = 1
+        _ui_scale = 2
         _items = Items.new()
         _stage = 1
         _score = 0

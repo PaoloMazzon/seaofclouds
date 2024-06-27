@@ -334,7 +334,7 @@ class Game is Level {
 
     create() {
         super.create()
-        Save.ui_scale = 2
+        Save.ui_scale = Save.ui_scale
 
         // Random housekeeping
         Assets.spr_telegraph.origin_x = Assets.spr_telegraph.width / 2
