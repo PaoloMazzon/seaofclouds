@@ -409,8 +409,8 @@ class Game is Level {
             _game_camera.y = _game_camera.y + 0.05 * ((_focal_y - (_game_camera.height / 2)) - _game_camera.y)
 
             if (is_shaking) {
-                _game_camera.x = _game_camera.x + _rng.float(-Constants.SHAKE_INTENSITY * _shake_intensity_modifier, Constants.SHAKE_INTENSITY * _shake_intensity_modifier)
-                _game_camera.y = _game_camera.y + _rng.float(-Constants.SHAKE_INTENSITY * _shake_intensity_modifier, Constants.SHAKE_INTENSITY * _shake_intensity_modifier)
+                _game_camera.x = _game_camera.x + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
+                _game_camera.y = _game_camera.y + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
             }
         }
 
@@ -561,6 +561,7 @@ class Game is Level {
         // Fullscreen
         if (Keyboard.key(Keyboard.KEY_LALT) && Keyboard.key_pressed(Keyboard.KEY_RETURN)) {
             Renderer.fullscreen = !Renderer.fullscreen
+            Save.fullscreen = Renderer.fullscreen
         }
     }
 

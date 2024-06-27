@@ -63,6 +63,9 @@ class SaveImpl {
         _items = Items.new()
         _stage = 1
         _score = 0
+        _shake_intensity = 3
+        _shake_modifier = 1
+        _fullscreen = false
     }
 
     // Called at the start of the game
@@ -82,7 +85,11 @@ class SaveImpl {
         _score = 0
     }
 
-
+    fullscreen=(s) { _fullscreen = s }
+    fullscreen { _fullscreen}
+    shake_modifier=(s) { _shake_modifier = s }
+    shake_modifier { _shake_modifier }
+    shake_intensity { _shake_intensity * _shake_modifier }
     items { _items }
     volume { _volume }
     volume=(s) { _volume = s }

@@ -26,7 +26,6 @@ class Constants {
     static CLOUD_COUNT { 30 } // must be even
     static MIN_PROPS { 30 }
     static MAX_PROPS { 50 }
-    static SHAKE_INTENSITY { 3 }
     static MAX_STRUCTURES { 5 }
     static MIN_STRUCTURES { 3 }
 
@@ -70,7 +69,7 @@ class Constants {
     //////////////////////////// Ranger balance ////////////////////////////
     static RANGER_WALK_SPEED { 50 }
     static RANGER_RUN_SPEED { 80 }
-    static RANGER_AGGRO_RANGE { 120 }
+    static RANGER_AGGRO_RANGE { 100 }
     static RANGER_ARROW_SPEED { 200 }
     static RANGER_ARROW_LIFETIME { 3 }
     static RANGER_MIN_SHOOT_COOLDOWN { 0.75 } // time between shots

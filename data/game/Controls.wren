@@ -23,6 +23,10 @@ class ControlsImpl {
     throw_axe { Keyboard.key_pressed(Keyboard.KEY_C) || Gamepad.button_pressed(0, Gamepad.BUTTON_Y) }
     parry { Keyboard.key(Keyboard.KEY_X) || Gamepad.button(0, Gamepad.BUTTON_B) }
     restart { Keyboard.key_pressed(Keyboard.KEY_R) || Gamepad.button_pressed(0, Gamepad.BUTTON_BACK) }
+    menu_up { Keyboard.key_pressed(Keyboard.KEY_UP) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_UP) }
+    menu_down { Keyboard.key_pressed(Keyboard.KEY_DOWN) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_DOWN) }
+    menu_left { Keyboard.key_pressed(Keyboard.KEY_LEFT) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_LEFT) }
+    menu_right { Keyboard.key_pressed(Keyboard.KEY_RIGHT) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_RIGHT) }
     on_gamepad { Gamepad.is_connected(0) }
 }
 
