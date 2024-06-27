@@ -38,16 +38,18 @@ class Constants {
     static ENEMY_HIT_IFRAMES { 1 }
 
     //////////////////////////// Level generation by stage ////////////////////////////
-    static ISLAND_RADIUS_MAX { [10, 10, 10, 10, 10, 10] }
-    static ISLAND_RADIUS_MIN { [3, 3, 3, 3, 3, 3] }
-    static ISLAND_MINIMUM_DISTANCE { [15, 15, 15, 15, 15, 15] }
-    static LEVEL_WIDTH { [50, 75, 75, 75, 75, 75] }
-    static LEVEL_HEIGHT { [50, 75, 75, 75, 75, 75] }
-    static LEVEL_ISLAND_COUNT { [13, 13, 13, 13, 13, 13] }
-    static LEVEL_ENEMY_MAX { [20, 20, 20, 20, 20, 20] }
-    static LEVEL_ENEMY_MIN { [15, 15, 15, 15, 15, 15] }
-    static LEVEL_TRAP_MAX { [0, 10, 10, 10, 10, 10] }
-    static LEVEL_TRAP_MIN { [0, 5, 5, 5, 5, 5] }
+    static ISLAND_RADIUS_MAX                { [10, 10, 10, 10, 10, 10] }
+    static ISLAND_RADIUS_MIN                { [ 3,  3,  3,  3,  3,  3] }
+    static ISLAND_MINIMUM_DISTANCE          { [15, 15, 15, 15, 15, 15] }
+    static LEVEL_WIDTH                      { [50, 75, 75, 75, 75, 75] }
+    static LEVEL_HEIGHT                     { [50, 75, 75, 75, 75, 75] }
+    static LEVEL_ISLAND_COUNT               { [13, 13, 13, 13, 13, 13] }
+    static LEVEL_ENEMY_MAX                  { [20, 20, 20, 20, 20, 20] }
+    static LEVEL_ENEMY_MIN                  { [15, 15, 15, 15, 15, 15] }
+    static LEVEL_TRAP_MAX                   { [ 0, 10, 10, 10, 10, 10] }
+    static LEVEL_TRAP_MIN                   { [ 0,  5,  5,  5,  5,  5] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [10, 10, 10, 10, 10, 10] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 6,  6,  6,  6,  6,  6] }
 
     //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }
@@ -88,6 +90,6 @@ class Constants {
     static RANGER_MAX_SHOOT_COOLDOWN { 1.5 }
     static RANGER_SEARCH_TIME_MIN { 3 }
     static RANGER_SEARCH_TIME_MAX { 5 }
-    static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing it will wait before shooting
+    static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
     static RANGER_SCORE_VALUE { 15 }
 }

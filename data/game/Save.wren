@@ -51,6 +51,10 @@ class Items {
         return item_count(id)
     }
 
+    set_item(id, count) {
+        _items[id] = count
+    }
+
     give_item(id) {
         _items[id] = _items[id] + 1
     }
@@ -58,7 +62,7 @@ class Items {
     copy() {
         var items = Items.new()
         for (index in 0..Items.ITEM_COUNT - 1) {
-            items[index] = item_count(index)
+            items.set_item(index, item_count(index))
         }
         return items
     }

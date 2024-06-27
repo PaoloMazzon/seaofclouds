@@ -131,6 +131,82 @@ class Structures {
         var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_HOUSE_3, Structures.STRUCTURE_PROP_1, Structures.STRUCTURE_PROP_2, Structures.STRUCTURE_PROP_3]
         return rng.sample(list)
     }
+
+    static STRUCTURE_ENVIRONMENT_BLOCK {
+        var foreground = [
+            [53]
+        ]
+
+        var collisions = [
+            [53]
+        ]
+        return Structures.new(foreground, collisions, 1, 1, 1)
+    }
+
+    static STRUCTURE_ENVIRONMENT_HORIZONTAL_2 {
+        var foreground = [
+            [65, 66]
+        ]
+
+        var collisions = [
+            [65, 66]
+        ]
+        return Structures.new(foreground, collisions, 2, 1, 1)
+    }
+
+    static STRUCTURE_ENVIRONMENT_VERTICAL_2 {
+        var foreground = [
+            [57],
+            [67]
+        ]
+
+        var collisions = [
+            [57],
+            [67]
+        ]
+        return Structures.new(foreground, collisions, 1, 2, 1)
+    }
+
+    static STRUCTURE_ENVIRONMENT_L_LEFT {
+        var foreground = [
+            [54, 55, 56],
+            [64, 0, 0]
+        ]
+
+        var collisions = [
+            [54, 55, 56],
+            [64, 0, 0]
+        ]
+        return Structures.new(foreground, collisions, 3, 2, 1)
+    }
+    
+    static STRUCTURE_ENVIRONMENT_L_RIGHT {
+        var foreground = [
+            [74, 75, 76],
+            [84, 0, 0]
+        ]
+
+        var collisions = [
+            [74, 75, 76],
+            [84, 0, 0]
+        ]
+        return Structures.new(foreground, collisions, 3, 2, 1)
+    }
+    
+    static STRUCTURE_ENVIRONMENT_CROSS {
+        var foreground = [
+            [0, 85, 0],
+            [94, 95, 96],
+            [0, 105, 0]
+        ]
+
+        var collisions = [
+            [0, 85, 0],
+            [94, 95, 96],
+            [0, 105, 0]
+        ]
+        return Structures.new(foreground, collisions, 3, 3, 1)
+    }
 }
 
 // Generates a random sky level and returns the grid
@@ -359,6 +435,18 @@ class Generator {
         return true
     }
 
+    // x/y should be a tile coordinate
+    remove_location(locations, x, y) {
+        // Remove location from locations list
+        for (l in locations) {
+            var place = [((x) * tile_width) + (tile_width / 2), ((y) * tile_height) + (tile_height / 2)]
+            if (l[0] == place[0] && l[1] == place[1]) {
+                locations.remove(l)
+                break
+            }
+        }
+    }
+
     place_structures(level, foreground, collisions, island_spots, rng, locations) {
         var count = rng.int(Constants.MIN_STRUCTURES, Constants.MAX_STRUCTURES + 1)
         var structure_spots = []
@@ -389,18 +477,23 @@ class Generator {
                         foreground[x + start_x, y + start_y] = structure.foreground[y][x]
                         collisions[x + start_x, y + start_y] = structure.collisions[y][x]
 
-                        // Remove location from locations list
-                        for (l in locations) {
-                            var place = [((x + start_x) * tile_width) + (tile_width / 2), ((y + start_y) * tile_height) + (tile_height / 2)]
-                            if (l[0] == place[0] && l[1] == place[1]) {
-                                locations.remove(l)
-                                break
-                            }
-                        }
+                        remove_location(locations, x + start_x, y + start_y)
                     }
                 }
             }
         }
+    }
+
+    place_environment_structures(level, foreground, collisions, island_spots, rng, locations) {
+        var block = Structures.STRUCTURE_ENVIRONMENT_BLOCK
+        var horizontal2 = Structures.STRUCTURE_ENVIRONMENT_HORIZONTAL_2
+        var vertical2 = Structures.STRUCTURE_ENVIRONMENT_VERTICAL_2
+        var l_left = Structures.STRUCTURE_ENVIRONMENT_L_LEFT
+        var l_right = Structures.STRUCTURE_ENVIRONMENT_L_RIGHT
+        var cross = Structures.STRUCTURE_ENVIRONMENT_CROSS
+        var structures = [block, horizontal2, vertical2, l_left, l_right, cross]
+
+        var count = rng.int(Constants.LEVEL_ENVIRONMENT_STRUCTURES_MIN[Save.stage - 1], Constants.LEVEL_ENVIRONMENT_STRUCTURES_MAX[Save.stage - 1] + 1)
     }
 
     player_start_x { _start_tile[0] * _tile_width }
@@ -522,10 +615,11 @@ class Generator {
 
         // Place entities and such
         place_structures(level, tileset_foreground, collisions, island_spots, rng, locations)
-        place_enemies(level, rng.int(Constants.LEVEL_ENEMY_MIN[Save.stage - 1], Constants.LEVEL_ENEMY_MAX[Save.stage - 1]), rng, locations)
+        place_environment_structures(level, tileset_foreground, collisions, island_spots, rng, locations)
+        place_enemies(level, rng.int(Constants.LEVEL_ENEMY_MIN[Save.stage - 1], Constants.LEVEL_ENEMY_MAX[Save.stage - 1] + 1), rng, locations)
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
-        place_traps(level, rng.int(Constants.LEVEL_TRAP_MIN[Save.stage - 1], Constants.LEVEL_TRAP_MAX[Save.stage - 1]), rng, locations)
+        place_traps(level, rng.int(Constants.LEVEL_TRAP_MIN[Save.stage - 1], Constants.LEVEL_TRAP_MAX[Save.stage - 1] + 1), rng, locations)
         give_knickknack(level, rng)
 
         // Place start and end ladder
