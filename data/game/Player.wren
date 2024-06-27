@@ -178,6 +178,7 @@ class Player is Character {
         var parry_frame = _in_parry ? 0 : (_parry_alarm != null ? (_parry_alarm.get_normalized_time() * 8).round : 8)
         var dash_frame = _dash_alarm != null ? (_dash_alarm.get_normalized_time() * 8).round : 8
         var top_left = (icon_height * Save.ui_scale)
+        var top_right = Renderer.window_width - (Assets.tex_scorebanner.width * Save.ui_scale * 1.5)
         var banner_current_x = start_x
         var banner_move_x = Assets.spr_itemdisplay.width * Save.ui_scale
         var item_start_x = (12 * Save.ui_scale)
@@ -198,6 +199,8 @@ class Player is Character {
         if (level.has_knickknack) {
             Renderer.draw_texture(level.knickknack_textures[level.knickknack_id], knickknack_icon_pos_x + (Save.ui_scale * 3 * 4), knickknack_icon_pos_y + (Save.ui_scale * 3 * 4), Save.ui_scale * 3, Save.ui_scale * 3, 0, 0, 0)
         }
+        Renderer.draw_texture(Assets.tex_scorebanner, top_right, top_left, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+        draw_digits(Save.score, top_right + (Save.ui_scale * 26), top_left + (Save.ui_scale * 11))
 
         // Items
         Renderer.draw_sprite(Assets.spr_itemdisplay, 0, banner_current_x, top_left)

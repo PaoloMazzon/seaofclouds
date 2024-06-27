@@ -55,7 +55,7 @@ class Constants {
     //////////////////////////// NPC balance ////////////////////////////
     static NPC_TOP_SPEED { 40 }
     static NPC_MAX_WANDER_DISTANCE { 75 }
-    static NPC_SCORE_VALUE { -10 }
+    static NPC_SCORE_VALUE { 10 }
 
     //////////////////////////// Trap balance ////////////////////////////
     static SPIKES_DELAY { 0.5 }
