@@ -49,6 +49,7 @@ class Menu is Level {
 
     create() {
         super.create()
+        Renderer.hide_cursor = true
         _ui_scale = _ui_scale
         _background_camera = Camera.new()
         _ui_camera = Camera.new()

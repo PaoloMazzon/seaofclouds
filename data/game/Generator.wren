@@ -23,8 +23,8 @@ class Structures {
 
     static STRUCTURE_HOUSE_1 {
         var foreground = [
-            [57, 58, 59, 60],
-            [67, 68, 69, 70],
+            [0, 58, 59, 60],
+            [0, 68, 69, 70],
             [77, 78, 79, 80],
             [87, 88, 89, 90],
             [97, 98, 99, 100]
@@ -183,12 +183,12 @@ class Structures {
     static STRUCTURE_ENVIRONMENT_L_RIGHT {
         var foreground = [
             [74, 75, 76],
-            [84, 0, 0]
+            [0, 0, 86]
         ]
 
         var collisions = [
             [74, 75, 76],
-            [84, 0, 0]
+            [0, 0, 86]
         ]
         return Structures.new(foreground, collisions, 3, 2, 1)
     }
@@ -332,7 +332,7 @@ class Generator {
         return Tileset.new(arr, Assets.tex_tiles, ground_tileset.tile_width, ground_tileset.tile_height)
     }
 
-    autotile(tileset_ground, tileset_background, locations, rng) {
+    autotile(tileset_ground, tileset_background, locations, collisions, rng) {
         for (y in 1..tileset_background.tiles_tall - 2) {
             for (x in 1..tileset_background.tiles_wide - 2) {
                 if (tileset_ground[x, y] != 0) {
@@ -370,7 +370,9 @@ class Generator {
                         tileset_ground[x, y] = 16
                     }
 
-                    get_entity_locations(locations, x, y, rng)
+                    if (collisions[x, y] == 0) {
+                        get_entity_locations(locations, x, y, rng)
+                    }
                 } else if (tileset_background[x, y] != 0) {
                     var above = tileset_ground[x, y - 1] != 0
                     var below = tileset_ground[x, y + 1] != 0
@@ -494,6 +496,59 @@ class Generator {
         var structures = [block, horizontal2, vertical2, l_left, l_right, cross]
 
         var count = rng.int(Constants.LEVEL_ENVIRONMENT_STRUCTURES_MIN[Save.stage - 1], Constants.LEVEL_ENVIRONMENT_STRUCTURES_MAX[Save.stage - 1] + 1)
+
+        for (i in 1..count) {
+            var attempts = 10
+            var valid_location = null
+            var chosen_structure = rng.sample(structures)
+            
+            // Attempt to find a place for this structure in locations
+            while (attempts > 0 && valid_location == null) {
+                attempts = attempts - 1
+                var loc = rng.sample(locations)
+                loc[0] = ((loc[0] - (0.5 * collisions.tile_width)) / collisions.tile_width).round
+                loc[1] = ((loc[1] - (0.5 * collisions.tile_height)) / collisions.tile_height).round
+                var collision = false
+
+                // Make sure there is nothing on the collision layer here
+                for (y in loc[1] - 1..loc[1] + chosen_structure.height) {
+                    for (x in loc[0] - 1..loc[0] + chosen_structure.width) {
+                        if (collisions[x, y] != 0) {
+                            collision = true
+                            break
+                        }
+                    }
+                    if (collision) {
+                        break
+                    }
+                }
+
+                /*
+                    [Runtime Error] Subscript must be an integer.
+                    [lib/Util line 282] in [_,_]
+                    [Generator line 514] in place_environment_structures(_,_,_,_,_,_)
+                    [Generator line 663] in generate_level(_,_,_,_)
+                    [Game line 353] in create()
+                    [Runtime Error] Null does not implement 'width=(_)'.
+                    [Game line 439] in pre_frame()
+                */
+
+                if (!collision) {
+                    valid_location = loc
+                }
+            }
+
+            // If we have a valid spot
+            if (valid_location != null) {
+                for (y in valid_location[1]..valid_location[1] + chosen_structure.height - 1) {
+                    for (x in valid_location[0]..valid_location[0] + chosen_structure.width - 1) {
+                        collisions[x, y] = chosen_structure.collisions[y - valid_location[1]][x - valid_location[0]]
+                        foreground[x, y] = chosen_structure.foreground[y - valid_location[1]][x - valid_location[0]]
+                        remove_location(locations, x, y)
+                    }
+                }
+            }
+        }
     }
 
     player_start_x { _start_tile[0] * _tile_width }
@@ -611,7 +666,9 @@ class Generator {
         island_spots.remove(_end_tile)
 
         // Autotile pass
-        autotile(tileset_ground, tileset_background, locations, rng)
+        autotile(tileset_ground, tileset_background, locations, collisions, rng)
+        remove_location(locations, _end_tile[0], _end_tile[1])
+        remove_location(locations, _start_tile[0], _start_tile[1])
 
         // Place entities and such
         place_structures(level, tileset_foreground, collisions, island_spots, rng, locations)

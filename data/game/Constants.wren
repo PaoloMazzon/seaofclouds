@@ -48,8 +48,8 @@ class Constants {
     static LEVEL_ENEMY_MIN                  { [15, 15, 15, 15, 15, 15] }
     static LEVEL_TRAP_MAX                   { [ 0, 10, 10, 10, 10, 10] }
     static LEVEL_TRAP_MIN                   { [ 0,  5,  5,  5,  5,  5] }
-    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [10, 10, 10, 10, 10, 10] }
-    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 6,  6,  6,  6,  6,  6] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [10, 20, 20, 20, 20, 20] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 6, 12, 12, 12, 12, 12] }
 
     //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }
