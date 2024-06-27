@@ -236,7 +236,7 @@ class Character is Entity {
             _death_timer = (sprite_set.die.frame_count) * sprite_set.die.delay
             sprite_set.die.frame = 0
             _has_died = true
-            Save.score = Save.score + score_value
+            _level.player.award_score(score_value)
         }
     }
 
@@ -301,6 +301,7 @@ class Character is Entity {
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
+        _level = level
     }
 
     update(level) {

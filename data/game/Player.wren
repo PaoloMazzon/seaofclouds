@@ -84,6 +84,8 @@ class Player is Character {
         _dash_duration = 0
         _dash_alarm = null
         _dash_available = true
+        _score_timer = 0
+        _score_increase = 0
     }
 
     return_axe() {
@@ -202,6 +204,15 @@ class Player is Character {
         Renderer.draw_texture(Assets.tex_scorebanner, top_right, top_left, Save.ui_scale, Save.ui_scale, 0, 0, 0)
         draw_digits(Save.score, top_right + (Save.ui_scale * 26), top_left + (Save.ui_scale * 11))
 
+        // If new score
+        _score_timer = _score_timer - Engine.delta
+        if (_score_timer > 0) {
+            Renderer.colour_mod = [1, 1, 1, _score_timer > 1 ? 1 : _score_timer]
+            Renderer.draw_sprite(Assets.spr_digits, 11, top_right + (Save.ui_scale * 13), top_left + (Save.ui_scale * 48))
+            draw_digits(_score_increase, top_right + (Save.ui_scale * 26), top_left + (Save.ui_scale * 48))
+            Renderer.colour_mod = [1, 1, 1, 1]
+        }
+
         // Items
         Renderer.draw_sprite(Assets.spr_itemdisplay, 0, banner_current_x, top_left)
         banner_current_x = banner_current_x + banner_move_x
@@ -225,6 +236,15 @@ class Player is Character {
             Renderer.draw_texture(Assets.tex_youdied, draw_x, draw_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
             Renderer.draw_sprite(spr_controls, Constants.CONTROL_RESTART, c_x, c_y)
         }
+    }
+
+    award_score(score) {
+        if (score <= 0) {
+            return
+        }
+        Save.score = Save.score + score
+        _score_timer = 3
+        _score_increase = score
     }
 
     create(level, tiled_data) {
