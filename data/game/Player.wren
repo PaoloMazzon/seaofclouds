@@ -86,6 +86,7 @@ class Player is Character {
         _dash_available = true
         _score_timer = 0
         _score_increase = 0
+        _level_title_fade = 0
     }
 
     return_axe() {
@@ -185,6 +186,8 @@ class Player is Character {
         var banner_move_x = Assets.spr_itemdisplay.width * Save.ui_scale
         var item_start_x = (12 * Save.ui_scale)
         var item_start_y = (12 * Save.ui_scale)
+        var level_title_x = (Renderer.window_width / 2) - (Assets.spr_levelnames.width * Save.ui_scale * 0.5)
+        var level_title_y = Renderer.window_height * 0.2
 
         // Draw the UI
         Renderer.draw_sprite(Assets.spr_swordicon, is_attacking ? 1 : 0, sword_icon_pos_x, sword_icon_pos_y)
@@ -203,6 +206,20 @@ class Player is Character {
         }
         Renderer.draw_texture(Assets.tex_scorebanner, top_right, top_left, Save.ui_scale, Save.ui_scale, 0, 0, 0)
         draw_digits(Save.score, top_right + (Save.ui_scale * 26), top_left + (Save.ui_scale * 11))
+
+        // Level title
+        if (!level.is_paused) {
+            _level_title_fade = _level_title_fade + Engine.delta
+        }
+        if (_level_title_fade < 4) {
+            var percent = 1
+            if (_level_title_fade < 1) {
+                percent = Math.serp(_level_title_fade, 0, 1)
+            } else if (_level_title_fade > 3) {
+                percent = Math.serp(1 - (_level_title_fade - 3), 0, 1)
+            }
+            Renderer.draw_sprite(Assets.spr_levelnames, Save.stage - 1, level_title_x, -(Assets.spr_levelnames.height * Save.ui_scale) + level_title_y * percent)
+        }
 
         // If new score
         _score_timer = _score_timer - Engine.delta

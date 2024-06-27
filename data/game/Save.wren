@@ -63,6 +63,7 @@ class SaveImpl {
         _items = Items.new()
         _stage = 1
         _score = 0
+        _highscore = 0
         _shake_intensity = 3
         _shake_modifier = 1
         _fullscreen = false
@@ -70,12 +71,23 @@ class SaveImpl {
 
     // Called at the start of the game
     load() {
-
+        var ini = INI.open("save.ini")
+        _volume = ini.get_num("game", "volume", 1)
+        _ui_scale = ini.get_num("game", "ui_scale", 2)
+        _highscore = ini.get_num("game", "highscore", 0)
+        _shake_modifier = ini.get_num("game", "shake_modifier", 1)
+        _fullscreen = ini.get_bool("game", "fullscreen", false)
     }
 
     // Should be called at the end of runs
     save() {
-
+        var ini = INI.open("save.ini")
+        ini.set_num("game", "volume", _volume)
+        ini.set_num("game", "ui_scale", _ui_scale)
+        ini.set_num("game", "highscore", _highscore)
+        ini.set_num("game", "shake_modifier", _shake_modifier)
+        ini.set_bool("game", "fullscreen", _fullscreen)
+        ini.flush("save.ini")
     }
 
     // Called when the game is restarted
@@ -85,6 +97,8 @@ class SaveImpl {
         _score = 0
     }
 
+    highscore=(s) { _highscore = s }
+    highscore { _highscore }
     fullscreen=(s) { _fullscreen = s }
     fullscreen { _fullscreen}
     shake_modifier=(s) { _shake_modifier = s }
@@ -118,6 +132,8 @@ class SaveImpl {
         Assets.spr_items.scale_y = _ui_scale
         Assets.spr_digits.scale_x = _ui_scale
         Assets.spr_digits.scale_y = _ui_scale
+        Assets.spr_levelnames.scale_x = _ui_scale
+        Assets.spr_levelnames.scale_y = _ui_scale
     }
 }
 

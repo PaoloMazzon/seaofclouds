@@ -191,7 +191,7 @@ class Generator {
         for (i in 1..count) {
             var location = rng.sample(locations)
             locations.remove(location)
-            var e = level.add_entity(rng.sample([Ranger, BlueSlime]))
+            var e = level.add_entity(rng.sample([BlueSlime]))
             e.x = location[0]
             e.y = location[1]
         }

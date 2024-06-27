@@ -1,6 +1,8 @@
 import "Menu" for Menu
 import "Save" for Save
 
+Save.load()
+
 var renderer_config = {
 	"window_title": "Game",
 	"window_width": 1280,
@@ -13,6 +15,8 @@ var renderer_config = {
 
 System.print(Engine.info)
 Engine.fps_limit = 144
+Engine.delta_max = 1/30
 
 var minimum_load_time = 0
+var window_icon = "icon.png"
 var start_level = Menu.new()

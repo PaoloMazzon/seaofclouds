@@ -198,6 +198,7 @@ class Game is Level {
         _fade_out = Constants.FADE_TIME
         _next_level = true
         Save.stage = Save.stage + 1
+        Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
     }
 
     grab_knickknack() {
@@ -391,6 +392,9 @@ class Game is Level {
         _parallax_camera.y = _player.y - (_parallax_camera.height / 2)
         set_focal_point(_player.x, _player.y, 1)
         _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
+
+        // Fade in sound effect
+        Audio.play(Assets.aud_fadein, false, Save.volume, Save.volume)
     }
 
     pre_frame() {
@@ -508,6 +512,7 @@ class Game is Level {
         // Restart
         if ((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) {
             _fade_out = Constants.FADE_TIME
+            Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
         }
 
         // Fade in and out

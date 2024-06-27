@@ -35,6 +35,7 @@ class Constants {
     static HIT_PAUSE { 0.2 }
     static WEAPON_HIT_SHAKE { 0.1 }
     static SPAWN_GRACE_RANGE { 8 } // how far enemies must be from player spawn in tiles (24*16)
+    static ENEMY_HIT_IFRAMES { 1 }
 
     //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }

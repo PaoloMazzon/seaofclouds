@@ -146,6 +146,7 @@ class Character is Entity {
         _melee_attack = null
         _melee_attack_texture = null
         _score_value = 0
+        _extra_lives = 0
     }
 
     score_value { _score_value }
@@ -171,6 +172,8 @@ class Character is Entity {
     melee_attack_entity { _melee_attack }
     melee_attack_texture { _melee_attack_texture }
     melee_attack_texture=(s) { _melee_attack_texture = s }
+    extra_lives { _extra_lives }
+    extra_lives=(s) { _extra_lives = s }
 
     // Sets a sprite to be used instead of anything else, setting this to null will go back to normal
     sprite_override=(sprite) { _sprite_override = sprite }
@@ -179,6 +182,7 @@ class Character is Entity {
     // Assigns this character the knickknack
     give_knickknack() {
         _has_knickknack = true
+        extra_lives = extra_lives + 1
     }
 
     // Makes a character invincible for a short time
@@ -290,13 +294,29 @@ class Character is Entity {
         }
         level.pause(Constants.HIT_PAUSE)
         Audio.play(Assets.aud_enemyhit, false, Save.volume, Save.volume)
-        die()
-        // Spawn the knickknack if this entity has it
-        if (_has_knickknack) {
-            var knickknack = level.add_entity(Knickknack)
-            knickknack.x = x
-            knickknack.y = y
+        
+        // Account for this monster having extra lives
+        if (extra_lives <= 0) {
+            die()
+            
+            // Spawn the knickknack if this entity has it
+            if (_has_knickknack) {
+                var knickknack = level.add_entity(Knickknack)
+                knickknack.x = x
+                knickknack.y = y
+            }
+            return true
+        } else {
+            extra_lives = extra_lives - 1
+            make_invincible(Constants.ENEMY_HIT_IFRAMES)
+            sprite_effect = Assets.spr_guardbreak.copy()
+            sprite_effect.frame = 0
+            var f = Fiber.new {
+                sprite_effect = null
+            }
+            set_alarm((Assets.spr_guardbreak.frame_count - 1) * Assets.spr_guardbreak.delay, f)
         }
+        return false
     }
 
     create(level, tiled_data) {
@@ -395,11 +415,11 @@ class Character is Entity {
                 sprite_set.walk.scale_x = _facing_x
                 draw_sprite(sprite_set.walk, x, y, level.is_paused)
             }
+
+            Renderer.colour_mod = [1, 1, 1, 1]
             if (sprite_effect != null) {
                 draw_sprite(sprite_effect, x - 16, y - 16, level.is_paused)
             }
-
-            Renderer.colour_mod = [1, 1, 1, 1]
         }
     }
 }

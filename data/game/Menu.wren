@@ -31,8 +31,8 @@ class Menu is Level {
         _titlecard_time = 0
         _cursor = 0
         _menu = 0
-        _fade_out = 1.5
-        _fade_out_start = 1.5
+        _fade_out = 2.5
+        _fade_out_start = _fade_out
         _play = false
         _ui_scale = Save.ui_scale
     }
@@ -147,6 +147,7 @@ class Menu is Level {
                 } else if (_cursor == Menu.MENU_MAIN_STATS) {
                     _menu = Menu.MENU_STATS
                 } else if (_cursor == Menu.MENU_MAIN_QUIT) {
+                    Save.save()
                     Engine.quit()
                 }
             }
@@ -243,6 +244,9 @@ class Menu is Level {
             if (_titlecard_time < 2.348) {
                 _menu_effect.stop()
             }
+            if (_play) {
+                _fade_out = 0
+            }
         }
         var ignore_frame = false
         if (add + _titlecard_time > 2.348 && _titlecard_time < 2.348) {
@@ -286,10 +290,11 @@ class Menu is Level {
         // Draw the fade out
         if (_play) {
             Renderer.colour_mod = [0, 0, 0, 1]
-            Renderer.draw_rectangle(0, 0, Renderer.window_width, Renderer.window_height * Math.serp((1 - (_fade_out / _fade_out_start)), 0, 1), 0, 0, 0)
+            Renderer.draw_rectangle(0, 0, Renderer.window_width, Renderer.window_height - Renderer.window_height * bounce(Math.lerp((1 - (_fade_out / _fade_out_start)), 0, 2.6)), 0, 0, 0)
             Renderer.colour_mod = [1, 1, 1, 1]
             _fade_out = _fade_out - Engine.delta
             if (_fade_out <= 0) {
+                Save.save()
                 Engine.switch_level(Game.new())
             }
         }
@@ -307,6 +312,7 @@ class Menu is Level {
     }
 
     destroy() {
+        Save.save()
         super.destroy()
     }
 }
