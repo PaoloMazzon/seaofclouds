@@ -53,8 +53,8 @@ class Menu is Level {
         _ui_scale = _ui_scale
         _background_camera = Camera.new()
         _ui_camera = Camera.new()
-        _background_camera.width = Renderer.window_width / 2
-        _background_camera.height = Renderer.window_height / 2
+        _background_camera.width = Renderer.window_width / 4
+        _background_camera.height = Renderer.window_height / 4
         _background_camera.w_on_screen = Renderer.window_width
         _background_camera.h_on_screen = Renderer.window_height
         _background_camera.update()
@@ -73,8 +73,8 @@ class Menu is Level {
         _ui_camera.w_on_screen = Renderer.window_width
         _ui_camera.h_on_screen = Renderer.window_height
         _ui_camera.update()
-        _background_camera.width = Renderer.window_width / 2
-        _background_camera.height = Renderer.window_height / 2
+        _background_camera.width = Renderer.window_width / 4
+        _background_camera.height = Renderer.window_height / 4
         _background_camera.w_on_screen = Renderer.window_width
         _background_camera.h_on_screen = Renderer.window_height
         _background_camera.update()
@@ -127,8 +127,8 @@ class Menu is Level {
     }
 
     move_cursor_to(x, y) {
-        _cursor_x = _cursor_x + ((x - _cursor_x) * 0.2)
-        _cursor_y = _cursor_y + ((y - _cursor_y) * 0.2)
+        _cursor_x = _cursor_x + ((x - _cursor_x) * 12 * Engine.delta)
+        _cursor_y = _cursor_y + ((y - _cursor_y) * 12 * Engine.delta)
     }
 
     draw_bar(x, y, percent) {
@@ -290,7 +290,7 @@ class Menu is Level {
 
         Renderer.lock_cameras(_background_camera)
         for (cloud in _clouds_background) {
-            cloud.draw(false)
+            //cloud.draw(false)
         }
         Renderer.lock_cameras(_ui_camera)
 
@@ -307,7 +307,7 @@ class Menu is Level {
 
         Renderer.lock_cameras(_background_camera)
         for (cloud in _clouds_foreground) {
-            cloud.draw(false)
+            //cloud.draw(false)
         }
         Renderer.lock_cameras(_ui_camera)
 
@@ -327,8 +327,8 @@ class Menu is Level {
         if (Keyboard.key(Keyboard.KEY_LALT) && Keyboard.key_pressed(Keyboard.KEY_RETURN)) {
             Renderer.fullscreen = !Renderer.fullscreen
             Save.fullscreen = Renderer.fullscreen
-            _background_camera.width = Renderer.window_width / 2
-            _background_camera.height = Renderer.window_height / 2
+            _background_camera.width = Renderer.window_width / 4
+            _background_camera.height = Renderer.window_height / 4
             _background_camera.w_on_screen = Renderer.window_width
             _background_camera.h_on_screen = Renderer.window_height
             reset_clouds()

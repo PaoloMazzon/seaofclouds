@@ -187,6 +187,9 @@ class Character is Entity {
 
     // Makes a character invincible for a short time
     make_invincible(time) {
+        if (is_dead) {
+            return
+        }
         _invincible = true
         var f = Fiber.new {
             _invincible = false

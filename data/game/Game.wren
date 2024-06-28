@@ -411,8 +411,8 @@ class Game is Level {
             _game_camera.height = _game_camera.height + 0.05 * ((desired_height - _game_camera.height))
             _game_camera.w_on_screen = Renderer.window_width
             _game_camera.h_on_screen = Renderer.window_height
-            _game_camera.x = _game_camera.x + 0.05 * ((_focal_x - (_game_camera.width / 2)) - _game_camera.x)
-            _game_camera.y = _game_camera.y + 0.05 * ((_focal_y - (_game_camera.height / 2)) - _game_camera.y)
+            _game_camera.x = _game_camera.x + 3 * (((_focal_x - (_game_camera.width / 2)) - _game_camera.x)) * Engine.delta
+            _game_camera.y = _game_camera.y + 3 * (((_focal_y - (_game_camera.height / 2)) - _game_camera.y)) * Engine.delta
 
             if (is_shaking) {
                 _game_camera.x = _game_camera.x + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
