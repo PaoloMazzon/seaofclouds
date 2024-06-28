@@ -287,6 +287,9 @@ class Game is Level {
 
     in_chest { _in_chest }
 
+    // Hard pause
+    hard_paused { _paused }
+
     // Pauses indefinetely
     pause() {
         _paused = true
@@ -519,7 +522,7 @@ class Game is Level {
         }
 
         // Restart
-        if ((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) {
+        if (((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) || (hard_paused && Controls.restart)) {
             _fade_out = Constants.FADE_TIME
             Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
         }
@@ -544,7 +547,8 @@ class Game is Level {
                         Save.restart()
                     }
                     Audio.stop_all()
-                    Engine.switch_level(Game.new())
+                    var menu = Engine.get_class("Menu::Menu")
+                    Engine.switch_level(menu.new())
                 }
             }
             

@@ -50,6 +50,7 @@ class Menu is Level {
 
     create() {
         super.create()
+        Renderer.colour_mod = [1, 1, 1, 1]
         Renderer.hide_cursor = true
         _ui_scale = _ui_scale
         _background_camera = Camera.new()
@@ -128,7 +129,7 @@ class Menu is Level {
     }
 
     move_cursor_to(x, y) {
-        _cursor_x = _cursor_x + ((x - _cursor_x) * 12 * Engine.delta)
+        _cursor_x = _cursor_x + ((x - _cursor_x) * 12 * Engine.delta) + ((5 * Engine.time).sin * _ui_scale * 0.5) - (_ui_scale * 0.5)
         _cursor_y = _cursor_y + ((y - _cursor_y) * 12 * Engine.delta)
     }
 
@@ -305,6 +306,7 @@ class Menu is Level {
         if (_titlecard_time > 2.348) {
             if (process_menu(ignore_frame || _play)) {
                 _play = true
+                Audio.play(Assets.aud_menueffect, false, Save.volume, Save.volume)
             }
         }
 

@@ -27,6 +27,7 @@ class ControlsImpl {
     menu_down { Keyboard.key_pressed(Keyboard.KEY_DOWN) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_DOWN) }
     menu_left { Keyboard.key_pressed(Keyboard.KEY_LEFT) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_LEFT) }
     menu_right { Keyboard.key_pressed(Keyboard.KEY_RIGHT) || Gamepad.button_pressed(0, Gamepad.BUTTON_DPAD_RIGHT) }
+    pause { Keyboard.key_pressed(Keyboard.KEY_ESCAPE) || Gamepad.button_pressed(0, Gamepad.BUTTON_START) }
     on_gamepad { Gamepad.is_connected(0) }
 }
 

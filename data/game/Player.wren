@@ -273,6 +273,16 @@ class Player is Character {
         }
         Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)
 
+        // Pause
+        if (level.hard_paused) {
+            var pause_x = (Renderer.window_width / 2) - (Assets.tex_paused.width * Save.ui_scale * 0.5)
+            var pause_y = (Renderer.window_height / 2) - (Assets.tex_paused.height * Save.ui_scale * 0.5)
+            var control_x = pause_x + (Save.ui_scale * 53)
+            var control_y = pause_y + (Save.ui_scale * 44)
+            Renderer.draw_texture(Assets.tex_paused, pause_x, pause_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+            Renderer.draw_sprite(spr_controls, Constants.CONTROL_RESTART, control_x, control_y)
+        }
+
         // Post death screen
         if (_post_death >= 1.5) {
             var draw_x = (Renderer.window_width / 2) - (Assets.tex_youdied.width * Save.ui_scale * 0.5)
@@ -322,6 +332,16 @@ class Player is Character {
 
     update(level) {
         super.update(level)
+
+        // Pausing
+        if (Controls.pause && !is_dead) {
+            if (level.hard_paused) {
+                level.unpause()
+            } else {
+                level.pause()
+            }
+        }
+
         if (!level.is_paused) {
             if (!in_dash) {
                 var speed = Constants.PLAYER_SPEED + (Save.items[Items.BOOTS_INDEX] * Constants.ITEM_BOOTS_SPEED)
@@ -413,13 +433,6 @@ class Player is Character {
                 _dash_duration = _dash_duration - Engine.delta
             }
             sprite_effect = in_dash ? Assets.spr_sheild : null
-
-            // Debug
-            if (Keyboard.key_pressed(Keyboard.KEY_0)) {
-                var c = level.add_entity(Chest)
-                c.x = x
-                c.y = y
-            }
 
             // Leave level icon
             if (Math.point_distance(x, y, level.end_x, level.end_y) < 30) {
