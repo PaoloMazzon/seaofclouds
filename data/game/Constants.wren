@@ -38,18 +38,18 @@ class Constants {
     static ENEMY_HIT_IFRAMES { 1 }
 
     //////////////////////////// Level generation by stage ////////////////////////////
-    static ISLAND_RADIUS_MAX                { [10, 10, 10, 10, 10, 10] }
-    static ISLAND_RADIUS_MIN                { [ 3,  3,  3,  3,  3,  3] }
+    static ISLAND_RADIUS_MAX                { [10, 10, 11, 10, 10, 10] }
+    static ISLAND_RADIUS_MIN                { [ 3,  3,  4,  3,  3,  3] }
     static ISLAND_MINIMUM_DISTANCE          { [15, 15, 15, 15, 15, 15] }
     static LEVEL_WIDTH                      { [50, 75, 75, 75, 75, 75] }
     static LEVEL_HEIGHT                     { [50, 75, 75, 75, 75, 75] }
-    static LEVEL_ISLAND_COUNT               { [13, 13, 13, 13, 13, 13] }
-    static LEVEL_ENEMY_MAX                  { [20, 20, 20, 20, 20, 20] }
-    static LEVEL_ENEMY_MIN                  { [15, 15, 15, 15, 15, 15] }
-    static LEVEL_TRAP_MAX                   { [ 0, 10, 10, 10, 10, 10] }
+    static LEVEL_ISLAND_COUNT               { [13, 13, 11, 13, 13, 13] }
+    static LEVEL_ENEMY_MAX                  { [15, 20, 25, 20, 20, 20] }
+    static LEVEL_ENEMY_MIN                  { [10, 15, 15, 15, 15, 15] }
+    static LEVEL_TRAP_MAX                   { [ 0, 10, 15, 10, 10, 10] }
     static LEVEL_TRAP_MIN                   { [ 0,  5,  5,  5,  5,  5] }
-    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [15, 30, 20, 20, 20, 20] }
-    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 8, 15, 12, 12, 12, 12] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [15, 30, 45, 20, 20, 20] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 8, 15, 25, 12, 12, 12] }
 
     //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }

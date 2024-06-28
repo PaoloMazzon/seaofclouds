@@ -321,7 +321,7 @@ class Character is Entity {
 
     // Triggers when an attack from the opposite team hits this character
     on_hit(level, attack) {
-        if (is_dead) {
+        if (is_dead || is_invincible) {
             return
         }
         level.pause(Constants.HIT_PAUSE)

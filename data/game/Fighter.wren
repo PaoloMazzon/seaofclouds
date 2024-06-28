@@ -131,9 +131,9 @@ class Fighter is Character {
                 } else {
                     // Move in a circle around the player
                     _circle_time = _circle_time - Engine.delta
-                    if (dist > 5) {
-                        var target_x = level.player.x + (Constants.FIGHTER_CIRCLE_DISTANCE * _circling_angle.cos)
-                        var target_y = level.player.y + (Constants.FIGHTER_CIRCLE_DISTANCE * _circling_angle.sin)
+                    var target_x = level.player.x + (Constants.FIGHTER_CIRCLE_DISTANCE * _circling_angle.cos)
+                    var target_y = level.player.y + (Constants.FIGHTER_CIRCLE_DISTANCE * _circling_angle.sin)
+                    if (Math.point_distance(x, y, target_x, target_y) > 5) {
                         var angle = Math.point_angle(x, y, target_x, target_y)
                         velocity_x = Constants.FIGHTER_RUN_SPEED * angle.cos
                         velocity_y = Constants.FIGHTER_RUN_SPEED * angle.sin
@@ -144,6 +144,7 @@ class Fighter is Character {
                         _state = Fighter.STATE_CHARGE
                         _fighter_charge_timer = Constants.FIGHTER_CHARGE_TIME
                         melee_attack(level, 6)
+                        Audio.play(Assets.aud_fighterattack, false, Save.volume, Save.volume)
                     }
                 }
             } else if (_state == Fighter.STATE_CHASE) {

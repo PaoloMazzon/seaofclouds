@@ -284,8 +284,8 @@ class Generator {
         var trap_list_by_stage = [
             [],
             [Spikes],
-            [],
-            [],
+            [Spikes],
+            [Spikes],
             [],
             []
         ]
@@ -434,7 +434,8 @@ class Generator {
                 return false
             }
         }
-        return true
+        var pass = Math.point_distance(spot[0], spot[1], _start_tile[0], _start_tile[1]) < new_structure.minimum_size + 1 && Math.point_distance(spot[0], spot[1], _end_tile[0], _end_tile[1]) < new_structure.minimum_size + 1
+        return pass
     }
 
     // x/y should be a tile coordinate
