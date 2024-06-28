@@ -76,59 +76,8 @@ class Structures {
         return Structures.new(foreground, collisions, 4, 5, 5)
     }
 
-    static STRUCTURE_PROP_1 {
-        var foreground = [
-            [0, 81, 0, 0],
-            [0, 91, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ]
-
-        var collisions = [
-            [0, 81, 0, 0],
-            [0, 91, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ]
-        return Structures.new(foreground, collisions, 4, 4, 4)
-    }
-
-    static STRUCTURE_PROP_2 {
-        var foreground = [
-            [0, 82, 0, 0],
-            [0, 92, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ]
-
-        var collisions = [
-            [0, 82, 0, 0],
-            [0, 92, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ]
-        return Structures.new(foreground, collisions, 4, 4, 4)
-    }
-
-    static STRUCTURE_PROP_3 {
-        var foreground = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 83, 0],
-            [0, 0, 93, 0],
-        ]
-
-        var collisions = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 83, 0],
-            [0, 0, 93, 0],
-        ]
-        return Structures.new(foreground, collisions, 4, 4, 4)
-    }
-
     static get_random_structure(rng) {
-        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_HOUSE_3, Structures.STRUCTURE_PROP_1, Structures.STRUCTURE_PROP_2, Structures.STRUCTURE_PROP_3]
+        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_HOUSE_3]
         return rng.sample(list)
     }
 
@@ -141,6 +90,45 @@ class Structures {
             [53]
         ]
         return Structures.new(foreground, collisions, 1, 1, 1)
+    }
+
+    static STRUCTURE_ENVIRONMENT_PROP_1 {
+        var foreground = [
+            [81],
+            [91],
+        ]
+
+        var collisions = [
+            [81],
+            [91],
+        ]
+        return Structures.new(foreground, collisions, 1, 2, 1)
+    }
+
+    static STRUCTURE_ENVIRONMENT_PROP_2 {
+        var foreground = [
+            [82],
+            [92],
+        ]
+
+        var collisions = [
+            [82],
+            [92],
+        ]
+        return Structures.new(foreground, collisions, 1, 2, 1)
+    }
+
+    static STRUCTURE_ENVIRONMENT_PROP_3 {
+        var foreground = [
+            [83],
+            [93],
+        ]
+
+        var collisions = [
+            [83],
+            [93],
+        ]
+        return Structures.new(foreground, collisions, 1, 2, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_HORIZONTAL_2 {
@@ -275,8 +263,7 @@ class Generator {
         ]
 
         for (i in 1..count) {
-            var location = rng.sample(locations)
-            locations.remove(location)
+            var location = get_location(locations, rng)
             var e = level.add_entity(rng.sample(enemy_list_by_stage[Save.stage - 1]))
             e.x = location[0]
             e.y = location[1]
@@ -286,8 +273,7 @@ class Generator {
     // Places props
     place_props(level, count, rng, locations) {
         for (i in 1..count) {
-            var location = rng.sample(locations)
-            locations.remove(location)
+            var location = get_location(locations, rng)
             level.add_prop(location[0], location[1])
         }
     }
@@ -307,15 +293,23 @@ class Generator {
         }
 
         for (i in 1..count) {
-            var location = rng.sample(locations)
-            locations.remove(location)
+            var location = get_location(locations, rng)
             var spikes = level.add_entity(rng.sample(trap_list_by_stage[Save.stage - 1]))
             spikes.x = location[0]
             spikes.y = location[1]
         }
     }
 
-    generate_collision_map(ground_tileset) {
+    get_location(locations, rng) {
+        var spot = rng.sample(locations)
+        while (spot[0] < 100 || spot[1] < 100) {
+            spot = rng.sample(locations)
+        }
+        locations.remove(spot)
+        return spot
+    }
+
+    generate_collision_map(ground_tileset, locations, rng) {
         // Generate collision tileset
         var arr = []
         for (i in 0..ground_tileset.tiles_tall - 1) {
@@ -325,6 +319,7 @@ class Generator {
                     inner.add(160)
                 } else {
                     inner.add(0)
+                    get_entity_locations(locations, j, i, rng)
                 }
             }
             arr.add(inner)
@@ -370,9 +365,6 @@ class Generator {
                         tileset_ground[x, y] = 16
                     }
 
-                    if (collisions[x, y] == 0) {
-                        get_entity_locations(locations, x, y, rng)
-                    }
                 } else if (tileset_background[x, y] != 0) {
                     var above = tileset_ground[x, y - 1] != 0
                     var below = tileset_ground[x, y + 1] != 0
@@ -422,8 +414,7 @@ class Generator {
     }
 
     place_npcs(level, locations, rng) {
-        var location = rng.sample(locations)
-        locations.remove(location)
+        var location = get_location(locations, rng)
         var npc = level.add_entity(NPC)
         npc.set_start_location(location[0], location[1])
     }
@@ -493,7 +484,10 @@ class Generator {
         var l_left = Structures.STRUCTURE_ENVIRONMENT_L_LEFT
         var l_right = Structures.STRUCTURE_ENVIRONMENT_L_RIGHT
         var cross = Structures.STRUCTURE_ENVIRONMENT_CROSS
-        var structures = [block, horizontal2, vertical2, l_left, l_right, cross]
+        var prop1 = Structures.STRUCTURE_ENVIRONMENT_PROP_1
+        var prop2 = Structures.STRUCTURE_ENVIRONMENT_PROP_2
+        var prop3 = Structures.STRUCTURE_ENVIRONMENT_PROP_3
+        var structures = [block, horizontal2, vertical2, l_left, l_right, cross, prop1, prop1, prop2, prop2, prop3]
 
         var count = rng.int(Constants.LEVEL_ENVIRONMENT_STRUCTURES_MIN[Save.stage - 1], Constants.LEVEL_ENVIRONMENT_STRUCTURES_MAX[Save.stage - 1] + 1)
 
@@ -645,12 +639,6 @@ class Generator {
             }
         }
 
-        // Generate collision tileset
-        var collisions = generate_collision_map(tileset_ground)
-
-        // Dropdown wall effect
-        add_decoration(tileset_ground, tileset_background, tileset_foreground, rng)
-
         // Pick start island
         _start_tile = rng.sample(island_spots)
         island_spots.remove(_start_tile)
@@ -662,6 +650,13 @@ class Generator {
                 farthest = spot
             }
         }
+
+        // Generate collision tileset
+        var collisions = generate_collision_map(tileset_ground, locations, rng)
+
+        // Dropdown wall effect
+        add_decoration(tileset_ground, tileset_background, tileset_foreground, rng)
+
         _end_tile = farthest
         island_spots.remove(_end_tile)
 
@@ -669,6 +664,17 @@ class Generator {
         autotile(tileset_ground, tileset_background, locations, collisions, rng)
         remove_location(locations, _end_tile[0], _end_tile[1])
         remove_location(locations, _start_tile[0], _start_tile[1])
+
+        // Remove locations to close to the edge
+        var new_locs = []
+        for (loc in locations) {
+            if (loc[0] > 200 && loc[1] > 200) {
+                new_locs.add(loc)
+            }
+        }
+        //locations = new_locs
+        //System.print(locations)
+        //System.print("\n\n")
 
         // Place entities and such
         place_structures(level, tileset_foreground, collisions, island_spots, rng, locations)

@@ -87,6 +87,8 @@ class Player is Character {
         _score_timer = 0
         _score_increase = 0
         _level_title_fade = 0
+        _highscore_timer = 0
+        _highscore = false
     }
 
     return_axe() {
@@ -97,7 +99,9 @@ class Player is Character {
 
     die() {
         super.die()
-        Save.check_highscore()
+        if (Save.check_highscore()) {
+            _highscore = true
+        }
         Save.save()
     }
 
@@ -207,6 +211,29 @@ class Player is Character {
         }
         Renderer.draw_texture(Assets.tex_scorebanner, top_right, top_left, Save.ui_scale, Save.ui_scale, 0, 0, 0)
         draw_digits(Save.score, top_right + (Save.ui_scale * 26), top_left + (Save.ui_scale * 11))
+
+        // Draw highscore
+        if (_highscore) {
+            var scale_percent = 0
+            if (_highscore_timer < 0.5) {
+                scale_percent = 0
+            } else {
+                scale_percent = _highscore_timer > 2.5 ? 1 : Math.serp((_highscore_timer - 0.5) / 2, 0, 1)
+            }
+            _highscore_timer = _highscore_timer + Engine.delta
+            var hs_x = (Renderer.window_width / 2) - (Assets.tex_newhighscore.width * Save.ui_scale * scale_percent * 0.5)
+            var hs_y = Renderer.window_height - (Assets.tex_newhighscore.height * Save.ui_scale * scale_percent) - (0.2 * Renderer.window_height)
+            Renderer.draw_texture(
+                Assets.tex_newhighscore, 
+                hs_x, 
+                hs_y, 
+                scale_percent * Save.ui_scale, 
+                scale_percent * Save.ui_scale, 
+                _highscore_timer.sin * 0.2,
+                (Assets.tex_newhighscore.width) * 0.5,
+                (Assets.tex_newhighscore.height) * 0.5
+            )
+        }
 
         // Level title
         if (!level.is_paused) {

@@ -68,11 +68,28 @@ class Items {
     }
 
     save_to_string() {
-        return ""
+        var s = ""
+        for (i in 0..Items.ITEM_COUNT - 1) {
+            s = s + item_count(i).toString + ","
+        }
+        return s.trimEnd(",")
     }
 
     static load_from_string(string) {
-        return Items.new()
+        if (string == "") {
+            return Items.new()
+        }
+        var items = Items.new()
+        var parts = string.split(",")
+        var index = 0
+        for (part in parts) {
+            if (index >= Items.ITEM_COUNT) {
+                break
+            }
+            items.set_item(index, Num.fromString(part))
+            index = index + 1
+        }
+        return items
     }
 }
 
@@ -130,7 +147,9 @@ class SaveImpl {
             _best_run_props_destroyed = _total_props_destroyed
             _best_run_npcs_killed = _total_npcs_killed
             _best_run_axes_thrown = _total_axes_thrown
+            return true
         }
+        return false
     }
 
     // Should be called at the end of runs
