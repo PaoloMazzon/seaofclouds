@@ -115,6 +115,16 @@ class SpriteSet {
             Assets.spr_npc4_die.copy()
         )
     }
+
+    static WizardSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_wizard_walk.copy(),
+            Assets.spr_wizard_idle.copy(),
+            null,
+            Assets.spr_wizard_attack.copy(),
+            Assets.spr_wizard_die.copy()
+        )
+    }
 }
 
 class Character is Entity {

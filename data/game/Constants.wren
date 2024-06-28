@@ -92,4 +92,17 @@ class Constants {
     static RANGER_SEARCH_TIME_MAX { 5 }
     static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
     static RANGER_SCORE_VALUE { 15 }
+
+    //////////////////////////// Wizard balance ////////////////////////////
+    static WIZARD_WALK_SPEED { 30 }
+    static WIZARD_RUN_SPEED { 50 }
+    static WIZARD_AGGRO_RANGE { 80 }
+    static WIZARD_FIREBALL_SPEED { 140 }
+    static WIZARD_FIREBALL_LIFETIME { 3 }
+    static WIZARD_MIN_SHOOT_COOLDOWN { 1 } // time between shots
+    static WIZARD_MAX_SHOOT_COOLDOWN { 2 }
+    static WIZARD_SEARCH_TIME_MIN { 3 }
+    static WIZARD_SEARCH_TIME_MAX { 5 }
+    static WIZARD_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
+    static WIZARD_SCORE_VALUE { 40 }
 }

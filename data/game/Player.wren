@@ -128,7 +128,7 @@ class Player is Character {
                     }
                 }
             }
-            level.skill_check(Constants.SKILL_CHECK_EASY, f)
+            level.skill_check(attack.difficulty, f)
 
             // Player parry cooldown
             _parry_available = false

@@ -10,7 +10,10 @@ class Attack is Entity {
         _texture = null
         _lifespan = 0
         _team = Constants.TEAM_NONE
+        _difficulty = Constants.SKILL_CHECK_EASY
     }
+    difficulty=(s) { _difficulty = s }
+    difficulty { _difficulty }
     tied_entity=(s) { _tied_entity = s }
     tied_entity { _tied_entity }
     direction=(s) { _direction = s }
@@ -37,6 +40,12 @@ class Attack is Entity {
         h.x_offset = texture.width / 2
         h.y_offset = texture.height / 2
         e.hitbox = h
+        return e
+    }
+    
+    static create_attack(level, x, y, tied_entity, direction, velocity_x, velocity_y, texture, lifespan, team, difficulty) {
+        var e = Attack.create_attack(level, x, y, tied_entity, direction, velocity_x, velocity_y, texture, lifespan, team)
+        e.difficulty = difficulty
         return e
     }
 
