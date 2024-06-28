@@ -2,6 +2,7 @@ import "Constants" for Constants
 import "Save" for Save
 import "Attack" for Attack
 import "Knickknack" for Knickknack
+import "Key" for Key
 
 class Alarm {
     construct new(time, fiber) {
@@ -125,6 +126,16 @@ class SpriteSet {
             Assets.spr_wizard_die.copy()
         )
     }
+    
+    static FighterSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_fighter_walk.copy(),
+            Assets.spr_fighter_idle.copy(),
+            Assets.spr_fighter_attack.copy(),
+            null,
+            Assets.spr_fighter_die.copy()
+        )
+    }
 }
 
 class Character is Entity {
@@ -151,6 +162,7 @@ class Character is Entity {
         _ranged_attack = false
         _sprite_timer = 0
         _has_knickknack = false
+        _has_key = false
         _dont_flicker = false
         _sprite_effect = null
         _melee_attack = null
@@ -192,6 +204,12 @@ class Character is Entity {
     // Assigns this character the knickknack
     give_knickknack() {
         _has_knickknack = true
+        extra_lives = extra_lives + 1
+    }
+
+    // Assigns the keyholder
+    give_key() {
+        _has_key = true
         extra_lives = extra_lives + 1
     }
 
@@ -319,6 +337,11 @@ class Character is Entity {
                 knickknack.x = x
                 knickknack.y = y
             }
+            if (_has_key) {
+                var key = level.add_entity(Key)
+                key.x = x
+                key.y = y
+            }
             return true
         } else {
             extra_lives = extra_lives - 1
@@ -412,7 +435,7 @@ class Character is Entity {
             }
 
             // Draw knickknack highlight
-            if (_has_knickknack) {
+            if (_has_knickknack || _has_key) {
                 draw_sprite(Assets.spr_telegraph, x, y, level.is_paused)
             }
 

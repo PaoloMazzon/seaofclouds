@@ -1,6 +1,7 @@
 import "BlueSlime" for BlueSlime
 import "Ranger" for Ranger
 import "Wizard" for Wizard
+import "Fighter" for Fighter
 import "Constants" for Constants
 import "random" for Random
 import "NPC" for NPC
@@ -257,7 +258,7 @@ class Generator {
         var enemy_list_by_stage = [
             [BlueSlime],
             [BlueSlime, BlueSlime, BlueSlime, Ranger],
-            [],
+            [Ranger, Fighter],
             [],
             [],
             []
@@ -411,7 +412,14 @@ class Generator {
         while (char is NPC) {
             char = rng.sample(characters)
         }
+        characters.remove(char)
         char.give_knickknack()
+
+        char = rng.sample(characters)
+        while (char is NPC) {
+            char = rng.sample(characters)
+        }
+        char.give_key()
     }
 
     place_npcs(level, locations, rng) {

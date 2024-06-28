@@ -186,11 +186,13 @@ class Game is Level {
         _knickknack_id = _rng.int(11)
         _in_chest = false
         _next_level = false
+        _has_key = false
     }
     rng { _rng }
     player { _player }
     knickknack_id { _knickknack_id }
     has_knickknack { _has_knickknack }
+    has_key { _has_key }
     end_x { _gen.ending_spot_x }
     end_y { _gen.ending_spot_y }
 
@@ -204,6 +206,10 @@ class Game is Level {
 
     grab_knickknack() {
         _has_knickknack = true
+    }
+
+    grab_key() {
+        _has_key = true
     }
 
     remove_knickknack() {

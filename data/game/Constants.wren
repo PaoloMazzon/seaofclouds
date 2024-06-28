@@ -105,4 +105,18 @@ class Constants {
     static WIZARD_SEARCH_TIME_MAX { 5 }
     static WIZARD_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
     static WIZARD_SCORE_VALUE { 40 }
+
+    //////////////////////////// Fighter balance ////////////////////////////
+    static FIGHTER_WALK_SPEED { 50 }
+    static FIGHTER_RUN_SPEED { 80 }
+    static FIGHTER_CHARGE_SPEED { 105 }
+    static FIGHTER_CHARGE_TIME { 1 }
+    static FIGHTER_AGGRO_RANGE { 80 }
+    static FIGHTER_AGGRO_RANGE_IN_FIGHT { 140 } // how far their aggro range is while engaged with the player
+    static FIGHTER_MIN_CIRCLE_TIME { 1 } // time spent circling around the player
+    static FIGHTER_MAX_CIRCLE_TIME { 2 }
+    static FIGHTER_SEARCH_TIME_MIN { 3 }
+    static FIGHTER_SEARCH_TIME_MAX { 5 }
+    static FIGHTER_CIRCLE_DISTANCE { 50 } // distance from the player while circling
+    static FIGHTER_SCORE_VALUE { 20 }
 }
