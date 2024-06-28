@@ -201,6 +201,7 @@ class Game is Level {
         _fade_out = Constants.FADE_TIME
         _next_level = true
         Save.stage = Save.stage + 1
+        Audio.stop_all()
         Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
     }
 
@@ -529,6 +530,12 @@ class Game is Level {
             if (_fade_in > 0) {
                 percent = 1 - (_fade_in / Constants.FADE_TIME)
                 _fade_in = _fade_in - Engine.delta
+
+                // The moment we're done fading in
+                if (_fade_in <= 0) {
+                    // TODO: Different music for diff areas
+                    Audio.play(Assets.aud_area1_1, true, Save.volume, Save.volume)
+                }
             } else {
                 percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
@@ -536,6 +543,7 @@ class Game is Level {
                     if (!_next_level) {
                         Save.restart()
                     }
+                    Audio.stop_all()
                     Engine.switch_level(Game.new())
                 }
             }

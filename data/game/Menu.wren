@@ -34,6 +34,7 @@ class Menu is Level {
         _fade_out = 2.5
         _fade_out_start = _fade_out
         _play = false
+        _music = null
         _ui_scale = Save.ui_scale
     }
     rng { _rng }
@@ -203,6 +204,7 @@ class Menu is Level {
                     if (Save.volume > 1) {
                         Save.volume = 0
                     }
+                    _music.update(true, Save.volume, Save.volume)
                 } else if (_cursor == Menu.MENU_SETTINGS_SHAKE_INTENSITY) {
                     Save.shake_modifier = Save.shake_modifier + 0.25
                     if (Save.shake_modifier > 2.1) {
@@ -276,6 +278,7 @@ class Menu is Level {
         if (add + _titlecard_time > 2.348 && _titlecard_time < 2.348) {
             // The moment the title card is done
             ignore_frame = true
+            _music = Audio.play(Assets.aud_title, true, Save.volume, Save.volume)
         }
         _titlecard_time = _titlecard_time + add
 
@@ -319,6 +322,7 @@ class Menu is Level {
             _fade_out = _fade_out - Engine.delta
             if (_fade_out <= 0) {
                 Save.save()
+                Audio.stop_all()
                 Engine.switch_level(Game.new())
             }
         }
