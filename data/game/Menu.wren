@@ -80,6 +80,19 @@ class Menu is Level {
         _background_camera.update()
     }
 
+    draw_digits(num, x, y) {
+        var move_x = _ui_scale * 5 * 3
+        Assets.spr_digits.scale_x = _ui_scale
+        Assets.spr_digits.scale_y = _ui_scale
+        for (character in num.toString) {
+            var digit = Num.fromString(character)
+            Renderer.draw_sprite(Assets.spr_digits, digit, x, y)
+            x = x + move_x
+        }
+        Assets.spr_digits.scale_x = Save.ui_scale
+        Assets.spr_digits.scale_y = Save.ui_scale
+    }
+
     bounce(time) {
         time = time * 3
         if (time >= 2.348 * 3) {
@@ -231,7 +244,17 @@ class Menu is Level {
                 _menu = Menu.MENU_MAIN
                 _cursor = 0
             }
-            // TODO: Draw stats
+            texture = Assets.tex_scorecard
+            x = (Renderer.window_width / 2) - (texture.width * 0.5 * _ui_scale)
+            y = Renderer.window_height - (texture.height * _ui_scale) - (Renderer.window_height * 0.1)
+            Renderer.draw_texture(texture, x, y, _ui_scale, _ui_scale, 0, 0, 0)
+            // 246, 43
+            draw_digits(Save.best_run_kills, x + (235 * _ui_scale), y + (38 * _ui_scale))
+            draw_digits(Save.best_run_parries, x + (235 * _ui_scale), y + ((38 + (1 * 20)) * _ui_scale))
+            draw_digits(Save.best_run_highest_stage, x + (235 * _ui_scale), y + ((38 + (2 * 20)) * _ui_scale))
+            draw_digits(Save.best_run_npcs_killed, x + (235 * _ui_scale), y + ((38 + (3 * 20)) * _ui_scale))
+            draw_digits(Save.best_run_axes_thrown, x + (235 * _ui_scale), y + ((38 + (4 * 20)) * _ui_scale))
+            draw_digits(Save.best_run_props_destroyed, x + (235 * _ui_scale), y + ((38 + (5 * 20)) * _ui_scale))
         }
         return false
     }

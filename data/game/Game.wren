@@ -152,6 +152,7 @@ class Prop {
                 } else {
                     Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
                 }
+                Save.total_props_destroyed = Save.total_props_destroyed + 1
                 return true
             }
         }

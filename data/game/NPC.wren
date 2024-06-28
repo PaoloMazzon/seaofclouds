@@ -20,6 +20,7 @@ class NPC is Character {
 
     on_hit(level, attack) {
         super.on_hit(level, attack)
+        Save.total_npcs_killed = Save.total_npcs_killed + 1
         level.add_particles(Assets.tex_humanparticle, x, y, Math.point_angle(attack.x, attack.y, x, y), Num.pi * 0.3, 40, 1, Num.pi, 10)
     }
 

@@ -175,6 +175,12 @@ class SaveImpl {
         _items.restart()
         _stage = 1
         _score = 0
+        _total_parries = 0
+        _total_kills = 0
+        _total_highest_stage = 0
+        _total_props_destroyed = 0
+        _total_npcs_killed = 0
+        _total_axes_thrown = 0
     }
 
     best_run_parries { _best_run_parries }
@@ -208,7 +214,12 @@ class SaveImpl {
     score { _score }
     score=(s) { _score = s }
     stage { _stage }
-    stage=(s) { _stage = s }
+    stage=(s) { 
+        _stage = s 
+        if (s > _total_highest_stage) {
+            _total_highest_stage = s
+        }
+    }
     ui_scale { _ui_scale }
     ui_scale=(s) { 
         _ui_scale = s

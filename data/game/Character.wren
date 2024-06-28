@@ -237,6 +237,7 @@ class Character is Entity {
             return
         }
         if (_death_timer <= 0) {
+            Save.total_kills = Save.total_kills + 1
             _death_timer = (sprite_set.die.frame_count) * sprite_set.die.delay
             sprite_set.die.frame = 0
             _has_died = true

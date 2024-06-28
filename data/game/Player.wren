@@ -116,6 +116,7 @@ class Player is Character {
                     die()
                     Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
                 } else {
+                    Save.total_parries = Save.total_parries + 1
                     make_invincible(Constants.PLAYER_PARRY_IFRAMES)
                     if (attack.tied_entity == null) {
                         var angle = Math.point_angle(x, y, attack.x, attack.y)
@@ -373,6 +374,7 @@ class Player is Character {
                     axe.attack = Attack.create_attack(level, axe.x, axe.y, axe, 0, 0, 0, Assets.tex_attack, (Constants.THROWING_AXE_SPEED / Constants.THROWING_AXE_DECELERATION).sqrt, Constants.TEAM_PLAYER)
                 }
                 _has_axe = false
+                Save.total_axes_thrown = Save.total_axes_thrown + 1
                 set_alarm(sprite_set.ranged_attack.delay * 11, f)
             }
 
