@@ -25,7 +25,7 @@ class BlueSlime is Character {
         } else {
             _direction = _rng.float(Num.tau)
         }
-        _time = _rng.float(1.5, 3.5)
+        _time = _rng.float(Constants.SLIME_MIN_MOVE_TIME, Constants.SLIME_MAX_MOVE_TIME)
         _max_time = _time
     }
 
@@ -55,7 +55,7 @@ class BlueSlime is Character {
                     var f = Fiber.new {
                         start_direction(level)
                     }
-                    set_alarm(_rng.float(0.5, 3), f)
+                    set_alarm(_rng.float(Constants.SLIME_MIN_MOVE_TIME, Constants.SLIME_MAX_MOVE_TIME), f)
                 }
             }
             process_physics(level)

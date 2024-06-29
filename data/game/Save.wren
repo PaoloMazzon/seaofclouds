@@ -101,6 +101,7 @@ class SaveImpl {
         _stage = 1
         _score = 0
         _highscore = 0
+        _beaten_game = false
         _shake_intensity = 3
         _shake_modifier = 1
         _fullscreen = false
@@ -126,6 +127,7 @@ class SaveImpl {
         _ui_scale = ini.get_num("game", "ui_scale", 2)
         _highscore = ini.get_num("game", "highscore", 0)
         _best_run_parries = ini.get_num("game", "best_run_parries", 0)
+        _beaten_game = ini.get_bool("game", "beaten_game", false)
         _best_run_kills = ini.get_num("game", "best_run_kills", 0)
         _best_run_items = Items.load_from_string(ini.get_string("game", "best_run_items", ""))
         _best_run_highest_stage = ini.get_num("game", "best_run_highest_stage", 0)
@@ -167,6 +169,7 @@ class SaveImpl {
         ini.set_num("game", "best_run_axes_thrown", best_run_axes_thrown)   
         ini.set_num("game", "shake_modifier", _shake_modifier)
         ini.set_bool("game", "fullscreen", _fullscreen)
+        ini.set_bool("game", "beaten_game", _beaten_game)
         ini.flush("save.ini")
     }
 
@@ -183,6 +186,8 @@ class SaveImpl {
         _total_axes_thrown = 0
     }
 
+    beaten_game { _beaten_game }
+    beaten_game=(s) { _beaten_game = s }
     best_run_items { _best_run_items }
     best_run_parries { _best_run_parries }
     best_run_kills { _best_run_kills }

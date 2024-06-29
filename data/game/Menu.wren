@@ -324,7 +324,7 @@ class Menu is Level {
             var move_x = Assets.tex_menuradiobox.width * _ui_scale * 1.5
             
             // Draw the crown if the players beaten the game (allowed to play oops all wizards mode)
-            if (true){//Save.beaten_game) {
+            if (Save.beaten_game) {
                 Renderer.draw_texture(Assets.tex_menuradioboxchecked, corner_x + move_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
                 Renderer.draw_texture(Assets.tex_crown, corner_x + move_x, corner_y - (12 * _ui_scale), _ui_scale, _ui_scale, 0, 0, 0)
                 Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, corner_x + move_x + (_ui_scale * 1.5), corner_y + (34 * _ui_scale))

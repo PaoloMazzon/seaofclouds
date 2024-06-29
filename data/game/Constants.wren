@@ -78,6 +78,8 @@ class Constants {
     //////////////////////////// Slime balance ////////////////////////////
     static SLIME_TOP_SPEED { 70 }
     static SLIME_AGGRO_RANGE { 75 }
+    static SLIME_MIN_MOVE_TIME { 0.75 } // min/max time between the slime deciding to move or attack
+    static SLIME_MAX_MOVE_TIME { 2.5 }
     static SLIME_SCORE_VALUE { 5 }
 
     //////////////////////////// Ranger balance ////////////////////////////
@@ -92,6 +94,23 @@ class Constants {
     static RANGER_SEARCH_TIME_MAX { 5 }
     static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
     static RANGER_SCORE_VALUE { 15 }
+
+    //////////////////////////// Rogue balance ////////////////////////////
+    static ROGUE_WALK_SPEED { 50 }
+    static ROGUE_RUN_SPEED { 80 }
+    static ROGUE_CHARGE_SPEED { 105 }
+    static ROGUE_CHARGE_TIME { 1 }
+    static ROGUE_AGGRO_RANGE { 80 }
+    static ROGUE_AGGRO_RANGE_IN_FIGHT { 140 } // how far their aggro range is while engaged with the player
+    static ROGUE_MIN_CIRCLE_TIME { 1 } // time spent circling around the player
+    static ROGUE_MAX_CIRCLE_TIME { 2 }
+    static ROGUE_SEARCH_TIME_MIN { 3 }
+    static ROGUE_SEARCH_TIME_MAX { 5 }
+    static ROGUE_CIRCLE_DISTANCE { 50 } // distance from the player while circling
+    static ROGUE_SCORE_VALUE { 25 }
+    static ROGUE_BOMB_TIMER { 4 } // how long between rogue bomb throws
+    static ROGUE_BOMB_DETONATION_TIMER { 1 } // how long it takes the bombs to explode
+    static ROGUE_BOMB_CHANCE { 0.75 } // percent chance the rogue will throw a bomb if they are allowed to (bomb timer is up)
 
     //////////////////////////// Wizard balance ////////////////////////////
     static WIZARD_WALK_SPEED { 30 }

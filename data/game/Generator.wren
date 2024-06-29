@@ -2,6 +2,7 @@ import "BlueSlime" for BlueSlime
 import "Ranger" for Ranger
 import "Wizard" for Wizard
 import "Fighter" for Fighter
+import "Rogue" for Rogue
 import "Constants" for Constants
 import "random" for Random
 import "NPC" for NPC

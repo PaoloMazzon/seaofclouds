@@ -136,6 +136,16 @@ class SpriteSet {
             Assets.spr_fighter_die.copy()
         )
     }
+
+    static RogueSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_rogue_walk.copy(),
+            Assets.spr_rogue_idle.copy(),
+            Assets.spr_rogue_melee_attack.copy(),
+            Assets.spr_rogue_ranged_attack.copy(),
+            Assets.spr_rogue_die.copy()
+        )
+    }
 }
 
 class Character is Entity {
@@ -169,8 +179,11 @@ class Character is Entity {
         _melee_attack_texture = null
         _score_value = 0
         _extra_lives = 0
+        _hidden = false
     }
 
+    hidden=(s) { _hidden = s }
+    hidden { _hidden }
     score_value { _score_value }
     score_value=(s) { _score_value = s }
     sprite_effect { _sprite_effect }
@@ -430,6 +443,10 @@ class Character is Entity {
             }
             Renderer.colour_mod = [1, 1, 1, 1]
         } else if (sprite_set.die.frame != sprite_set.die.frame_count - 1) {
+            if (_hidden) {
+                Renderer.colour_mod = [1, 1, 1, 0.3]
+            }
+
             if (is_invincible && _alternator && !_dont_flicker) {
                 Renderer.colour_mod = [0, 0, 0, 0]
             }
