@@ -249,7 +249,8 @@ class Player is Character {
             } else if (_level_title_fade > 3) {
                 percent = Math.serp(1 - (_level_title_fade - 3), 0, 1)
             }
-            Renderer.draw_sprite(Assets.spr_levelnames, Save.stage - 1, level_title_x, -(Assets.spr_levelnames.height * Save.ui_scale) + level_title_y * percent)
+            var spr = Save.oops_all_wizards ? Assets.spr_levelnameswizards : Assets.spr_levelnames
+            Renderer.draw_sprite(spr, Save.stage - 1, level_title_x, -(spr.height * Save.ui_scale) + level_title_y * percent)
         }
 
         // If new score

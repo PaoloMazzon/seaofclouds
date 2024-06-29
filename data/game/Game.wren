@@ -122,7 +122,7 @@ class Particle {
 
 class Prop {
     construct new(x, y, rng) {
-        _snow = Save.stage >= 3
+        _snow = Save.stage >= 4
         _sprite = _snow ? Assets.spr_props2 : Assets.spr_props
         _sprite.origin_x = _sprite.width / 2
         _sprite.origin_y = _sprite.height / 2
@@ -390,7 +390,7 @@ class Game is Level {
         _gen = Generator.new()
         _gen.tile_width = 24
         _gen.tile_height = 16
-        _gen.tileset_tex = Save.stage < 3 ? Assets.tex_tiles : Assets.tex_tilesmoon
+        _gen.tileset_tex = Save.stage <= 3 ? Assets.tex_tiles : Assets.tex_tilesmoon
         _gen.island_radius_max = Constants.ISLAND_RADIUS_MAX[Save.stage - 1]//10
         _gen.island_radius_min = Constants.ISLAND_RADIUS_MIN[Save.stage - 1]//3
         _gen.minimum_distance = Constants.ISLAND_MINIMUM_DISTANCE[Save.stage - 1]//_gen.island_radius_max * 1.5

@@ -118,6 +118,7 @@ class SaveImpl {
         _total_props_destroyed = 0
         _total_npcs_killed = 0
         _total_axes_thrown = 0
+        _oops_all_wizards = false
     }
 
     // Called at the start of the game
@@ -184,8 +185,11 @@ class SaveImpl {
         _total_props_destroyed = 0
         _total_npcs_killed = 0
         _total_axes_thrown = 0
+        _oops_all_wizards = false
     }
 
+    oops_all_wizards { _oops_all_wizards }
+    oops_all_wizards=(s) { _oops_all_wizards = s }
     beaten_game { _beaten_game }
     beaten_game=(s) { _beaten_game = s }
     best_run_items { _best_run_items }
@@ -249,6 +253,8 @@ class SaveImpl {
         Assets.spr_digits.scale_y = _ui_scale
         Assets.spr_levelnames.scale_x = _ui_scale
         Assets.spr_levelnames.scale_y = _ui_scale
+        Assets.spr_levelnameswizards.scale_x = _ui_scale
+        Assets.spr_levelnameswizards.scale_y = _ui_scale
     }
 }
 

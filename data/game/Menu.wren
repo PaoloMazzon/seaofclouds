@@ -330,7 +330,8 @@ class Menu is Level {
                 Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, corner_x + move_x + (_ui_scale * 1.5), corner_y + (34 * _ui_scale))
 
                 if (!ignore_frame && Controls.throw_axe) {
-                    // TODO: Implement oops all wizard mode
+                    Save.oops_all_wizards = true
+                    return true
                 }
             } else {
                 Renderer.draw_texture(Assets.tex_menuradiobox, corner_x + move_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)

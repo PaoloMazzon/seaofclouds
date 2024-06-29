@@ -257,14 +257,26 @@ class Generator {
 
     // Place enemies
     place_enemies(level, count, rng, locations) {
-        var enemy_list_by_stage = [
-            [BlueSlime],
-            [BlueSlime, BlueSlime, BlueSlime, Ranger],
-            [Ranger, Fighter],
-            [],
-            [],
-            []
-        ]
+        var enemy_list_by_stage = []
+        if (!Save.oops_all_wizards) {
+            enemy_list_by_stage = [
+                [BlueSlime],
+                [BlueSlime, BlueSlime, BlueSlime, Ranger],
+                [Ranger, Fighter],
+                [],
+                [],
+                []
+            ]
+        } else {
+            enemy_list_by_stage = [
+                [Wizard],
+                [Wizard],
+                [Wizard],
+                [Wizard],
+                [Wizard],
+                [Wizard]
+            ]
+        }
 
         for (i in 1..count) {
             var location = get_location(locations, rng)
