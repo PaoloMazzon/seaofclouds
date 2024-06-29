@@ -58,7 +58,7 @@ class Constants {
     static PLAYER_PARRY_IFRAMES { 1 } // amount of time after a successful parry the player is invincible
     static THROWING_AXE_SPEED { 150 }
     static THROWING_AXE_DECELERATION { 50 }
-    static PLAYER_SPEED { 100 }
+    static PLAYER_SPEED { 75 }
 
     //////////////////////////// Items ////////////////////////////
     static ITEM_DASH_SPEED { 150 }

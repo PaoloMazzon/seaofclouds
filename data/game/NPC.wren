@@ -74,7 +74,7 @@ class NPC is Character {
                 if (level.has_knickknack && !_happy) {
                     _happy = true
                     level.remove_knickknack()
-                    Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)
+                    Audio.play(Assets.aud_chest, false, Save.volume, Save.volume)
                     level.player.award_score(Constants.NPC_GIVE_ITEM_SCORE)
                     var e = level.add_entity(Chest)
                     e.x = x

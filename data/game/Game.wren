@@ -622,25 +622,6 @@ class Game is Level {
             Renderer.draw_texture(_window_surface, 0, 0)
         }
 
-        // Debug
-        if (Keyboard.key_pressed(Keyboard.KEY_Y)) {
-            shake_screen(0.1)
-        }
-        if (Keyboard.key_pressed(Keyboard.KEY_U)) {
-            pause(0.5)
-        }
-        if (Keyboard.key_pressed(Keyboard.KEY_E)) {
-            var f = Fiber.new { |success|
-                System.print(success)
-            }
-            skill_check(SkillCheck.SKILL_CHECK_EASY, f)
-        }
-        if (Keyboard.key_pressed(Keyboard.KEY_H)) {
-            var f = Fiber.new { |success|
-                System.print(success)
-            }
-            skill_check(SkillCheck.SKILL_CHECK_HARD, f)
-        }
 
         // Fullscreen
         if (Keyboard.key(Keyboard.KEY_LALT) && Keyboard.key_pressed(Keyboard.KEY_RETURN)) {
