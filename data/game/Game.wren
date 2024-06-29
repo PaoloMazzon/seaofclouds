@@ -412,9 +412,11 @@ class Game is Level {
 
         
         // Clouds
-        for (i in 1..(Constants.CLOUD_COUNT / 2)) {
-            _clouds_background.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
-            _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+        if (Save.stage <= 3) {
+            for (i in 1..(Constants.CLOUD_COUNT / 2)) {
+                _clouds_background.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+                _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+            }
         }
 
         // Create player
@@ -440,6 +442,9 @@ class Game is Level {
 
         // Fade in sound effect
         Audio.play(Assets.aud_fadein, false, Save.volume, Save.volume)
+
+        // Record current stage for graphic effects
+        _current_stage = Save.stage
     }
 
     pre_frame() {
@@ -503,16 +508,27 @@ class Game is Level {
     update() {
         Renderer.lock_cameras(_game_camera)
 
-        // Background and tiles
+        // Clouds
         Renderer.colour_mod = Constants.SKY_COLOUR
         Renderer.clear()
         Renderer.colour_mod = [1, 1, 1, 1]
         for (cloud in _clouds_background) {
             cloud.draw(is_paused)
         }
+
+        // Background
         Renderer.lock_cameras(_parallax_camera)
-        var bg = Save.stage == 1 ? Assets.tex_background : Assets.tex_backgroundfar
-        draw_tiling_background(bg, 0.95)
+        if (_current_stage <= 3) {
+            var bg = _current_stage == 1 ? Assets.tex_background : Assets.tex_backgroundfar
+            draw_tiling_background(bg, 0.95)
+        } else {
+            draw_tiling_background(Assets.tex_backgroundspace, 0.98)
+            draw_tiling_background(Assets.tex_backgroundstars, 0.95)
+            draw_tiling_background(Assets.tex_backgroundstars2, 0.925)
+            Renderer.draw_texture(Assets.tex_planet, (_parallax_camera.x * 0.9), (_parallax_camera.y * 0.9) + (_parallax_camera.height - Assets.tex_planet.height))
+        }
+
+        // Draw tileset
         Renderer.lock_cameras(_game_camera)
         Renderer.draw_texture(_tileset_surface, 0, 0)
 

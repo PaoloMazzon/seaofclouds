@@ -60,7 +60,7 @@ class FastSpikes is Entity {
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
-        sprite = Assets.spr_spikes.copy()
+        sprite = Assets.spr_fastspikes.copy()
         sprite.origin_x = sprite.width / 2
         sprite.origin_y = sprite.height / 2
         sprite.delay = 0

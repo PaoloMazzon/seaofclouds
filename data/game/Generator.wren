@@ -81,7 +81,7 @@ class Structures {
     }
 
     static get_random_structure(rng) {
-        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_HOUSE_3]
+        var list = [Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_1, Structures.STRUCTURE_HOUSE_2, Structures.STRUCTURE_HOUSE_3, Structures.STRUCTURE_HOUSE_3]
         return rng.sample(list)
     }
 
@@ -261,11 +261,11 @@ class Generator {
         if (!Save.oops_all_wizards) {
             enemy_list_by_stage = [
                 [BlueSlime],
-                [BlueSlime, BlueSlime, BlueSlime, Ranger],
-                [Ranger, Fighter],
-                [],
-                [],
-                []
+                [BlueSlime, BlueSlime, BlueSlime, Ranger, Ranger],
+                [Ranger, Ranger, Ranger, Fighter, Fighter, BlueSlime],
+                [Fighter, Fighter, Wizard, Wizard, Ranger],
+                [Fighter, Fighter, Rogue, Rogue, Wizard, Wizard, Hunter],
+                [Hunter, Rogue, Fighter, Wizard]
             ]
         } else {
             enemy_list_by_stage = [
@@ -296,11 +296,11 @@ class Generator {
 
     place_traps(level, count, rng, locations) {
         var trap_list_by_stage = [
-            [],
+            [Spikes],
             [Spikes],
             [BombPlant, Spikes],
             [FastSpikes, Teleporter],
-            [],
+            [BombPlant, FastSpikes, Teleporter],
             []
         ]
 
@@ -340,7 +340,7 @@ class Generator {
             }
             arr.add(inner)
         }
-        return Tileset.new(arr, Assets.tex_tiles, ground_tileset.tile_width, ground_tileset.tile_height)
+        return Tileset.new(arr, Save.stage <= 3 ? Assets.tex_tiles : Assets.tex_tilesmoon, ground_tileset.tile_width, ground_tileset.tile_height)
     }
 
     autotile(tileset_ground, tileset_background, locations, collisions, rng) {

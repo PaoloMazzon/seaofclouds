@@ -47,8 +47,8 @@ class Constants {
     static LEVEL_ISLAND_COUNT               { [13, 13, 11, 13, 13, 13] }
     static LEVEL_ENEMY_MAX                  { [15, 20, 25, 20, 20, 20] }
     static LEVEL_ENEMY_MIN                  { [10, 15, 15, 15, 15, 15] }
-    static LEVEL_TRAP_MAX                   { [10, 10, 15, 10, 10, 10] }
-    static LEVEL_TRAP_MIN                   { [ 5,  5,  5,  5,  5,  5] }
+    static LEVEL_TRAP_MAX                   { [ 5, 10, 15, 10, 10, 10] }
+    static LEVEL_TRAP_MIN                   { [ 2,  5,  5,  5,  5,  5] }
     static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [15, 60, 45, 20, 20, 20] }
     static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 8, 30, 25, 12, 12, 12] }
 
