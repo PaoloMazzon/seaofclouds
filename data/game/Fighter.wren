@@ -25,6 +25,7 @@ class Fighter is Character {
         score_value = Constants.FIGHTER_SCORE_VALUE
         _circling_angle = 0 // for circling player
         _fighter_charge_timer = 0
+        extra_lives = extra_lives + Constants.FIGHTER_EXTRA_LIVES
     }
 
     die() {

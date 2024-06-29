@@ -3,6 +3,7 @@ import "Ranger" for Ranger
 import "Wizard" for Wizard
 import "Fighter" for Fighter
 import "Rogue" for Rogue
+import "Hunter" for Hunter
 import "Constants" for Constants
 import "random" for Random
 import "NPC" for NPC
@@ -435,7 +436,7 @@ class Generator {
                 return false
             }
         }
-        var pass = Math.point_distance(spot[0], spot[1], _start_tile[0], _start_tile[1]) < new_structure.minimum_size + 1 && Math.point_distance(spot[0], spot[1], _end_tile[0], _end_tile[1]) < new_structure.minimum_size + 1
+        var pass = Math.point_distance(spot[0], spot[1], _start_tile[0], _start_tile[1]) > new_structure.minimum_size + 1 && Math.point_distance(spot[0], spot[1], _end_tile[0], _end_tile[1]) > new_structure.minimum_size + 1
         return pass
     }
 

@@ -22,6 +22,7 @@ class Wizard is Character {
         _initial_shot_delay = 0
         _bowshot_sound = null
         score_value = Constants.WIZARD_SCORE_VALUE
+        extra_lives = extra_lives + Constants.WIZARD_EXTRA_LIVES
     }
 
     ranged_attack(level) {

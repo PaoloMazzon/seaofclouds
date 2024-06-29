@@ -9,6 +9,7 @@ class Bomb is Entity {
         super()
         _exploded = false
         _invisible = false
+        extra_lives = extra_lives + Constants.ROGUE_EXTRA_LIVES
     }
 
     create(level, tiled_data) {
@@ -70,6 +71,7 @@ class Bomb is Entity {
         if (_time <= 0) {
             if (!_exploded) {
                 Audio.play(Assets.aud_explosion, false, Save.volume, Save.volume)
+                level.shake_screen(0.2)
             }
             _exploded = true
 

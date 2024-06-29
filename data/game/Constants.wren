@@ -80,6 +80,7 @@ class Constants {
     static SLIME_AGGRO_RANGE { 75 }
     static SLIME_MIN_MOVE_TIME { 0.75 } // min/max time between the slime deciding to move or attack
     static SLIME_MAX_MOVE_TIME { 2.5 }
+    static SLIME_EXTRA_LIVES { 0 }
     static SLIME_SCORE_VALUE { 5 }
 
     //////////////////////////// Ranger balance ////////////////////////////
@@ -93,6 +94,7 @@ class Constants {
     static RANGER_SEARCH_TIME_MIN { 3 }
     static RANGER_SEARCH_TIME_MAX { 5 }
     static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
+    static RANGER_EXTRA_LIVES { 0 }
     static RANGER_SCORE_VALUE { 15 }
 
     //////////////////////////// Rogue balance ////////////////////////////
@@ -107,10 +109,11 @@ class Constants {
     static ROGUE_SEARCH_TIME_MIN { 3 }
     static ROGUE_SEARCH_TIME_MAX { 5 }
     static ROGUE_CIRCLE_DISTANCE { 50 } // distance from the player while circling
-    static ROGUE_SCORE_VALUE { 25 }
+    static ROGUE_SCORE_VALUE { 55 }
     static ROGUE_BOMB_TIMER { 4 } // how long between rogue bomb throws
     static ROGUE_BOMB_DETONATION_TIMER { 1 } // how long it takes the bombs to explode
     static ROGUE_BOMB_CHANCE { 0.75 } // percent chance the rogue will throw a bomb if they are allowed to (bomb timer is up)
+    static ROGUE_EXTRA_LIVES { 1 }
 
     //////////////////////////// Wizard balance ////////////////////////////
     static WIZARD_WALK_SPEED { 30 }
@@ -123,6 +126,7 @@ class Constants {
     static WIZARD_SEARCH_TIME_MIN { 3 }
     static WIZARD_SEARCH_TIME_MAX { 5 }
     static WIZARD_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
+    static WIZARD_EXTRA_LIVES { 0 }
     static WIZARD_SCORE_VALUE { 40 }
 
     //////////////////////////// Fighter balance ////////////////////////////
@@ -137,5 +141,22 @@ class Constants {
     static FIGHTER_SEARCH_TIME_MIN { 3 }
     static FIGHTER_SEARCH_TIME_MAX { 5 }
     static FIGHTER_CIRCLE_DISTANCE { 50 } // distance from the player while circling
+    static FIGHTER_EXTRA_LIVES { 1 }
     static FIGHTER_SCORE_VALUE { 20 }
+
+    //////////////////////////// Hunter balance ////////////////////////////
+    static HUNTER_WALK_SPEED { 50 }
+    static HUNTER_RUN_SPEED { 80 }
+    static HUNTER_CHARGE_SPEED { 105 }
+    static HUNTER_CHARGE_TIME { 1 }
+    static HUNTER_AGGRO_RANGE { 80 }
+    static HUNTER_AGGRO_RANGE_IN_FIGHT { 140 } // how far their aggro range is while engaged with the player
+    static HUNTER_MIN_CIRCLE_TIME { 1 } // time spent circling around the player
+    static HUNTER_MAX_CIRCLE_TIME { 2 }
+    static HUNTER_SEARCH_TIME_MIN { 3 }
+    static HUNTER_SEARCH_TIME_MAX { 5 }
+    static HUNTER_CIRCLE_DISTANCE { 50 } // distance from the player while circling
+    static HUNTER_EXTRA_LIVES { 2 }
+    static HUNTER_ENTER_CIRCLING { 80 } // how far from the player the hunter has to be to be in the cirlcing state
+    static HUNTER_SCORE_VALUE { 50 }
 }

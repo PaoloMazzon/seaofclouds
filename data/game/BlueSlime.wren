@@ -10,6 +10,7 @@ class BlueSlime is Character {
         _max_time = 0
         team = Constants.TEAM_ENEMIES
         score_value = Constants.SLIME_SCORE_VALUE
+        extra_lives = extra_lives + Constants.SLIME_EXTRA_LIVES
     }
 
     on_hit(level, attack) {

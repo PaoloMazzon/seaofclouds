@@ -146,6 +146,16 @@ class SpriteSet {
             Assets.spr_rogue_die.copy()
         )
     }
+
+    static HunterSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_hunter_walk.copy(),
+            Assets.spr_hunter_idle.copy(),
+            Assets.spr_hunter_attack.copy(),
+            Assets.spr_hunter_get_up.copy(),
+            Assets.spr_hunter_die.copy()
+        )
+    }
 }
 
 class Character is Entity {
@@ -294,6 +304,7 @@ class Character is Entity {
             return false
         }
         if (_attack_timer <= 0) {
+            _ranged_attack = false
             var f = Fiber.new {
                 if (!is_dead) {
                     _ranged_attack = false
