@@ -122,20 +122,36 @@ class Particle {
 
 class Prop {
     construct new(x, y, rng) {
-        _sprite = Assets.spr_props
+        _snow = Save.stage >= 3
+        _sprite = _snow ? Assets.spr_props2 : Assets.spr_props
         _sprite.origin_x = _sprite.width / 2
         _sprite.origin_y = _sprite.height / 2
-        _frame = rng.sample([0, 1, 2, 3, 7, 4, 4, 4, 5, 5, 5, 6, 6, 6])
-        var list = [
-            Assets.tex_boxparticle,
-            Assets.tex_vaseparticle, 
-            Assets.tex_statueparticle, 
-            Assets.tex_chairparticle, 
-            Assets.tex_plantparticle, 
-            Assets.tex_plantparticle, 
-            Assets.tex_plantparticle, 
-            Assets.tex_rockparticle
-        ]
+        var list = []
+        if (!_snow) {
+            _frame = rng.sample([0, 1, 2, 3, 7, 4, 4, 4, 5, 5, 5, 6, 6, 6])
+            list = [
+                Assets.tex_boxparticle,
+                Assets.tex_vaseparticle, 
+                Assets.tex_statueparticle, 
+                Assets.tex_chairparticle, 
+                Assets.tex_plantparticle, 
+                Assets.tex_plantparticle, 
+                Assets.tex_plantparticle, 
+                Assets.tex_rockparticle
+            ]
+        } else {
+            _frame = rng.sample([0, 1, 2, 3, 4, 5, 6, 7])
+            list = [
+                Assets.tex_snowparticle,
+                Assets.tex_boxparticle, 
+                Assets.tex_snowparticle, 
+                Assets.tex_snowparticle, 
+                Assets.tex_boxparticle, 
+                Assets.tex_snowparticle, 
+                Assets.tex_snowparticle, 
+                Assets.tex_snowparticle
+            ]
+        }
         _particle = list[_frame]
         _x = x
         _y = y
@@ -147,10 +163,18 @@ class Prop {
         for (attack in level.get_entities(Attack)) {
             if (Math.point_distance(attack.x, attack.y, _x, _y) < attack.hitbox.w) {
                 level.add_particles(_particle, _x, _y, Math.point_angle(attack.x, attack.y, _x, _y), Num.pi * 0.3, 50, 1, Num.pi, 8)
-                if (_frame == 4 || _frame == 5 || _frame == 6) {
-                    Audio.play(Assets.aud_plantcut, false, Save.volume, Save.volume)
+                if (!_snow) {
+                    if (_frame == 4 || _frame == 5 || _frame == 6) {
+                        Audio.play(Assets.aud_plantcut, false, Save.volume, Save.volume)
+                    } else {
+                        Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
+                    }
                 } else {
-                    Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
+                    if (_frame == 3 || _frame == 4 || _frame == 6 || _frame == 7) {
+                        Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
+                    } else {
+                        Audio.play(Assets.aud_plantcut, false, Save.volume, Save.volume)
+                    }
                 }
                 Save.total_props_destroyed = Save.total_props_destroyed + 1
                 return true
@@ -366,7 +390,7 @@ class Game is Level {
         _gen = Generator.new()
         _gen.tile_width = 24
         _gen.tile_height = 16
-        _gen.tileset_tex = Assets.tex_tiles
+        _gen.tileset_tex = Save.stage < 3 ? Assets.tex_tiles : Assets.tex_tilesmoon
         _gen.island_radius_max = Constants.ISLAND_RADIUS_MAX[Save.stage - 1]//10
         _gen.island_radius_min = Constants.ISLAND_RADIUS_MIN[Save.stage - 1]//3
         _gen.minimum_distance = Constants.ISLAND_MINIMUM_DISTANCE[Save.stage - 1]//_gen.island_radius_max * 1.5
