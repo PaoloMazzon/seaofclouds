@@ -9,7 +9,6 @@ class Bomb is Entity {
         super()
         _exploded = false
         _invisible = false
-        extra_lives = extra_lives + Constants.ROGUE_EXTRA_LIVES
     }
 
     create(level, tiled_data) {
@@ -129,6 +128,7 @@ class Rogue is Character {
         _circling_angle = 0 // for circling player
         _fighter_charge_timer = 0
         _thrown_bomb = false
+        extra_lives = extra_lives + Constants.ROGUE_EXTRA_LIVES
     }
 
     ranged_attack(level) {

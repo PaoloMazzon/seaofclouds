@@ -466,7 +466,7 @@ class Player is Character {
         }
         if (!is_dead) {
             // Focus on player
-            var zoom_level = level.in_skill_check ? 2 : (_in_parry ? 1.2 : 1)
+            var zoom_level = level.in_skill_check || level.in_chest ? 2 : (_in_parry ? 1.2 : 1)
             level.set_focal_point(x, y, zoom_level)
         }
     }
