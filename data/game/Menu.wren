@@ -1,5 +1,5 @@
 import "random" for Random
-import "Save" for Save
+import "Save" for Save, Items
 import "Constants" for Constants
 import "Game" for Game, Cloud
 import "Controls" for Controls
@@ -36,6 +36,7 @@ class Menu is Level {
         _play = false
         _music = null
         _ui_scale = Save.ui_scale
+        _showing_help = false
     }
     rng { _rng }
 
@@ -70,11 +71,15 @@ class Menu is Level {
         super.pre_frame()
         
         // Camera
+        _ui_camera.x = 0
+        _ui_camera.y = 0
         _ui_camera.width = Renderer.window_width
         _ui_camera.height = Renderer.window_height
         _ui_camera.w_on_screen = Renderer.window_width
         _ui_camera.h_on_screen = Renderer.window_height
         _ui_camera.update()
+        _background_camera.x = 0
+        _background_camera.y = 0
         _background_camera.width = Renderer.window_width / 4
         _background_camera.height = Renderer.window_height / 4
         _background_camera.w_on_screen = Renderer.window_width
@@ -91,6 +96,20 @@ class Menu is Level {
             Renderer.draw_sprite(Assets.spr_digits, digit, x, y)
             x = x + move_x
         }
+        Assets.spr_digits.scale_x = Save.ui_scale
+        Assets.spr_digits.scale_y = Save.ui_scale
+    }
+
+    draw_digits_wenrad(num, x, y) {
+        var move_x = _ui_scale * 5 * 3
+        Assets.spr_digits.scale_x = _ui_scale
+        Assets.spr_digits.scale_y = _ui_scale
+        for (character in num.toString) {
+            var digit = Num.fromString(character)
+            Renderer.draw_sprite(Assets.spr_digits, digit, x, y)
+            x = x + move_x
+        }
+        Renderer.draw_sprite(Assets.spr_digits, 10, x, y)
         Assets.spr_digits.scale_x = Save.ui_scale
         Assets.spr_digits.scale_y = Save.ui_scale
     }
@@ -146,14 +165,14 @@ class Menu is Level {
         var y = Renderer.window_height - (texture.height * _ui_scale) - (Renderer.window_height * 0.2)
 
         if (_menu == Menu.MENU_MAIN) {
-            if (!ignore_frame && Controls.menu_down) {
+            if (!ignore_frame && !_showing_help && Controls.menu_down) {
                 _cursor = _cursor == (Menu.MENU_MAIN_QUIT) ? 0 : _cursor + 1
                 Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
-            } else if (!ignore_frame && Controls.menu_up) {
+            } else if (!ignore_frame && !_showing_help && Controls.menu_up) {
                 _cursor = _cursor == 0 ? Menu.MENU_MAIN_QUIT : (_cursor - 1)
                 Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
             }
-            if (!ignore_frame && Controls.confirm) {
+            if (!ignore_frame && !_showing_help && Controls.confirm) {
                 Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
                 if (_cursor == Menu.MENU_MAIN_PLAY) {
                     return true
@@ -249,16 +268,90 @@ class Menu is Level {
             }
             texture = Assets.tex_scorecard
             x = (Renderer.window_width / 2) - (texture.width * 0.5 * _ui_scale)
-            y = Renderer.window_height - (texture.height * _ui_scale) - (Renderer.window_height * 0.1)
+            y = Renderer.window_height - (texture.height * _ui_scale) - (Renderer.window_height * 0.13)
             Renderer.draw_texture(texture, x, y, _ui_scale, _ui_scale, 0, 0, 0)
             // 246, 43
+            draw_digits_wenrad(Save.highscore, x + (235 * _ui_scale), y + (6 * _ui_scale))
             draw_digits(Save.best_run_kills, x + (235 * _ui_scale), y + (38 * _ui_scale))
             draw_digits(Save.best_run_parries, x + (235 * _ui_scale), y + ((38 + (1 * 20)) * _ui_scale))
             draw_digits(Save.best_run_highest_stage, x + (235 * _ui_scale), y + ((38 + (2 * 20)) * _ui_scale))
             draw_digits(Save.best_run_npcs_killed, x + (235 * _ui_scale), y + ((38 + (3 * 20)) * _ui_scale))
             draw_digits(Save.best_run_axes_thrown, x + (235 * _ui_scale), y + ((38 + (4 * 20)) * _ui_scale))
             draw_digits(Save.best_run_props_destroyed, x + (235 * _ui_scale), y + ((38 + (5 * 20)) * _ui_scale))
+
+            // Items
+            Assets.spr_itemdisplay.scale_x = _ui_scale
+            Assets.spr_itemdisplay.scale_y = _ui_scale
+            Assets.spr_items.scale_x = _ui_scale
+            Assets.spr_items.scale_y = _ui_scale
+            var total_items = 2
+            for (i in 0..Items.ITEM_COUNT - 1) {
+                total_items = total_items + Save.best_run_items.item_count(i)
+            }
+            var start_x = (Renderer.window_width / 2) - (0.5 * Assets.spr_itemdisplay.width * _ui_scale * total_items)
+            var top_left = (Renderer.window_height) - (1.1 * Assets.spr_itemdisplay.height * _ui_scale)
+            var banner_current_x = start_x
+            var banner_move_x = Assets.spr_itemdisplay.width * _ui_scale
+            var item_start_x = (12 * _ui_scale)
+            var item_start_y = (12 * _ui_scale)
+            Renderer.draw_sprite(Assets.spr_itemdisplay, 0, banner_current_x, top_left)
+            banner_current_x = banner_current_x + banner_move_x
+            for (i in 0..Items.ITEM_COUNT - 1) {
+                if (Save.best_run_items.item_count(i) > 0) {
+                    for (j in 1..Save.best_run_items.item_count(i)) {
+                        Renderer.draw_sprite(Assets.spr_itemdisplay, 1, banner_current_x, top_left)
+                        Renderer.draw_sprite(Assets.spr_items, i, banner_current_x + item_start_x, top_left + item_start_y)
+                        banner_current_x = banner_current_x + banner_move_x
+                    }
+                }
+            }
+            Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)
+            Assets.spr_itemdisplay.scale_x = Save.ui_scale
+            Assets.spr_itemdisplay.scale_y = Save.ui_scale
+            Assets.spr_items.scale_x = Save.ui_scale
+            Assets.spr_items.scale_y = Save.ui_scale
         }
+
+        // Draw buttons in the corner
+        if (_menu == Menu.MENU_MAIN) {
+            var spr_controls = Controls.on_gamepad ? Assets.spr_gamepadcontrols : Assets.spr_keyboardcontrols
+            var old_scale = _ui_scale
+            _ui_scale = Save.ui_scale
+            spr_controls.scale_x = _ui_scale
+            spr_controls.scale_y = _ui_scale
+            var corner_x = Assets.tex_menuradiobox.width * _ui_scale
+            var corner_y = Renderer.window_height - (Assets.tex_menuradiobox.height * _ui_scale * 2)
+            var move_x = Assets.tex_menuradiobox.width * _ui_scale * 1.5
+            
+            // Draw the crown if the players beaten the game (allowed to play oops all wizards mode)
+            if (true){//Save.beaten_game) {
+                Renderer.draw_texture(Assets.tex_menuradioboxchecked, corner_x + move_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
+                Renderer.draw_texture(Assets.tex_crown, corner_x + move_x, corner_y - (12 * _ui_scale), _ui_scale, _ui_scale, 0, 0, 0)
+                Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, corner_x + move_x + (_ui_scale * 1.5), corner_y + (34 * _ui_scale))
+
+                if (!ignore_frame && Controls.throw_axe) {
+                    // TODO: Implement oops all wizard mode
+                }
+            } else {
+                Renderer.draw_texture(Assets.tex_menuradiobox, corner_x + move_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
+            }
+
+            // Draw the help button
+            Renderer.draw_texture(Assets.tex_helpbutton, corner_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
+            Renderer.draw_sprite(spr_controls, Constants.CONTROL_PARRY, corner_x + (_ui_scale * 1.5), corner_y + (34 * _ui_scale))
+
+            if (!ignore_frame && Controls.parry) {
+                _showing_help = true
+            } else {
+                _showing_help = false
+            }
+
+
+            _ui_scale = old_scale
+            spr_controls.scale_x = Save.ui_scale
+            spr_controls.scale_y = Save.ui_scale
+        }
+
         return false
     }
 
@@ -315,6 +408,11 @@ class Menu is Level {
             //cloud.draw(false)
         }
         Renderer.lock_cameras(_ui_camera)
+
+        // Draw help
+        if (_showing_help) {
+            Renderer.draw_texture(Assets.tex_tutorial, 0, 0, Renderer.window_width / Assets.tex_tutorial.width, Renderer.window_height / Assets.tex_tutorial.height, 0, 0, 0)
+        }
 
         // Draw the fade out
         if (_play) {

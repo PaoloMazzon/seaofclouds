@@ -140,7 +140,7 @@ class Fighter is Character {
                     }
 
                     // Attack
-                    if (_circle_time <= 0) {
+                    if (_circle_time <= 0 && !is_dead) {
                         _state = Fighter.STATE_CHARGE
                         _fighter_charge_timer = Constants.FIGHTER_CHARGE_TIME
                         melee_attack(level, 6)

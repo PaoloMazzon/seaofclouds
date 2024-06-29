@@ -99,6 +99,8 @@ class Player is Character {
 
     die() {
         super.die()
+        _level.stop_music()
+        Audio.play(Assets.aud_death, false, Save.volume, Save.volume)
         if (Save.check_highscore()) {
             _highscore = true
         }
@@ -308,6 +310,7 @@ class Player is Character {
         sprite_set = SpriteSet.PlayerSpriteSet
         team = Constants.TEAM_PLAYER
         melee_attack_texture = Assets.tex_attack
+        _level = level
     }
 
     death_camera(level) {

@@ -183,6 +183,7 @@ class SaveImpl {
         _total_axes_thrown = 0
     }
 
+    best_run_items { _best_run_items }
     best_run_parries { _best_run_parries }
     best_run_kills { _best_run_kills }
     best_run_highest_stage { _best_run_highest_stage }

@@ -187,6 +187,7 @@ class Game is Level {
         _in_chest = false
         _next_level = false
         _has_key = false
+        _music = null
     }
     rng { _rng }
     player { _player }
@@ -222,6 +223,14 @@ class Game is Level {
     // Adds a new prop
     add_prop(x, y) {
         _props.add(Prop.new(x, y, _rng))
+    }
+
+    // Stops the soundtrack
+    stop_music() {
+        if (_music != null) {
+            _music.stop()
+            _music = null
+        }
     }
 
     // Draws a parallax background
@@ -537,18 +546,27 @@ class Game is Level {
                 // The moment we're done fading in
                 if (_fade_in <= 0) {
                     // TODO: Different music for diff areas
-                    Audio.play(Assets.aud_area1_1, true, Save.volume, Save.volume)
+                    var audio = null
+                    if (Save.stage <= 3) {
+                        audio = _rng.sample([Assets.aud_area1_1, Assets.aud_area1_2])
+                    } else if (Save.stage <= 5) {
+                        audio = _rng.sample([Assets.aud_area2_1, Assets.aud_area2_2])
+                    } else {
+                        audio = Assets.aud_area3_1
+                    }
+                    _music = Audio.play(audio, true, Save.volume, Save.volume)
                 }
             } else {
                 percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
                 if (_fade_out <= 0) {
+                    var next = Game
                     if (!_next_level) {
                         Save.restart()
+                        next = Engine.get_class("Menu::Menu")
                     }
                     Audio.stop_all()
-                    var menu = Engine.get_class("Menu::Menu")
-                    Engine.switch_level(menu.new())
+                    Engine.switch_level(next.new())
                 }
             }
             
