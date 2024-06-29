@@ -17,6 +17,7 @@ class Constants {
     static TEAM_NONE { 0 }
     static TEAM_ENEMIES { 1 }
     static TEAM_PLAYER { 2 }
+    static TEAM_TRAPS { 3 }
     static FLOATING_TEXT_DURATION { 2 }
 
     //////////////////////////// Graphics ////////////////////////////
@@ -74,6 +75,7 @@ class Constants {
 
     //////////////////////////// Trap balance ////////////////////////////
     static SPIKES_DELAY { 0.5 }
+    static FAST_SPIKES_DELAY { 0.2 }
 
     //////////////////////////// Slime balance ////////////////////////////
     static SLIME_TOP_SPEED { 70 }

@@ -458,6 +458,11 @@ class Player is Character {
                     level.next_level()
                 }
             }
+
+            // Debug
+            if (Keyboard.key_pressed(Keyboard.KEY_0)) {
+                level.next_level()
+            }
         }
         if (!is_dead) {
             // Focus on player

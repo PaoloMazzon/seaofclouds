@@ -7,7 +7,7 @@ import "Hunter" for Hunter
 import "Constants" for Constants
 import "random" for Random
 import "NPC" for NPC
-import "Spikes" for Spikes
+import "Traps" for Spikes, FastSpikes
 import "Character" for Character
 import "Save" for Save
 
@@ -286,8 +286,8 @@ class Generator {
         var trap_list_by_stage = [
             [],
             [Spikes],
-            [Spikes],
-            [Spikes],
+            [FastSpikes, Spikes],
+            [FastSpikes],
             [],
             []
         ]

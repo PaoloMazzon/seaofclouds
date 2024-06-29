@@ -487,7 +487,8 @@ class Game is Level {
             cloud.draw(is_paused)
         }
         Renderer.lock_cameras(_parallax_camera)
-        draw_tiling_background(Assets.tex_background, 0.95)
+        var bg = Save.stage == 1 ? Assets.tex_background : Assets.tex_backgroundfar
+        draw_tiling_background(bg, 0.95)
         Renderer.lock_cameras(_game_camera)
         Renderer.draw_texture(_tileset_surface, 0, 0)
 
