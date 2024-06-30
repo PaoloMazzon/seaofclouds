@@ -2,6 +2,7 @@ import "random" for Random
 import "Save" for Save, Items
 import "Constants" for Constants
 import "Game" for Game, Cloud
+import "Between" for Between
 import "Controls" for Controls
 
 class Menu is Level {
@@ -56,6 +57,8 @@ class Menu is Level {
         _ui_scale = _ui_scale
         _background_camera = Camera.new()
         _ui_camera = Camera.new()
+        _background_camera.x = 0
+        _background_camera.y = 0
         _background_camera.width = Renderer.window_width / 4
         _background_camera.height = Renderer.window_height / 4
         _background_camera.w_on_screen = Renderer.window_width
@@ -424,7 +427,7 @@ class Menu is Level {
             if (_fade_out <= 0) {
                 Save.save()
                 Audio.stop_all()
-                Engine.switch_level(Game.new())
+                Engine.switch_level(Between.new())
             }
         }
 

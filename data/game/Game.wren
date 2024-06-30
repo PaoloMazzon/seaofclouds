@@ -5,6 +5,7 @@ import "Generator" for Generator
 import "Save" for Save
 import "Controls" for Controls
 import "Attack" for Attack
+import "Between" for Between
 
 class Cloud {
     construct new(rng, width, height) {
@@ -425,8 +426,8 @@ class Game is Level {
         _player.y = _gen.player_start_y + 8
 
         // Setup cameras
-        _game_camera = Camera.new()
         _ui_camera = Camera.new()
+        _game_camera = Camera.new()
         _parallax_camera = Camera.new()
         var aspectRatio = Renderer.window_width / Renderer.window_height
         _game_camera.width = Constants.GAME_HEIGHT * aspectRatio
@@ -439,6 +440,7 @@ class Game is Level {
         _parallax_camera.y = _player.y - (_parallax_camera.height / 2)
         set_focal_point(_player.x, _player.y, 1)
         _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
+        pre_frame()
 
         // Fade in sound effect
         Audio.play(Assets.aud_fadein, false, Save.volume, Save.volume)
@@ -601,7 +603,7 @@ class Game is Level {
                 percent = _fade_out / Constants.FADE_TIME
                 _fade_out = _fade_out - Engine.delta
                 if (_fade_out <= 0) {
-                    var next = Game
+                    var next = Between
                     if (!_next_level) {
                         Save.restart()
                         next = Engine.get_class("Menu::Menu")
@@ -621,7 +623,6 @@ class Game is Level {
             Renderer.lock_cameras(_ui_camera)
             Renderer.draw_texture(_window_surface, 0, 0)
         }
-
 
         // Fullscreen
         if (Keyboard.key(Keyboard.KEY_LALT) && Keyboard.key_pressed(Keyboard.KEY_RETURN)) {
