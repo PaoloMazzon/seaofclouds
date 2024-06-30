@@ -1,3 +1,4 @@
+import "CameraManager" for CameraManager
 import "Constants" for Constants
 import "Player" for Player
 import "random" for Random
@@ -426,9 +427,9 @@ class Game is Level {
         _player.y = _gen.player_start_y + 8
 
         // Setup cameras
-        _ui_camera = Camera.new()
-        _game_camera = Camera.new()
-        _parallax_camera = Camera.new()
+        _ui_camera = CameraManager.ui_camera
+        _game_camera = CameraManager.game_camera
+        _parallax_camera = CameraManager.parallax_camera
         var aspectRatio = Renderer.window_width / Renderer.window_height
         _game_camera.width = Constants.GAME_HEIGHT * aspectRatio
         _game_camera.height = Constants.GAME_HEIGHT

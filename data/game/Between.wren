@@ -2,6 +2,7 @@ import "Controls" for Controls
 import "Constants" for Constants
 import "Save" for Save
 import "random" for Random
+import "CameraManager" for CameraManager
 
 class Between is Level {
     construct new() {  }
@@ -13,14 +14,14 @@ class Between is Level {
         _rng = Random.new()
 
         // 2d camera
-        _game_camera = Camera.new()
+        _game_camera = CameraManager.transistion_camera
         var aspectRatio = Renderer.window_width / Renderer.window_height
         _game_camera.width = Constants.GAME_HEIGHT * aspectRatio
         _game_camera.height = Constants.GAME_HEIGHT
         _game_camera.update()
 
         // Load 3d stuff
-        _3d_camera = Camera.new()
+        _3d_camera = CameraManager.perspective_camera
         _3d_camera.w_on_screen = Renderer.window_width
         _3d_camera.h_on_screen = Renderer.window_height
         _3d_camera.width = Renderer.window_width

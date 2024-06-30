@@ -1,3 +1,4 @@
+import "CameraManager" for CameraManager
 import "random" for Random
 import "Save" for Save, Items
 import "Constants" for Constants
@@ -52,11 +53,12 @@ class Menu is Level {
 
     create() {
         super.create()
+        CameraManager.setup()
         Renderer.colour_mod = [1, 1, 1, 1]
         Renderer.hide_cursor = true
         _ui_scale = _ui_scale
-        _background_camera = Camera.new()
-        _ui_camera = Camera.new()
+        _background_camera = CameraManager.menu_background_camera
+        _ui_camera = CameraManager.menu_camera
         _background_camera.x = 0
         _background_camera.y = 0
         _background_camera.width = Renderer.window_width / 4
