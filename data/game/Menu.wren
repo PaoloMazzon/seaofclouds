@@ -46,8 +46,8 @@ class Menu is Level {
         _clouds_foreground.clear()
         _clouds_background.clear()
         for (i in 1..(Constants.CLOUD_COUNT / 4)) {
-            _clouds_background.add(Cloud.new(_rng, _background_camera.width, _background_camera.height))
-            _clouds_foreground.add(Cloud.new(_rng, _background_camera.width, _background_camera.height))
+            _clouds_background.add(Cloud.new(_rng, _background_camera.width, _background_camera.height, true))
+            _clouds_foreground.add(Cloud.new(_rng, _background_camera.width, _background_camera.height, false))
         }
     }
 
@@ -178,7 +178,7 @@ class Menu is Level {
                 _cursor = _cursor == 0 ? Menu.MENU_MAIN_QUIT : (_cursor - 1)
                 Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
             }
-            if (!ignore_frame && !_showing_help && Controls.confirm) {
+            if (!ignore_frame && !_showing_help && Controls.menu_confirm) {
                 Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
                 if (_cursor == Menu.MENU_MAIN_PLAY) {
                     return true
@@ -215,7 +215,7 @@ class Menu is Level {
                 _cursor = _cursor == 0 ? Menu.MENU_SETTINGS_BACK : (_cursor - 1)
                 Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
             }
-            if (!ignore_frame && Controls.confirm) {
+            if (!ignore_frame && Controls.menu_confirm) {
                 Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
                 if (_cursor == Menu.MENU_SETTINGS_FULLSCREEN) {
                     Renderer.fullscreen = !Renderer.fullscreen
@@ -267,7 +267,7 @@ class Menu is Level {
                 Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
             }
         } else if (_menu == Menu.MENU_STATS) {
-            if (!ignore_frame && Controls.confirm) {
+            if (!ignore_frame && Controls.menu_confirm) {
                 Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
                 _menu = Menu.MENU_MAIN
                 _cursor = 0
@@ -365,8 +365,9 @@ class Menu is Level {
     update() {
         super.update()
         Renderer.lock_cameras(_ui_camera)
+        Controls.update_menu()
         var add = Engine.delta
-        if (Controls.confirm) {
+        if (Controls.menu_confirm) {
             add = 2.348
             if (_titlecard_time < 2.348) {
                 _menu_effect.stop()

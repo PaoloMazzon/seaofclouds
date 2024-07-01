@@ -9,7 +9,12 @@ import "Attack" for Attack
 import "Between" for Between
 
 class Cloud {
-    construct new(rng, width, height) {
+    construct new(rng, width, height, background) {
+        _sprite = Assets.spr_clouds.copy()
+        if (background) {
+            _sprite.scale_x = 0.75
+            _sprite.scale_y = 0.75
+        }
         _frame = rng.int(Assets.spr_clouds.frame_count)
         _speed = rng.float(4, 10)
         _x = rng.float(-Assets.spr_clouds.width, width - Assets.spr_clouds.width)
@@ -26,7 +31,7 @@ class Cloud {
             }
         }
 
-        Renderer.draw_sprite(Assets.spr_clouds, _frame, _x, _y)
+        Renderer.draw_sprite(_sprite, _frame, _x, _y)
     }
 }
 
@@ -388,15 +393,28 @@ class Game is Level {
         Assets.spr_telegraph.origin_x = Assets.spr_telegraph.width / 2
         Assets.spr_telegraph.origin_y = Assets.spr_telegraph.height / 2
 
-        // Generate level
-        _gen = Generator.new()
-        _gen.tile_width = 24
-        _gen.tile_height = 16
-        _gen.tileset_tex = Save.stage <= 3 ? Assets.tex_tiles : Assets.tex_tilesmoon
-        _gen.island_radius_max = Constants.ISLAND_RADIUS_MAX[Save.stage - 1]//10
-        _gen.island_radius_min = Constants.ISLAND_RADIUS_MIN[Save.stage - 1]//3
-        _gen.minimum_distance = Constants.ISLAND_MINIMUM_DISTANCE[Save.stage - 1]//_gen.island_radius_max * 1.5
-        var tilesets = _gen.generate_level(Constants.LEVEL_WIDTH[Save.stage - 1], Constants.LEVEL_HEIGHT[Save.stage - 1], Constants.LEVEL_ISLAND_COUNT[Save.stage - 1], this)
+        var tilesets = {}
+        var player_start_x = 0
+        var player_start_y = 0
+
+        if (Save.stage < 6) {
+            // Generate level
+            _gen = Generator.new()
+            _gen.tile_width = 24
+            _gen.tile_height = 16
+            _gen.tileset_tex = Save.stage <= 3 ? Assets.tex_tiles : Assets.tex_tilesmoon
+            _gen.island_radius_max = Constants.ISLAND_RADIUS_MAX[Save.stage - 1]//10
+            _gen.island_radius_min = Constants.ISLAND_RADIUS_MIN[Save.stage - 1]//3
+            _gen.minimum_distance = Constants.ISLAND_MINIMUM_DISTANCE[Save.stage - 1]//_gen.island_radius_max * 1.5
+            tilesets = _gen.generate_level(Constants.LEVEL_WIDTH[Save.stage - 1], Constants.LEVEL_HEIGHT[Save.stage - 1], Constants.LEVEL_ISLAND_COUNT[Save.stage - 1], this)
+            player_start_x = _gen.player_start_x + 12
+            player_start_y = _gen.player_start_y + 8
+        } else {
+            // Load boss room from tiled
+            tilesets = load("data/finallevel.tmj")
+            player_start_x = 31 * 8
+            player_start_y = 34 * 8
+        }
         _tileset = tilesets["ground"]
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
@@ -416,17 +434,17 @@ class Game is Level {
         // Clouds
         if (Save.stage <= 3) {
             for (i in 1..(Constants.CLOUD_COUNT / 2)) {
-                _clouds_background.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+                _clouds_background.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height, true))
                 if (Save.stage <= 2) {
-                    _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+                    _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height, false))
                 }
             }
         }
 
         // Create player
         _player = add_entity(Player)
-        _player.x = _gen.player_start_x + 12
-        _player.y = _gen.player_start_y + 8
+        _player.x = player_start_x
+        _player.y = player_start_y
 
         // Setup cameras
         _ui_camera = CameraManager.ui_camera
@@ -523,13 +541,14 @@ class Game is Level {
         if (_current_stage <= 3) {
             var bg = _current_stage == 1 ? Assets.tex_background : (_current_stage == 2 ? Assets.tex_backgroundfar : Assets.tex_backgroundfarther)
             draw_tiling_background(bg, 0.95)
-        } else {
+        } else if (_current_stage != 6) {
             draw_tiling_background(Assets.tex_backgroundspace, 0.98)
             draw_tiling_background(Assets.tex_backgroundstars, 0.95)
             draw_tiling_background(Assets.tex_backgroundstars2, 0.925)
             Renderer.draw_texture(Assets.tex_planet, (_parallax_camera.x * 0.9), (_parallax_camera.y * 0.9) + (_parallax_camera.height - Assets.tex_planet.height))
         }
 
+        Renderer.lock_cameras(_game_camera)
         for (cloud in _clouds_background) {
             cloud.draw(is_paused)
         }

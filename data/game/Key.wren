@@ -1,5 +1,6 @@
 import "Constants" for Constants
 import "Save" for Save
+import "FloatingText" for FloatingText
 
 class Key is Entity {
     construct new() {
@@ -18,6 +19,7 @@ class Key is Entity {
             if (_time > 1.2 && Math.point_distance(x, y, level.player.x, level.player.y) < 10 && !level.player.is_dead) {
                 level.remove_entity(this)
                 level.grab_key()
+                FloatingText.create_floating_text(level, x, y, "Acquired key")
                 Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)
             }
 

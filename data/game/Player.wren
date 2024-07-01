@@ -5,6 +5,7 @@ import "BlueSlime" for BlueSlime
 import "Attack" for Attack
 import "Save" for Save, Items
 import "Chest" for Chest
+import "FloatingText" for FloatingText
 
 class ThrowingAxe is Entity {
     construct new() {
@@ -312,6 +313,7 @@ class Player is Character {
         team = Constants.TEAM_PLAYER
         melee_attack_texture = Assets.tex_attack
         _level = level
+        _check = 0
     }
 
     death_camera(level) {
@@ -347,6 +349,14 @@ class Player is Character {
         }
 
         if (!level.is_paused) {
+            // Check dialogue
+            if (_check == 3) {
+                if (level.rng.float(0, 1) < Constants.PLAYER_DIALOGUE_CHANCE) {
+                    FloatingText.create_floating_text(level, x, y, level.rng.sample(Constants.PLAYER_DIALOGUE))
+                }
+            }
+            _check = _check + 1
+
             if (!in_dash) {
                 var speed = Constants.PLAYER_SPEED + (Save.items[Items.BOOTS_INDEX] * Constants.ITEM_BOOTS_SPEED)
                 velocity_x = Controls.movement_x * speed
@@ -439,7 +449,7 @@ class Player is Character {
             sprite_effect = in_dash ? Assets.spr_sheild : null
 
             // Leave level icon
-            if (Math.point_distance(x, y, level.end_x, level.end_y) < 30) {
+            if (Save.stage < 6 && Math.point_distance(x, y, level.end_x, level.end_y) < 30) {
                 if (level.has_key) {
                     Assets.spr_gamepadcontrols.scale_x = 1/3
                     Assets.spr_gamepadcontrols.scale_y = 1/3
@@ -457,6 +467,8 @@ class Player is Character {
 
                 if (Controls.confirm && level.has_key) {
                     level.next_level()
+                } else if (Controls.confirm && !level.has_key) {
+                    FloatingText.create_floating_text(level, x, y, "Need key")
                 }
             }
 

@@ -59,6 +59,17 @@ class Constants {
     static THROWING_AXE_SPEED { 150 }
     static THROWING_AXE_DECELERATION { 50 }
     static PLAYER_SPEED { 75 }
+    static PLAYER_DIALOGUE_CHANCE { 0.1 }
+    static PLAYER_DIALOGUE {[
+        "\"What the heck is a wenrad?\"",
+        "\"Those ladders are strange.\"",
+        "\"Why are we here?\"",
+        "\"No one's gonna believe me...\"",
+        "\"Am I in control?\"",
+        "\"I miss my forge.\"",
+        "\"How'd everyone else get here?\"",
+        "\"...\"",
+    ]}
 
     //////////////////////////// Items ////////////////////////////
     static ITEM_DASH_SPEED { 150 }

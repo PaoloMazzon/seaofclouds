@@ -1,0 +1,21 @@
+Sea of Clouds credits
+(c) Paolo Mazzon
+
+Music
+=====
+Most tracks from RyanAvx - https://ryanavx.itch.io/
+Some music and sounds effects from Krishna Palacio - https://krishna-palacio.itch.io/
+
+Graphics
+========
+Nearly all graphics from Krishna Palacio - https://krishna-palacio.itch.io/
+Some very minor graphics from me
+
+Fonts
+=====
+Rick Hoppmann - https://tinyworlds.itch.io/free-pixel-font-thaleah under CC-BY 4.0 https://creativecommons.org/ licenses/by/4.0/ 
+Kenny - https://www.kenney.nl/ under CC0
+
+QA Testing
+==========
+Devon, Justin, Esteban, Kyle, Andrew, Spencer, and Vincent

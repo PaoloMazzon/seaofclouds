@@ -56,7 +56,7 @@ class StartCutscene is Level {
         _animation_time = 25
         _ui_camera = CameraManager.menu_camera
         _draw_surf = Surface.new(300, 200)
-        Audio.play(Assets.aud_teleportmusic, false, Save.volume, Save.volume)
+        Audio.play(Assets.aud_intro, false, Save.volume, Save.volume)
 
         _tweens = []
 
@@ -212,6 +212,8 @@ class StartCutscene is Level {
                 tex
             ))
         */
+
+        _sword_sound = null
     }
 
     pre_frame() {
@@ -226,7 +228,7 @@ class StartCutscene is Level {
 
     update() {
         _time = _time + Engine.delta
-        if (_time >= _animation_time || Controls.confirm) {
+        if (_time >= _animation_time || Controls.menu_confirm) {
             Engine.switch_level(Menu.new())
         }
 
@@ -252,6 +254,10 @@ class StartCutscene is Level {
             0, 
             0
         )
+
+        if (_sword_sound == null && _time > 21.8) {
+            _sword_sound = Audio.play(Assets.aud_sword, false, Save.volume, Save.volume)
+        }
     }
 
     destroy() {
