@@ -1,10 +1,13 @@
 
 class Items {
-    static ITEM_COUNT { 4 }
+    static ITEM_COUNT { 6 }
     static DASH_INDEX { 0 }
     static BOOTS_INDEX { 1 }
     static MAGNET_INDEX { 2 }
     static WHETSTONE_INDEX { 3 }
+    static PIZZA_INDEX { 4 }
+    static GLASS_INDEX { 5 }
+
     construct new() {
         _items = []
         for (i in 1..Items.ITEM_COUNT) {
@@ -23,7 +26,9 @@ class Items {
             "Dash a short distance",
             "Run faster",
             "Axe returns",
-            "Shorter parry cooldown"
+            "Shorter parry cooldown",
+            "+1 life",
+            "See farther"
         ]
         return texts[id]
     }

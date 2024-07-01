@@ -110,7 +110,7 @@ class Between is Level {
             var percent = 1 - (_time / Constants.FADE_TIME)
             _music.update(false, (1 - percent) * Save.volume, (1 - percent) * Save.volume)
             var x_pos = exp(1 - percent, -(Assets.tex_ascending.width / 2), (_game_camera.width / 2) - (Assets.tex_ascending.width / 2))
-            Renderer.draw_texture(Assets.tex_ascending, x_pos, (_game_camera.height / 2) - (Assets.tex_ascending.height / 2))
+            Renderer.draw_texture(Save.oops_all_wizards ? Assets.tex_oopsallwizards : Assets.tex_ascending, x_pos, (_game_camera.height / 2) - (Assets.tex_ascending.height / 2))
 
             Renderer.colour_mod = [0, 0, 0, percent]
             Renderer.draw_rectangle(0, 0, _game_camera.width, _game_camera.height, 0, 0, 0)
@@ -118,12 +118,12 @@ class Between is Level {
             var percent = 1 - ((_time_limit - _time) / Constants.FADE_TIME)
             _music.update(false, (1 - percent) * Save.volume, (1 - percent) * Save.volume)
             var x_pos = exp(1 - percent, (_game_camera.width), (_game_camera.width / 2) - (Assets.tex_ascending.width / 2))
-            Renderer.draw_texture(Assets.tex_ascending, x_pos, (_game_camera.height / 2) - (Assets.tex_ascending.height / 2))
+            Renderer.draw_texture(Save.oops_all_wizards ? Assets.tex_oopsallwizards : Assets.tex_ascending, x_pos, (_game_camera.height / 2) - (Assets.tex_ascending.height / 2))
 
             Renderer.colour_mod = [0, 0, 0, percent]
             Renderer.draw_rectangle(0, 0, _game_camera.width, _game_camera.height, 0, 0, 0)
         } else {
-            Renderer.draw_texture(Assets.tex_ascending, (_game_camera.width / 2) - (Assets.tex_ascending.width / 2), (_game_camera.height / 2) - (Assets.tex_ascending.height / 2))
+            Renderer.draw_texture(Save.oops_all_wizards ? Assets.tex_oopsallwizards : Assets.tex_ascending, (_game_camera.width / 2) - (Assets.tex_ascending.width / 2), (_game_camera.height / 2) - (Assets.tex_ascending.height / 2))
         }
         Renderer.colour_mod = [1, 1, 1, 1]
         

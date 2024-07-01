@@ -99,13 +99,26 @@ class Player is Character {
     in_dash { _dash_duration > 0 }
 
     die() {
-        super.die()
-        _level.stop_music()
-        Audio.play(Assets.aud_death, false, Save.volume, Save.volume)
-        if (Save.check_highscore()) {
-            _highscore = true
+        if (extra_lives <= 0) {
+            Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
+            super.die()
+            _level.stop_music()
+            Audio.play(Assets.aud_death, false, Save.volume, Save.volume)
+            if (Save.check_highscore()) {
+                _highscore = true
+            }
+            Save.save()
+        } else {
+            extra_lives = extra_lives - 1
+            Save.items.remove_item(Items.PIZZA_INDEX)
+            make_invincible(Constants.ENEMY_HIT_IFRAMES)
+            sprite_effect = Assets.spr_guardbreak.copy()
+            sprite_effect.frame = 0
+            var f = Fiber.new {
+                sprite_effect = null
+            }
+            set_alarm((Assets.spr_guardbreak.frame_count - 1) * Assets.spr_guardbreak.delay, f)
         }
-        Save.save()
     }
 
     on_hit(level, attack) {
@@ -117,7 +130,6 @@ class Player is Character {
             var f = Fiber.new { |passed|
                 if (!passed) {
                     die()
-                    Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
                 } else {
                     Save.total_parries = Save.total_parries + 1
                     make_invincible(Constants.PLAYER_PARRY_IFRAMES)
@@ -144,7 +156,6 @@ class Player is Character {
         } else {
             die()
             Audio.play(Assets.aud_failedskillcheck, false, Save.volume, Save.volume)
-            Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
         }
     }
 
@@ -314,6 +325,12 @@ class Player is Character {
         melee_attack_texture = Assets.tex_attack
         _level = level
         _check = 0
+        
+        var count = Save.items[Items.PIZZA_INDEX]
+        while (count > 0) {
+            count = count - 1
+            extra_lives = extra_lives + 1
+        }
     }
 
     death_camera(level) {
@@ -361,6 +378,10 @@ class Player is Character {
                 var speed = Constants.PLAYER_SPEED + (Save.items[Items.BOOTS_INDEX] * Constants.ITEM_BOOTS_SPEED)
                 velocity_x = Controls.movement_x * speed
                 velocity_y = Controls.movement_y * speed
+                if (velocity_x != 0 && velocity_y != 0) {
+                    velocity_x = velocity_x * (((2).sqrt) / 2)
+                    velocity_y = velocity_y * (((2).sqrt) / 2)
+                }
                 if (_in_parry) {
                     velocity_x = velocity_x * Constants.PLAYER_PARRY_MOVEMENT_MODIFIER
                     velocity_y = velocity_y * Constants.PLAYER_PARRY_MOVEMENT_MODIFIER
@@ -435,6 +456,7 @@ class Player is Character {
             if (_dash_available && _dash_duration <= 0 && !is_attacking && !_in_parry && Controls.confirm && Save.items.has_item(Items.DASH_INDEX)) {
                 _dash_duration = Constants.ITEM_DASH_DURATION
                 _dash_available = false
+                sprite_effect = Assets.spr_sheild
                 make_invincible_no_flicker(Constants.ITEM_DASH_DURATION)
                 var f = Fiber.new {
                     _dash_available = true
@@ -444,9 +466,12 @@ class Player is Character {
                 _dash_alarm = set_alarm(Constants.PLAYER_PARRY_COOLDOWN * item_multiplier, f)
                 Audio.play(Assets.aud_playerdash, false, Save.volume, Save.volume)
             } else {
-                _dash_duration = _dash_duration - Engine.delta
+                var delta = Engine.delta
+                if (_dash_duration - delta <= 0 && _dash_duration > 0) {
+                    sprite_effect = null
+                }
+                _dash_duration = _dash_duration - delta
             }
-            sprite_effect = in_dash ? Assets.spr_sheild : null
 
             // Leave level icon
             if (Save.stage < 6 && Math.point_distance(x, y, level.end_x, level.end_y) < 30) {
@@ -479,7 +504,8 @@ class Player is Character {
         }
         if (!is_dead) {
             // Focus on player
-            var zoom_level = level.in_skill_check || level.in_chest ? 2 : (_in_parry ? 1.2 : 1)
+            var default_zoom = Constants.ITEM_GLASS_ZOOM_FACTOR.pow(Save.items[Items.GLASS_INDEX])
+            var zoom_level = level.in_skill_check || level.in_chest ? 2 : (_in_parry ? 1.2 : default_zoom)
             level.set_focal_point(x, y, zoom_level)
         }
     }

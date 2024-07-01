@@ -22,7 +22,11 @@ class Chest is Entity {
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
-        _item = level.rng.int(Items.ITEM_COUNT)
+        _item = level.rng.sample([1, 2, 3, 5])
+        if (level.rng.float() < Constants.RARE_ITEM_CHANCE) {
+            _item = level.rng.sample([0, 4])
+        }
+        
         _create_timer = 1
     }
     
@@ -41,6 +45,9 @@ class Chest is Entity {
             _chest_open = true
             _open_this_frame = true
             level.chest_open(_item_movement + _item_oscillate + _chest_open_delay)
+            if (_item == Items.PIZZA_INDEX) {
+                level.player.extra_lives = level.player.extra_lives + 1
+            }
             Audio.play(Assets.aud_chestopen, false, Save.volume, Save.volume)
         }
     }

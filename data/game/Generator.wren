@@ -263,7 +263,7 @@ class Generator {
                 [BlueSlime],
                 [BlueSlime, BlueSlime, BlueSlime, Ranger, Ranger],
                 [Ranger, Ranger, Ranger, Fighter, Fighter, BlueSlime],
-                [Fighter, Fighter, Wizard, Wizard, Ranger],
+                [Fighter, Fighter, Wizard, Wizard, Ranger, Rogue],
                 [Fighter, Fighter, Rogue, Rogue, Wizard, Wizard, Hunter],
                 [Hunter, Rogue, Fighter, Wizard]
             ]
@@ -437,7 +437,7 @@ class Generator {
         char.give_key()
 
         // Give chests
-        var chests = rng.int(Constants.LEVEL_RANDOM_CHEST_MIN, Constants.LEVEL_RANDOM_CHEST_MAX + 1)
+        var chests = rng.int(Constants.LEVEL_RANDOM_CHEST_MIN[Save.stage], Constants.LEVEL_RANDOM_CHEST_MAX[Save.stage] + 1)
         while (chests > 0) {
             char = rng.sample(characters)
             characters.remove(char)
