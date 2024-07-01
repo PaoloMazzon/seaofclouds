@@ -1,4 +1,4 @@
-import "Menu" for Menu
+import "StartCutscene" for StartCutscene
 import "Save" for Save
 
 Save.load()
@@ -19,4 +19,4 @@ Engine.delta_max = 1/30
 
 var minimum_load_time = 0
 var window_icon = "icon.png"
-var start_level = Menu.new()
+var start_level = StartCutscene.new()

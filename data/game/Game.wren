@@ -417,7 +417,9 @@ class Game is Level {
         if (Save.stage <= 3) {
             for (i in 1..(Constants.CLOUD_COUNT / 2)) {
                 _clouds_background.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
-                _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+                if (Save.stage <= 2) {
+                    _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height))
+                }
             }
         }
 
@@ -515,20 +517,21 @@ class Game is Level {
         Renderer.colour_mod = Constants.SKY_COLOUR
         Renderer.clear()
         Renderer.colour_mod = [1, 1, 1, 1]
-        for (cloud in _clouds_background) {
-            cloud.draw(is_paused)
-        }
 
         // Background
         Renderer.lock_cameras(_parallax_camera)
         if (_current_stage <= 3) {
-            var bg = _current_stage == 1 ? Assets.tex_background : Assets.tex_backgroundfar
+            var bg = _current_stage == 1 ? Assets.tex_background : (_current_stage == 2 ? Assets.tex_backgroundfar : Assets.tex_backgroundfarther)
             draw_tiling_background(bg, 0.95)
         } else {
             draw_tiling_background(Assets.tex_backgroundspace, 0.98)
             draw_tiling_background(Assets.tex_backgroundstars, 0.95)
             draw_tiling_background(Assets.tex_backgroundstars2, 0.925)
             Renderer.draw_texture(Assets.tex_planet, (_parallax_camera.x * 0.9), (_parallax_camera.y * 0.9) + (_parallax_camera.height - Assets.tex_planet.height))
+        }
+
+        for (cloud in _clouds_background) {
+            cloud.draw(is_paused)
         }
 
         // Draw tileset

@@ -56,6 +56,7 @@ class Menu is Level {
         CameraManager.setup()
         Renderer.colour_mod = [1, 1, 1, 1]
         Renderer.hide_cursor = true
+        _time = 0
         _ui_scale = _ui_scale
         _background_camera = CameraManager.menu_background_camera
         _ui_camera = CameraManager.menu_camera
@@ -134,8 +135,8 @@ class Menu is Level {
         var cy = 0
         var cwidth = 0
         var cheight = 0
-        cx = Engine.time * 2
-        cy = Engine.time
+        cx = _time * 2
+        cy = _time * 1
         cwidth = _ui_camera.width
         cheight = _ui_camera.height
 
@@ -443,6 +444,7 @@ class Menu is Level {
             _background_camera.h_on_screen = Renderer.window_height
             reset_clouds()
         }
+        _time = _time + Engine.delta
     }
 
     destroy() {

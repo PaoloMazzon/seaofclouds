@@ -7,6 +7,7 @@ class CameraManagerImpl {
         if (_has_setup) {
             return
         }
+        _has_setup = true
 
         _ui_camera = Camera.new()
         _game_camera = Camera.new()

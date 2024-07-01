@@ -78,7 +78,12 @@ class Between is Level {
         // Draw background
         Renderer.lock_cameras(_game_camera)
         if (Save.stage <= 3) {
-            var bg = Save.stage == 1 ? Assets.tex_background : Assets.tex_backgroundfar
+            var bg = Assets.tex_background
+            if (Save.stage == 2) {
+                bg = Assets.tex_backgroundfar
+            } else if (Save.stage == 3) {
+                bg = Assets.tex_backgroundfarther
+            }
             Tileset.draw_tiling_background(bg, 0.95, _game_camera)
         } else {
             Tileset.draw_tiling_background(Assets.tex_backgroundspace, 0.98, _game_camera)
