@@ -12,6 +12,7 @@ class Between is Level {
         _time = 0
         _time_limit = 8
         _rng = Random.new()
+        _upside_down = _rng.int(50) == 5
 
         // 2d camera
         _game_camera = CameraManager.transistion_camera
@@ -101,7 +102,7 @@ class Between is Level {
 
         // Draw player model
         Renderer.lock_cameras(_3d_camera)
-        Renderer.draw_model(_model, 0, Math.serp(_time / _time_limit, -10, 10), 0, 1, 1, 1, _time * 5, [0, 1, 0], 0, 0, 0)
+        Renderer.draw_model(_model, 0, Math.serp(_time / _time_limit, -10, 10), 0, 1, _upside_down ? -1 : 1, 1, _time * 5, [0, 1, 0], 0, 0, 0)
 
         // Draw fade in/out
         Renderer.lock_cameras(_game_camera)

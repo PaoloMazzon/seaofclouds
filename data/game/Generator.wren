@@ -433,7 +433,17 @@ class Generator {
         while (char is NPC) {
             char = rng.sample(characters)
         }
+        characters.remove(char)
         char.give_key()
+
+        // Give chests
+        var chests = rng.int(Constants.LEVEL_RANDOM_CHEST_MIN, Constants.LEVEL_RANDOM_CHEST_MAX + 1)
+        while (chests > 0) {
+            char = rng.sample(characters)
+            characters.remove(char)
+            char.give_chest()
+            chests = chests - 1
+        }
     }
 
     place_npcs(level, locations, rng) {

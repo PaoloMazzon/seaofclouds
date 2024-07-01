@@ -3,6 +3,7 @@ import "Save" for Save
 import "Attack" for Attack
 import "Knickknack" for Knickknack
 import "Key" for Key
+import "Chest" for Chest
 
 class Alarm {
     construct new(time, fiber) {
@@ -190,6 +191,7 @@ class Character is Entity {
         _score_value = 0
         _extra_lives = 0
         _hidden = false
+        _has_chest = false
     }
 
     hidden=(s) { _hidden = s }
@@ -219,6 +221,11 @@ class Character is Entity {
     melee_attack_texture=(s) { _melee_attack_texture = s }
     extra_lives { _extra_lives }
     extra_lives=(s) { _extra_lives = s }
+
+    // Gives this character a chest upon death
+    give_chest() {
+        _has_chest = true
+    }
 
     // Sets a sprite to be used instead of anything else, setting this to null will go back to normal
     sprite_override=(sprite) { _sprite_override = sprite }
@@ -365,6 +372,12 @@ class Character is Entity {
                 var key = level.add_entity(Key)
                 key.x = x
                 key.y = y
+            }
+            if (_has_chest) {
+                Audio.play(Assets.aud_chest, false, Save.volume, Save.volume)
+                var e = level.add_entity(Chest)
+                e.x = x
+                e.y = y
             }
             return true
         } else {

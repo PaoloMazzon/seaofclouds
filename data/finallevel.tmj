@@ -225,7 +225,7 @@
                  "name":"boss",
                  "point":true,
                  "rotation":0,
-                 "type":"Boss::Boss",
+                 "class":"Boss::Boss",
                  "visible":true,
                  "width":0,
                  "x":240,

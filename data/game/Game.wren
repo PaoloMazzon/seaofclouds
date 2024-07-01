@@ -6,6 +6,7 @@ import "Generator" for Generator
 import "Save" for Save
 import "Controls" for Controls
 import "Attack" for Attack
+import "Boss" for Boss
 import "Between" for Between
 
 class Cloud {

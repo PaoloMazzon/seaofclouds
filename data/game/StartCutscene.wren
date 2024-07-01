@@ -53,12 +53,29 @@ class StartCutscene is Level {
     create() {
         CameraManager.setup()
         _time = 0
-        _animation_time = 25
         _ui_camera = CameraManager.menu_camera
         _draw_surf = Surface.new(300, 200)
-        Audio.play(Assets.aud_intro, false, Save.volume, Save.volume)
+        _music = null
+        var gamepad_time = 5
+        _animation_time = 30
+        _gamepad_time = gamepad_time
 
         _tweens = []
+
+        // Gamepad recommendation
+        _tweens.add(AnimationTween.new(
+            150,
+            100,
+            150,
+            100,
+            1,
+            1,
+            0,
+            gamepad_time,
+            1,
+            1,
+            Assets.tex_gamepad
+        ))
 
         // First part
         _tweens.add(AnimationTween.new(
@@ -68,8 +85,8 @@ class StartCutscene is Level {
             100,
             1,
             1,
-            0,
-            8,
+            0 + gamepad_time,
+            8 + gamepad_time,
             1,
             1,
             Assets.tex_animationslide1
@@ -81,8 +98,8 @@ class StartCutscene is Level {
             121,
             2,
             3,
-            0,
-            8,
+            0 + gamepad_time,
+            8 + gamepad_time,
             1,
             1,
             Assets.tex_blacksmith
@@ -96,8 +113,8 @@ class StartCutscene is Level {
             100,
             0.8,
             1,
-            8,
-            16,
+            8 + gamepad_time,
+            16 + gamepad_time,
             1,
             1,
             Assets.tex_animationslide2
@@ -109,8 +126,8 @@ class StartCutscene is Level {
             40,
             1,
             1,
-            8,
-            16,
+            8 + gamepad_time,
+            16 + gamepad_time,
             1,
             1,
             Assets.tex_animationslide2text
@@ -122,8 +139,8 @@ class StartCutscene is Level {
             123,
             2,
             3,
-            8,
-            16,
+            8 + gamepad_time,
+            16 + gamepad_time,
             1,
             1,
             Assets.tex_blacksmithback
@@ -137,8 +154,8 @@ class StartCutscene is Level {
             100,
             1,
             4,
-            16,
-            20,
+            16 + gamepad_time,
+            20 + gamepad_time,
             1,
             1,
             Assets.tex_garth
@@ -150,8 +167,8 @@ class StartCutscene is Level {
             100,
             1,
             1,
-            16,
-            20,
+            16 + gamepad_time,
+            20 + gamepad_time,
             1.5,
             1.5,
             Assets.tex_suitedup
@@ -165,8 +182,8 @@ class StartCutscene is Level {
             100,
             1,
             1,
-            20,
-            25,
+            20 + gamepad_time,
+            25 + gamepad_time,
             0.5,
             1.5,
             Assets.tex_background
@@ -178,8 +195,8 @@ class StartCutscene is Level {
             100,
             1,
             1,
-            20,
-            22,
+            20 + gamepad_time,
+            22 + gamepad_time,
             0.5,
             0,
             Assets.tex_titlecard
@@ -191,8 +208,8 @@ class StartCutscene is Level {
             100,
             1,
             1,
-            22,
-            25,
+            22 + gamepad_time,
+            25 + gamepad_time,
             0,
             1.5,
             Assets.tex_titlecard
@@ -255,8 +272,11 @@ class StartCutscene is Level {
             0
         )
 
-        if (_sword_sound == null && _time > 21.8) {
+        if (_sword_sound == null && _time > 21.8 + _gamepad_time) {
             _sword_sound = Audio.play(Assets.aud_sword, false, Save.volume, Save.volume)
+        }
+        if (_music == null && _time > _gamepad_time) {
+            _music = Audio.play(Assets.aud_intro, false, Save.volume, Save.volume)
         }
     }
 
