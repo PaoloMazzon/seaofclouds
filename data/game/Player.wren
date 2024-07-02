@@ -6,6 +6,7 @@ import "Attack" for Attack
 import "Save" for Save, Items
 import "Chest" for Chest
 import "FloatingText" for FloatingText
+import "Boss" for Boss
 
 class ThrowingAxe is Entity {
     construct new() {
@@ -288,6 +289,28 @@ class Player is Character {
             }
         }
         Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)
+
+        // Boss health
+        if (Save.stage == 6) {
+            var boss = level.get_entity(Boss)
+            if (boss != null) {
+                // Boss health bar
+                var boss_start_x = (Renderer.window_width / 2) - (Assets.tex_commanderhealth.width * Save.ui_scale * 0.5)
+                var boss_start_y = (Renderer.window_height) - (Assets.tex_commanderhealth.height * Save.ui_scale) - (Renderer.window_height * 0.05)
+                var health_start_x = boss_start_x + (Save.ui_scale * 6 * 3)
+                var health_start_y = boss_start_y + (Save.ui_scale * 16 * 3)
+                var health_move_x = 12 * Save.ui_scale * 3
+                Renderer.draw_texture(Assets.tex_commanderhealth, boss_start_x, boss_start_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+                var hp = 1 + boss.extra_lives
+                while (hp > 0) {
+                    hp = hp - 1
+                    Renderer.draw_texture(Assets.tex_bosshp, health_start_x, health_start_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+                    health_start_x = health_start_x + health_move_x
+                }
+            } else {
+                // Victory screen
+            }
+        }
 
         // Pause
         if (level.hard_paused) {

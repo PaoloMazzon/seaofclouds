@@ -64,6 +64,7 @@ class Hunter is Character {
         melee_attack_texture = Assets.tex_fighterattack
         _idle_spr = sprite_set.idle
         _player_dead_timer = 0
+        hard_melee()
     }
 
     enter_circling(level) {

@@ -211,9 +211,13 @@ class Character is Entity {
         _score_value = 0
         _extra_lives = 0
         _hidden = false
+        _hard_melee_attack = false
         _has_chest = false
+        _iframes = Constants.ENEMY_HIT_IFRAMES
     }
 
+    iframes { _iframes }
+    iframes=(s) { _iframes = s }
     hidden=(s) { _hidden = s }
     hidden { _hidden }
     score_value { _score_value }
@@ -335,7 +339,7 @@ class Character is Entity {
             var f = Fiber.new {
                 if (!is_dead) {
                     _ranged_attack = false
-                    _melee_attack = Attack.create_attack(level, x, y, this, 0, 0, 0, _melee_attack_texture, (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay, _team)
+                    _melee_attack = Attack.create_attack(level, x, y, this, 0, 0, 0, _melee_attack_texture, (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay, _team, _hard_melee_attack ? Constants.SKILL_CHECK_HARD : Constants.SKILL_CHECK_EASY)
                     _attack_timer = (sprite_set.attack.frame_count - delay_frames) * sprite_set.attack.delay
                 }
             }
@@ -353,6 +357,10 @@ class Character is Entity {
 
     melee_attack(level) {
         return melee_attack(level, 0)
+    }
+
+    hard_melee() {
+        _hard_melee_attack = true
     }
 
     // Meant to be overridden, returns true if successful attack so user can spawn attack entity
@@ -402,7 +410,7 @@ class Character is Entity {
             return true
         } else {
             extra_lives = extra_lives - 1
-            make_invincible(Constants.ENEMY_HIT_IFRAMES)
+            make_invincible(_iframes)
             sprite_effect = Assets.spr_guardbreak.copy()
             sprite_effect.frame = 0
             var f = Fiber.new {

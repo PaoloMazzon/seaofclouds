@@ -96,16 +96,15 @@ class Alien is Character {
                 if (!level.player.is_dead) {
                     ranged_attack(level)
                     var f = Fiber.new {
-                        _state = Alien.STATE_CHASE
+                        enter_circling(level)
                     }
                     sprite_set.idle = sprite_set.walk
                     set_alarm(sprite_set.ranged_attack.delay * sprite_set.ranged_attack.frame_count, f)
                 }
             } else if (_state == Alien.STATE_CIRCLE_PLAYER || _state == Alien.STATE_CHARGE) {
                 // If they go out of range switch to chase
-                if (dist >= Constants.ALIEN_AGGRO_RANGE_IN_FIGHT) {
-                    _state = Alien.STATE_CHASE
-                    _time = _rng.float(Constants.ALIEN_SEARCH_TIME_MIN, Constants.ALIEN_SEARCH_TIME_MAX)
+                if (dist >= Constants.ALIEN_ENTER_CIRCLING) {
+                    //_state = Alien.STATE_CHASE
                 }
 
                 // Record last known position
@@ -125,7 +124,7 @@ class Alien is Character {
                         velocity_y = Constants.ALIEN_CHARGE_SPEED * angle.sin
                     }
                 } else {
-                    if (Math.point_distance(level.player.x, level.player.y, x, y) > Constants.ALIEN_ENTER_CIRCLING) {
+                    if (Math.point_distance(level.player.x, level.player.y, x, y) > Constants.ALIEN_ENTER_CIRCLING * 1.1) {
                         _state = Alien.STATE_CHASE
                     }
 
@@ -140,7 +139,7 @@ class Alien is Character {
                     }
 
                     // Attack
-                    if (_circle_time <= 0 && !is_dead) {
+                    if (!is_attacking && _circle_time <= 0 && !is_dead) {
                         _state = Alien.STATE_CHARGE
                         _alien_charge_timer = Constants.ALIEN_CHARGE_TIME
                         melee_attack(level, 6)
@@ -154,7 +153,7 @@ class Alien is Character {
                     velocity_x = Constants.ALIEN_RUN_SPEED * angle.cos
                     velocity_y = Constants.ALIEN_RUN_SPEED * angle.sin
                 } else {
-                    _state = Alien.STATE_CIRCLE_PLAYER
+                    enter_circling(level)
                 }
             }
             process_physics(level)
