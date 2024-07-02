@@ -91,6 +91,8 @@ class Player is Character {
         _level_title_fade = 0
         _highscore_timer = 0
         _highscore = false
+        _boss_timer = 0
+        _boss_is_dead = false
     }
 
     return_axe() {
@@ -100,7 +102,7 @@ class Player is Character {
     in_dash { _dash_duration > 0 }
 
     die() {
-        if (extra_lives <= 0) {
+        if (false && extra_lives <= 0 && !boss_is_dead) {
             Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
             super.die()
             _level.stop_music()
@@ -110,7 +112,7 @@ class Player is Character {
             }
             Save.save()
         } else {
-            level.pause(Constants.HIT_PAUSE)
+            _level.pause(Constants.HIT_PAUSE)
             extra_lives = extra_lives - 1
             Save.items.remove_item(Items.PIZZA_INDEX)
             make_invincible(Constants.ENEMY_HIT_IFRAMES)
@@ -165,6 +167,8 @@ class Player is Character {
     death_wave(time) {
         return time > 25 ? 0 : (2.7182818).pow(-0.2 * (time - 3.7202)) * (3 * (time - 3.7202)).sin
     }
+
+    boss_is_dead { _boss_is_dead }
 
     // Draws numbers using the digits sprite
     draw_digits(num, x, y) {
@@ -293,7 +297,7 @@ class Player is Character {
         // Boss health
         if (Save.stage == 6) {
             var boss = level.get_entity(Boss)
-            if (boss != null) {
+            if (boss != null && !is_dead && !boss.is_dead) {
                 // Boss health bar
                 var boss_start_x = (Renderer.window_width / 2) - (Assets.tex_commanderhealth.width * Save.ui_scale * 0.5)
                 var boss_start_y = (Renderer.window_height) - (Assets.tex_commanderhealth.height * Save.ui_scale) - (Renderer.window_height * 0.05)
@@ -303,12 +307,31 @@ class Player is Character {
                 Renderer.draw_texture(Assets.tex_commanderhealth, boss_start_x, boss_start_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
                 var hp = 1 + boss.extra_lives
                 while (hp > 0) {
+                    Renderer.draw_texture(Assets.tex_bosshphalf, health_start_x, health_start_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
                     hp = hp - 1
-                    Renderer.draw_texture(Assets.tex_bosshp, health_start_x, health_start_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+                    if (hp > 0) {
+                        hp = hp - 1
+                        Renderer.draw_texture(Assets.tex_bosshp, health_start_x, health_start_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+                    }
                     health_start_x = health_start_x + health_move_x
                 }
-            } else {
+            } else if (!is_dead) {
                 // Victory screen
+                if (!_boss_is_dead) {
+                    _boss_is_dead = true
+                    if (Save.check_highscore()) {
+                        _highscore = true
+                    }
+                    Save.save()
+                }
+                _boss_timer = _boss_timer + Engine.delta
+
+                var draw_x = (Renderer.window_width / 2) - (Assets.tex_youdied.width * Save.ui_scale * 0.5)
+                var draw_y = (Renderer.window_height * 0.2) - (Assets.tex_youdied.height * Save.ui_scale * 0.5) + (death_wave(10 * (_boss_timer - 1.5)) * Assets.tex_youdied.height * Save.ui_scale)
+                var c_x = draw_x + (165 * Save.ui_scale)
+                var c_y = draw_y + (100 * Save.ui_scale)
+                Renderer.draw_texture(Assets.tex_bossdead, draw_x, draw_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+                Renderer.draw_sprite(spr_controls, Constants.CONTROL_RESTART, c_x, c_y)
             }
         }
 
@@ -529,8 +552,10 @@ class Player is Character {
         if (!is_dead) {
             // Focus on player
             var default_zoom = Constants.ITEM_GLASS_ZOOM_FACTOR.pow(Save.items[Items.GLASS_INDEX])
-            var zoom_level = level.in_skill_check || level.in_chest ? 2 : (_in_parry ? 1.2 : default_zoom)
-            level.set_focal_point(x, y, zoom_level)
+            var zoom_level = level.in_skill_check || level.in_chest || boss_is_dead ? 2 : (_in_parry ? 1.2 : default_zoom)
+            if (!level.boss_cutscene) {
+                level.set_focal_point(x, y, zoom_level)
+            }
         }
     }
 }

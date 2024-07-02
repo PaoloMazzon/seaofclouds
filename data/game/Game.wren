@@ -220,6 +220,7 @@ class Game is Level {
         _next_level = false
         _has_key = false
         _music = null
+        _in_boss_cutscene = false
     }
     rng { _rng }
     player { _player }
@@ -307,6 +308,7 @@ class Game is Level {
         _stop_time = _stop_time - Engine.delta
         if (_stop_time <= 0) {
             _in_chest = false
+            _in_boss_cutscene = false
         }
 
         // Find a new focal point if the player is dead
@@ -325,6 +327,13 @@ class Game is Level {
         _stop_time = time
         _in_chest = true
     }
+
+    start_boss_cutscene(time) {
+        _stop_time = time
+        _in_boss_cutscene = true
+    }
+
+    boss_cutscene { _in_boss_cutscene }
 
     in_chest { _in_chest }
 
@@ -474,7 +483,7 @@ class Game is Level {
     pre_frame() {
         super.pre_frame()
 
-        if (!is_paused || (is_paused && in_skill_check) || (is_paused && in_chest)) {
+        if (!is_paused || (is_paused && in_skill_check) || (is_paused && in_chest) || (is_paused && boss_cutscene)) {
             // Calculate camera's width and height
             var aspectRatio = Renderer.window_width / Renderer.window_height
             var desired_width = (Constants.GAME_HEIGHT * aspectRatio) / _focal_zoom
@@ -598,7 +607,7 @@ class Game is Level {
         }
 
         // Restart
-        if (((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) || (hard_paused && Controls.restart)) {
+        if (((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) || (hard_paused && Controls.restart) || (_player.boss_is_dead && Controls.restart)) {
             _fade_out = Constants.FADE_TIME
             Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
         }

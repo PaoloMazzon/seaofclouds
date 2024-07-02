@@ -41,7 +41,8 @@ class Boss is Character {
                     Attack.create_attack(level, s_x, s_y, null, angle, Constants.BOSS_BULLET_SPEED * angle.cos, Constants.BOSS_BULLET_SPEED * angle.sin, Assets.tex_bullet, Constants.BOSS_BULLET_LIFETIME, Constants.TEAM_ENEMIES, Constants.SKILL_CHECK_HARD)
                     Attack.create_attack(level, s_x, s_y, null, angle, Constants.BOSS_BULLET_SPEED * angle.cos + 0.4, Constants.BOSS_BULLET_SPEED * angle.sin + 0.4, Assets.tex_bullet, Constants.BOSS_BULLET_LIFETIME, Constants.TEAM_ENEMIES, Constants.SKILL_CHECK_HARD)
                     Attack.create_attack(level, s_x, s_y, null, angle, Constants.BOSS_BULLET_SPEED * angle.cos - 0.4, Constants.BOSS_BULLET_SPEED * angle.sin - 0.4, Assets.tex_bullet, Constants.BOSS_BULLET_LIFETIME, Constants.TEAM_ENEMIES, Constants.SKILL_CHECK_HARD)
-                    // TODO: Gunshot sound
+                    level.shake_screen(Constants.WEAPON_HIT_SHAKE)
+                    Audio.play(Assets.aud_gunshot, false, Save.volume, Save.volume)
                 }
             }
             set_alarm(sprite_set.ranged_attack.delay * 7, f)
@@ -53,6 +54,8 @@ class Boss is Character {
     die() {
         super.die()
         Save.beaten_game = true
+        _level.stop_music()
+        Audio.play(Assets.aud_title, false, Save.volume, Save.volume)
         // _bowshot_sound.stop() - might cause crashes not sure
     }
 
@@ -80,12 +83,20 @@ class Boss is Character {
         _shot = false
         idle()
         _attack_timer = 0
+        _level = level
         melee_attack_texture = Assets.tex_fighterattack
         hard_melee()
+        level.start_boss_cutscene(3)
+        FloatingText.create_floating_text(level, x, y, "\"Your journey ends here.\"")
     }
 
     update(level) {
         super.update(level)
+
+        if (level.boss_cutscene) {
+            level.set_focal_point(x, y, 1.3)
+        }
+
         if (!level.is_paused && !level.player.is_dead) {
             if (_state == Boss.STATE_WAIT) {
                 _cooldown_time = _cooldown_time - Engine.delta
@@ -119,6 +130,7 @@ class Boss is Character {
                     count = count - 1
                     spawn_alien(level)
                 }
+                Audio.play(Assets.aud_summonaliens, false, Save.volume, Save.volume)
                 idle()
             } else if (_state == Boss.STATE_MELEE) {
                 // Charge at the player for a set amount of time and melee when close enough
@@ -132,8 +144,10 @@ class Boss is Character {
                     velocity_x = angle.cos * Constants.BOSS_CHARGE_SPEED
                     velocity_y = angle.sin * Constants.BOSS_CHARGE_SPEED
                 } 
-                if (!is_attacking && Math.point_distance(level.player.x, level.player.y, x, y) < 10) {
+                if (!_shot && !is_attacking && Math.point_distance(level.player.x, level.player.y, x, y) < 10) {
                     melee_attack(level, 4)
+                    _shot = true
+                    Audio.play(Assets.aud_fighterattack, false, Save.volume, Save.volume)
                     var f = Fiber.new {
                         idle(Constants.BOSS_PHASE_MELEE_MODIFIER)
                     }

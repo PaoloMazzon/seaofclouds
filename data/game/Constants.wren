@@ -201,9 +201,9 @@ class Constants {
     static BOSS_PHASE_COOLDOWN_TIME_MAX { 5 }
     static BOSS_PHASE_MELEE_MODIFIER { 0.6 } // Percent of the actual cooldown to wait after a melee since theyre easier
     static BOSS_MIN_SHOOT_DISTANCE { 40 } // How close to run to the player while shooting
-    static BOSS_EXTRA_LIVES { 5 }
+    static BOSS_EXTRA_LIVES { 11 }
     static BOSS_SCORE_VALUE { 250 }
     static BOSS_ALIEN_SPAWN_COUNT { [1, 2, 2, 2, 3] } // one of these values will be chosen randomly
     static BOSS_ALIEN_SPAWN_RADIUS { 40 }
-    static BOSS_IFRAMES { 3 }
+    static BOSS_IFRAMES { 2 }
 }

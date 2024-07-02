@@ -5,8 +5,8 @@ Save.load()
 
 var renderer_config = {
 	"window_title": "Game",
-	"window_width": 1280,
-	"window_height": 720,
+	"window_width": 1600,
+	"window_height": 900,
 	"fullscreen": Save.fullscreen,
 	"msaa": Renderer.MSAA_32X,
 	"screen_mode": Renderer.SCREEN_MODE_TRIPLE_BUFFER,

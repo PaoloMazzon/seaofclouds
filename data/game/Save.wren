@@ -103,7 +103,7 @@ class SaveImpl {
         _volume = 1
         _ui_scale = 2
         _items = Items.new()
-        _stage = 6
+        _stage = 1
         _score = 0
         _highscore = 0
         _beaten_game = false

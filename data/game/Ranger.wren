@@ -42,7 +42,7 @@ class Ranger is Character {
 
     die() {
         super.die()
-        // _bowshot_sound.stop() - might cause crashes not sure
+        _bowshot_sound.stop() // might cause crashes not sure
     }
 
     on_hit(level, attack) {
