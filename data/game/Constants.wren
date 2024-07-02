@@ -177,4 +177,29 @@ class Constants {
     static HUNTER_EXTRA_LIVES { 2 }
     static HUNTER_ENTER_CIRCLING { 80 } // how far from the player the hunter has to be to be in the cirlcing state
     static HUNTER_SCORE_VALUE { 50 }
+
+    //////////////////////////// Alien balance ////////////////////////////
+    static ALIEN_WALK_SPEED { 50 }
+    static ALIEN_RUN_SPEED { 80 }
+    static ALIEN_CHARGE_SPEED { 105 }
+    static ALIEN_CHARGE_TIME { 1 }
+    static ALIEN_MIN_CIRCLE_TIME { 1 } // time spent circling around the player
+    static ALIEN_MAX_CIRCLE_TIME { 2 }
+    static ALIEN_AGGRO_RANGE_IN_FIGHT { 140 } // how far their aggro range is while engaged with the player
+    static ALIEN_SEARCH_TIME_MIN { 3 }
+    static ALIEN_SEARCH_TIME_MAX { 5 }
+    static ALIEN_CIRCLE_DISTANCE { 50 } // distance from the player while circling
+    static ALIEN_EXTRA_LIVES { 0 }
+    static ALIEN_ENTER_CIRCLING { 80 } // how far from the player the hunter has to be to be in the cirlcing state
+    static ALIEN_SCORE_VALUE { 20 }
+
+    //////////////////////////// Boss balance ////////////////////////////
+    static BOSS_RUN_SPEED { 50 }
+    static BOSS_BULLET_LIFETIME { 3 }
+    static BOSS_PHASE_COOLDOWN_TIME_MIN { 3 }
+    static BOSS_PHASE_COOLDOWN_TIME_MAX { 5 }
+    static BOSS_EXTRA_LIVES { 8 }
+    static BOSS_SCORE_VALUE { 250 }
+    static BOSS_ALIEN_SPAWN_COUNT { [1, 2, 2, 2, 3] } // one of these values will be chosen randomly
+    static BOSS_ALIEN_SPAWN_RADIUS { 40 }
 }

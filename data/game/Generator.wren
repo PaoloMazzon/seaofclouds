@@ -4,6 +4,7 @@ import "Wizard" for Wizard
 import "Fighter" for Fighter
 import "Rogue" for Rogue
 import "Hunter" for Hunter
+import "Alien" for Alien
 import "Constants" for Constants
 import "random" for Random
 import "NPC" for NPC
@@ -264,12 +265,10 @@ class Generator {
                 [BlueSlime, BlueSlime, BlueSlime, Ranger, Ranger],
                 [Ranger, Ranger, Ranger, Fighter, Fighter, BlueSlime],
                 [Fighter, Fighter, Wizard, Wizard, Ranger, Rogue],
-                [Fighter, Fighter, Rogue, Rogue, Wizard, Wizard, Hunter],
-                [Hunter, Rogue, Fighter, Wizard]
+                [Fighter, Fighter, Rogue, Rogue, Wizard, Wizard, Hunter]
             ]
         } else {
             enemy_list_by_stage = [
-                [Wizard],
                 [Wizard],
                 [Wizard],
                 [Wizard],
@@ -437,7 +436,7 @@ class Generator {
         char.give_key()
 
         // Give chests
-        var chests = rng.int(Constants.LEVEL_RANDOM_CHEST_MIN[Save.stage], Constants.LEVEL_RANDOM_CHEST_MAX[Save.stage] + 1)
+        var chests = rng.int(Constants.LEVEL_RANDOM_CHEST_MIN[Save.stage - 1], Constants.LEVEL_RANDOM_CHEST_MAX[Save.stage - 1] + 1)
         while (chests > 0) {
             char = rng.sample(characters)
             characters.remove(char)

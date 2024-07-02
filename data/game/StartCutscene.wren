@@ -245,7 +245,9 @@ class StartCutscene is Level {
 
     update() {
         _time = _time + Engine.delta
-        if (_time >= _animation_time || Controls.menu_confirm) {
+        if (Controls.menu_confirm && _time < 5) {
+            _time = 5
+        } else if (_time >= _animation_time || Controls.menu_confirm) {
             Engine.switch_level(Menu.new())
         }
 

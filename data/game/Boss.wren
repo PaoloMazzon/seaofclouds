@@ -2,12 +2,14 @@ import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
 import "Attack" for Attack
+import "Alien" for Alien
 import "Save" for Save
 
 class Boss is Character {
-    static STATE_WANDER { 0 }
-    static STATE_SHOOT { 1 }
-    static STATE_CHASE { 2 } // ranger is a state machine
+    static STATE_WAIT { 0 }
+    static STATE_RUN_N_GUN { 1 }
+    static STATE_MELEE { 2 } // boss is a state machine
+    static STATE_SPAWN_ALIEN { 3 }
 
     construct new() { 
         super() 
@@ -23,6 +25,14 @@ class Boss is Character {
         _bowshot_sound = null
         score_value = Constants.RANGER_SCORE_VALUE
         extra_lives = extra_lives + Constants.RANGER_EXTRA_LIVES
+    }
+
+    spawn_alien(level) {
+        var new_x = level.rng.float(x - Constants.BOSS_ALIEN_SPAWN_RADIUS, x + Constants.BOSS_ALIEN_SPAWN_RADIUS)
+        var new_y = level.rng.float(y - Constants.BOSS_ALIEN_SPAWN_RADIUS, y + Constants.BOSS_ALIEN_SPAWN_RADIUS)
+        var e = level.add_entity(Alien)
+        e.x = new_x
+        e.y = new_y
     }
 
     ranged_attack(level) {
@@ -67,7 +77,7 @@ class Boss is Character {
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
-        sprite_set = SpriteSet.RangerSpriteSet
+        sprite_set = SpriteSet.BossSpriteSet
         _rng = level.rng
         start_direction()
     }
@@ -75,15 +85,6 @@ class Boss is Character {
     update(level) {
         super.update(level)
         if (!level.is_paused) {
-            // Always on guard for the player
-            var dist = Math.point_distance(level.player.x, level.player.y, x, y)
-            if (dist < Constants.RANGER_AGGRO_RANGE) {
-                _state = Boss.STATE_SHOOT
-                if (_initial_shot_delay <= 0 && _state != Boss.STATE_SHOOT) {
-                    _initial_shot_delay = Constants.RANGER_INITIAL_SHOT_DELAY
-                }
-            }
-
             if (_state == Boss.STATE_WANDER) {
                 _time = _time - Engine.delta
                 if (_time <= 0) {

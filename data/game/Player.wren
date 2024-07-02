@@ -109,6 +109,7 @@ class Player is Character {
             }
             Save.save()
         } else {
+            level.pause(Constants.HIT_PAUSE)
             extra_lives = extra_lives - 1
             Save.items.remove_item(Items.PIZZA_INDEX)
             make_invincible(Constants.ENEMY_HIT_IFRAMES)

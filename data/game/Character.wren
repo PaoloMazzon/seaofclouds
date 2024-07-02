@@ -157,6 +157,26 @@ class SpriteSet {
             Assets.spr_hunter_die.copy()
         )
     }
+
+    static AlienSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_alien_walk.copy(),
+            Assets.spr_alien_idle.copy(),
+            Assets.spr_alien_attack.copy(),
+            Assets.spr_alien_get_up.copy(),
+            Assets.spr_alien_die.copy()
+        )
+    }
+
+    static BossSpriteSet {
+        return SpriteSet.new(
+            Assets.spr_boss_walk.copy(),
+            Assets.spr_boss_idle.copy(),
+            Assets.spr_boss_attack.copy(),
+            Assets.spr_boss_ranged_attack.copy(),
+            Assets.spr_boss_die.copy()
+        )
+    }
 }
 
 class Character is Entity {
