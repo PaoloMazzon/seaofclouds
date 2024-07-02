@@ -141,10 +141,9 @@ class Fighter is Character {
                     }
 
                     // Attack
-                    if (_circle_time <= 0 && !is_dead) {
+                    if (_circle_time <= 0 && !is_dead && melee_attack(level, 6)) {
                         _state = Fighter.STATE_CHARGE
                         _fighter_charge_timer = Constants.FIGHTER_CHARGE_TIME
-                        melee_attack(level, 6)
                         Audio.play(Assets.aud_fighterattack, false, Save.volume, Save.volume)
                     }
                 }

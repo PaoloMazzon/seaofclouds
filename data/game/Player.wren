@@ -102,7 +102,7 @@ class Player is Character {
     in_dash { _dash_duration > 0 }
 
     die() {
-        if (false && extra_lives <= 0 && !boss_is_dead) {
+        if (extra_lives <= 0 && !boss_is_dead) {
             Audio.play(Assets.aud_playerdie, false, Save.volume, Save.volume)
             super.die()
             _level.stop_music()
@@ -546,7 +546,7 @@ class Player is Character {
 
             // Debug
             if (Keyboard.key_pressed(Keyboard.KEY_0)) {
-                level.next_level()
+                //level.next_level()
             }
         }
         if (!is_dead) {

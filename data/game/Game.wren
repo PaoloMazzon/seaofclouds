@@ -502,7 +502,7 @@ class Game is Level {
         }
 
         // Debug
-        if (Keyboard.key(Keyboard.KEY_P)) {
+        if (false && Keyboard.key(Keyboard.KEY_P)) {
             _game_camera.x = 0
             _game_camera.y = 0
             _game_camera.width = _tileset_surface.width
