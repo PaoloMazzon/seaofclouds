@@ -443,7 +443,7 @@ class Game is Level {
         
         // Clouds
         if (Save.stage <= 3) {
-            for (i in 1..(Constants.CLOUD_COUNT / 2)) {
+            for (i in 1..(Constants.CLOUD_COUNT)) {
                 _clouds_background.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height, true))
                 if (Save.stage <= 2) {
                     _clouds_foreground.add(Cloud.new(_rng, _tileset_surface.width, _tileset_surface.height, false))
@@ -502,7 +502,7 @@ class Game is Level {
         }
 
         // Debug
-        if (false && Keyboard.key(Keyboard.KEY_P)) {
+        if (Keyboard.key(Keyboard.KEY_P)) {
             _game_camera.x = 0
             _game_camera.y = 0
             _game_camera.width = _tileset_surface.width
@@ -551,6 +551,9 @@ class Game is Level {
         if (_current_stage <= 3) {
             var bg = _current_stage == 1 ? Assets.tex_background : (_current_stage == 2 ? Assets.tex_backgroundfar : Assets.tex_backgroundfarther)
             draw_tiling_background(bg, 0.95)
+            Renderer.colour_mod = [1, 1, 1, 0.15]
+            draw_tiling_background(Assets.tex_cloudlayer, 0.90)
+            Renderer.colour_mod = [1, 1, 1, 1]
         } else if (_current_stage != 6) {
             draw_tiling_background(Assets.tex_backgroundspace, 0.98)
             draw_tiling_background(Assets.tex_backgroundstars, 0.95)
@@ -559,9 +562,9 @@ class Game is Level {
         }
 
         Renderer.lock_cameras(_game_camera)
-        for (cloud in _clouds_background) {
-            cloud.draw(is_paused)
-        }
+        //for (cloud in _clouds_background) {
+            //cloud.draw(is_paused)
+        //}
 
         // Draw tileset
         Renderer.lock_cameras(_game_camera)

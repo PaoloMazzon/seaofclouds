@@ -38,6 +38,10 @@ class ThrowingAxe is Entity {
     }
 
     update(level) {
+        if (level.is_paused) {
+            return
+        }
+
         if (_being_thrown) {
             // Decelerate
             _x_speed = _x_speed - (_x_speed.sign * (Constants.THROWING_AXE_DECELERATION * Engine.delta))
@@ -546,7 +550,7 @@ class Player is Character {
 
             // Debug
             if (Keyboard.key_pressed(Keyboard.KEY_0)) {
-                //level.next_level()
+                level.next_level()
             }
         }
         if (!is_dead) {

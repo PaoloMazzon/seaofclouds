@@ -86,6 +86,9 @@ class Between is Level {
                 bg = Assets.tex_backgroundfarther
             }
             Tileset.draw_tiling_background(bg, 0.95, _game_camera)
+            Renderer.colour_mod = [1, 1, 1, 0.15]
+            Tileset.draw_tiling_background(Assets.tex_cloudlayer, 0.90, _game_camera)
+            Renderer.colour_mod = [1, 1, 1, 1]
         } else {
             Tileset.draw_tiling_background(Assets.tex_backgroundspace, 0.98, _game_camera)
             Tileset.draw_tiling_background(Assets.tex_backgroundstars, 0.95, _game_camera)

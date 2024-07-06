@@ -139,16 +139,19 @@ class Menu is Level {
         cy = _time * 1
         cwidth = _ui_camera.width
         cheight = _ui_camera.height
+        var factor = 4
+        var twidth = texture.width * factor
+        var theight = texture.height * factor
 
         var tile_start_x = cx * parallax
         var tile_start_y = cy * parallax
-        tile_start_x = (tile_start_x + (((cx - tile_start_x) / texture.width).floor * texture.width)) - texture.width
-        tile_start_y = (tile_start_y + (((cy - tile_start_y) / texture.height).floor * texture.height)) - texture.height
-        var horizontal = (cwidth / texture.width).ceil + 1
-        var vertical = (cheight / texture.height).ceil + 1
+        tile_start_x = (tile_start_x + (((cx - tile_start_x) / twidth).floor * twidth)) - twidth
+        tile_start_y = (tile_start_y + (((cy - tile_start_y) / theight).floor * theight)) - theight
+        var horizontal = (cwidth / twidth).ceil + 1
+        var vertical = (cheight / theight).ceil + 1
         for (y in 0..vertical) {
             for (x in 0..horizontal) {
-                Renderer.draw_texture(texture, tile_start_x + (x * texture.width), tile_start_y + (y * texture.height))
+                Renderer.draw_texture(texture, tile_start_x + (x * twidth), tile_start_y + (y * theight), factor, factor, 0, 0, 0)
             }
         }
     }
@@ -391,7 +394,10 @@ class Menu is Level {
         }
 
         // Background
-        draw_tiling_background(Assets.tex_background, 8)
+        draw_tiling_background(Assets.tex_background, 7)
+        Renderer.colour_mod = [1, 1, 1, 0.15]
+        draw_tiling_background(Assets.tex_cloudlayer, 9)
+        Renderer.colour_mod = [1, 1, 1, 1]
 
         Renderer.lock_cameras(_background_camera)
         for (cloud in _clouds_background) {
