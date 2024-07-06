@@ -8,6 +8,34 @@ import "Chest" for Chest
 import "FloatingText" for FloatingText
 import "Boss" for Boss
 
+// A little key that follows the player to show the player has it
+class KeyFollower is Entity {
+    construct new() { super() }
+
+    create(level, tiled_data) {
+        super.create(level, tiled_data)
+        _time = 0
+    }
+
+    update(level) {
+        if (level.is_paused) {
+            return
+        }
+        _time = _time + Engine.delta * 3
+        if (Math.point_distance(x, y, level.player.x, level.player.y) > 20) {
+            var angle = Math.point_angle(level.player.x, level.player.y, x, y)
+            var tx = level.player.x + (angle.cos * 20)
+            var ty = level.player.y + (angle.sin * 20)
+            x = x + ((tx - x) * 1.2 * Engine.delta)
+            y = y + ((ty - y) * 1.2 * Engine.delta)
+        }
+    }
+
+    draw(level) {
+        Renderer.draw_texture(Assets.tex_key, x - (Assets.tex_key.width / 2), y - (Assets.tex_key.height / 2) + (_time.sin * 2))
+    }
+}
+
 class ThrowingAxe is Entity {
     construct new() {
         super()
@@ -384,6 +412,12 @@ class Player is Character {
         }
     }
 
+    create_key(level, x, y) {
+        var key = level.add_entity(KeyFollower)
+        key.x = x
+        key.y = y
+    }
+
     death_camera(level) {
         if (!is_dead) {
             return
@@ -525,7 +559,7 @@ class Player is Character {
             }
 
             // Leave level icon
-            if (Save.stage < 6 && Math.point_distance(x, y, level.end_x, level.end_y) < 30) {
+            if (Save.stage < 6 && Math.point_distance(x, y, level.end_x, level.end_y) < 50) {
                 if (level.has_key) {
                     Assets.spr_gamepadcontrols.scale_x = 1/3
                     Assets.spr_gamepadcontrols.scale_y = 1/3
@@ -538,7 +572,7 @@ class Player is Character {
                     Assets.spr_keyboardcontrols.scale_x = Save.ui_scale
                     Assets.spr_keyboardcontrols.scale_y = Save.ui_scale
                 } else {
-                    Renderer.draw_texture(Assets.tex_lockicon, x - (Assets.tex_lockicon.width / 2), y + 9 - (Assets.tex_lockicon.height / 2))
+                    Renderer.draw_texture(Assets.tex_lockicon, level.end_x - (Assets.tex_lockicon.width / 2) + 12, level.end_y + 9 - (Assets.tex_lockicon.height / 2))
                 }
 
                 if (Controls.confirm && level.has_key) {

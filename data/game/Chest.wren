@@ -3,6 +3,7 @@ import "Character" for Character, SpriteSet
 import "Controls" for Controls
 import "Save" for Save, Items
 import "FloatingText" for FloatingText
+import "Attack" for Attack
 
 class Chest is Entity {
     construct new() {
@@ -49,6 +50,16 @@ class Chest is Entity {
                 level.player.extra_lives = level.player.extra_lives + 1
             }
             Audio.play(Assets.aud_chestopen, false, Save.volume, Save.volume)
+        }
+
+        // Act like a prop
+        for (attack in level.get_entities(Attack)) {
+            if (Math.point_distance(attack.x, attack.y, x, y) < attack.hitbox.w) {
+                level.add_particles(Assets.tex_chairparticle, x, y, Math.point_angle(attack.x, attack.y, x, y), Num.pi * 0.3, 50, 1, Num.pi, 8)
+                Audio.play(Assets.aud_cratebreak, false, Save.volume, Save.volume)
+                Save.total_props_destroyed = Save.total_props_destroyed + 1
+                level.remove_entity(this)
+            }
         }
     }
 

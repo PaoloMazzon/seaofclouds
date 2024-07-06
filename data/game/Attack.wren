@@ -92,6 +92,7 @@ class Attack is Entity {
             var tile_y = (y / level.tileset.tile_height).floor
             if (_tied_entity == null && level.tileset[tile_x, tile_y] != 0 && level.tileset[tile_x, tile_y] == level.foreground_tileset[tile_x, tile_y]) {
                 level.remove_entity(this)
+                level.add_particles(texture, x, y, -_direction, 0.2, 40, 1, 20, 1)
                 _is_gone = true
             }
 

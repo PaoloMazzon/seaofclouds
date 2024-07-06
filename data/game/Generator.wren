@@ -11,6 +11,20 @@ import "NPC" for NPC
 import "Traps" for Spikes, FastSpikes, Teleporter, BombPlant
 import "Character" for Character
 import "Save" for Save
+import "Controls" for Controls
+
+// Show a small control hint on the first level
+class ControlHint is Entity {
+    construct new() { super() }
+    create(level, tiled_data) {
+        super.create(level, tiled_data)
+    }
+
+    draw(level) {
+        var tex = Controls.on_gamepad ? Assets.tex_gamepadcontrolshint : Assets.tex_keyboardcontrolshint
+        Renderer.draw_texture(tex, x - (Assets.tex_keyboardcontrolshint.width / 2), y)
+    }
+}
 
 class Structures {
     construct new(foreground, collisions, front, width, height, minimum_size) {
@@ -788,6 +802,12 @@ class Generator {
         tileset_foreground[_start_tile[0], _start_tile[1]] = 71
         tileset_foreground[_end_tile[0], _end_tile[1]] = 72
         tileset_foreground[_end_tile[0], _end_tile[1] - 1] = 62
+
+        if (Save.stage == 1) {
+            var e = level.add_entity(ControlHint)
+            e.x = player_start_x + (tile_width / 2)
+            e.y = player_start_y + tile_height + 4
+        }
 
         return {"front": tileset_front, "collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
     }
