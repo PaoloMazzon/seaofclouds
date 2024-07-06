@@ -4,6 +4,7 @@ import "Attack" for Attack
 import "Knickknack" for Knickknack
 import "Key" for Key
 import "Chest" for Chest
+import "CameraManager" for CameraManager
 
 class Alarm {
     construct new(time, fiber) {
@@ -471,6 +472,15 @@ class Character is Entity {
             if (_melee_attack != null && _melee_attack.is_gone) {
                 _melee_attack = null
             }
+        }
+    }
+
+    // Draws the outline of this character if its colliding with the front walls
+    draw_outline(level) {
+        if (level.front_tileset.collision(hitbox, x, y)) {
+            Renderer.shader = CameraManager.character_shader
+            draw(level)
+            Renderer.shader = null
         }
     }
 

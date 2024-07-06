@@ -107,11 +107,11 @@ class Constants {
     static RANGER_AGGRO_RANGE { 100 }
     static RANGER_ARROW_SPEED { 200 }
     static RANGER_ARROW_LIFETIME { 3 }
-    static RANGER_MIN_SHOOT_COOLDOWN { 1 } // time between shots
-    static RANGER_MAX_SHOOT_COOLDOWN { 1.75 }
+    static RANGER_MIN_SHOOT_COOLDOWN { 1.5 } // time between shots
+    static RANGER_MAX_SHOOT_COOLDOWN { 2 }
     static RANGER_SEARCH_TIME_MIN { 3 }
     static RANGER_SEARCH_TIME_MAX { 5 }
-    static RANGER_INITIAL_SHOT_DELAY { 1 } // how long after seeing the player it will wait before shooting
+    static RANGER_INITIAL_SHOT_DELAY { 1.5 } // how long after seeing the player it will wait before shooting
     static RANGER_EXTRA_LIVES { 0 }
     static RANGER_SCORE_VALUE { 15 }
 

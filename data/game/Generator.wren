@@ -13,15 +13,17 @@ import "Character" for Character
 import "Save" for Save
 
 class Structures {
-    construct new(foreground, collisions, width, height, minimum_size) {
+    construct new(foreground, collisions, front, width, height, minimum_size) {
         _foreground = foreground
         _collisions = collisions
         _width = width
         _height = height
         _minimum_size = minimum_size
+        _front = front
     }
     foreground { _foreground }
     collisions { _collisions }
+    front { _front }
     width { _width }
     height { _height }
     minimum_size { _minimum_size }
@@ -35,6 +37,14 @@ class Structures {
             [97, 98, 99, 100]
         ]
 
+        var front = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ]
+
         var collisions = [
             [0, 58, 59, 60],
             [0, 68, 69, 70],
@@ -42,7 +52,7 @@ class Structures {
             [0, 0, 0, 0],
             [0, 0, 0, 0]
         ]
-        return Structures.new(foreground, collisions, 4, 5, 4)
+        return Structures.new(foreground, collisions, front, 4, 5, 4)
     }
     
     static STRUCTURE_HOUSE_2 {
@@ -53,13 +63,20 @@ class Structures {
             [131, 132, 133, 134],
         ]
 
-        var collisions = [
+        var front = [
             [0, 0, 0, 0],
             [0, 112, 113, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ]
+
+        var collisions = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
             [0, 122, 123, 0],
             [0, 0, 0, 0],
         ]
-        return Structures.new(foreground, collisions, 4, 4, 4)
+        return Structures.new(foreground, collisions, front, 4, 4, 4)
     }
 
     static STRUCTURE_HOUSE_3 {
@@ -71,14 +88,22 @@ class Structures {
             [0, 148, 149, 150],
         ]
 
+        var front = [
+            [0, 108, 0, 0],
+            [0, 118, 119, 120],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ]
+
         var collisions = [
             [107, 108, 0, 0],
-            [117, 118, 119, 120],
+            [117, 118, 0, 0],
             [0, 128, 129, 130],
             [0, 138, 139, 140],
             [0, 0, 0, 0],
         ]
-        return Structures.new(foreground, collisions, 4, 5, 5)
+        return Structures.new(foreground, collisions, front, 4, 5, 5)
     }
 
     static get_random_structure(rng) {
@@ -91,10 +116,14 @@ class Structures {
             [53]
         ]
 
+        var front = [
+            [0]
+        ]
+
         var collisions = [
             [53]
         ]
-        return Structures.new(foreground, collisions, 1, 1, 1)
+        return Structures.new(foreground, collisions, front, 1, 1, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_PROP_1 {
@@ -103,11 +132,16 @@ class Structures {
             [91],
         ]
 
-        var collisions = [
+        var front = [
             [81],
+            [0],
+        ]
+
+        var collisions = [
+            [0],
             [91],
         ]
-        return Structures.new(foreground, collisions, 1, 2, 1)
+        return Structures.new(foreground, collisions, front, 1, 2, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_PROP_2 {
@@ -116,11 +150,16 @@ class Structures {
             [92],
         ]
 
-        var collisions = [
+        var front = [
             [82],
+            [0],
+        ]
+
+        var collisions = [
+            [0],
             [92],
         ]
-        return Structures.new(foreground, collisions, 1, 2, 1)
+        return Structures.new(foreground, collisions, front, 1, 2, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_PROP_3 {
@@ -129,11 +168,16 @@ class Structures {
             [93],
         ]
 
-        var collisions = [
+        var front = [
             [83],
+            [0],
+        ]
+
+        var collisions = [
+            [0],
             [93],
         ]
-        return Structures.new(foreground, collisions, 1, 2, 1)
+        return Structures.new(foreground, collisions, front, 1, 2, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_HORIZONTAL_2 {
@@ -141,10 +185,14 @@ class Structures {
             [65, 66]
         ]
 
+        var front = [
+            [0, 0]
+        ]
+
         var collisions = [
             [65, 66]
         ]
-        return Structures.new(foreground, collisions, 2, 1, 1)
+        return Structures.new(foreground, collisions, front, 2, 1, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_VERTICAL_2 {
@@ -153,11 +201,16 @@ class Structures {
             [67]
         ]
 
+        var front = [
+            [0],
+            [0]
+        ]
+
         var collisions = [
             [57],
             [67]
         ]
-        return Structures.new(foreground, collisions, 1, 2, 1)
+        return Structures.new(foreground, collisions, front, 1, 2, 1)
     }
 
     static STRUCTURE_ENVIRONMENT_L_LEFT {
@@ -166,11 +219,16 @@ class Structures {
             [64, 0, 0]
         ]
 
+        var front = [
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+
         var collisions = [
             [54, 55, 56],
             [64, 0, 0]
         ]
-        return Structures.new(foreground, collisions, 3, 2, 1)
+        return Structures.new(foreground, collisions, front, 3, 2, 1)
     }
     
     static STRUCTURE_ENVIRONMENT_L_RIGHT {
@@ -179,11 +237,16 @@ class Structures {
             [0, 0, 86]
         ]
 
+        var front = [
+            [0, 0, 0],
+            [0, 0, 86]
+        ]
+
         var collisions = [
             [74, 75, 76],
             [0, 0, 86]
         ]
-        return Structures.new(foreground, collisions, 3, 2, 1)
+        return Structures.new(foreground, collisions, front, 3, 2, 1)
     }
     
     static STRUCTURE_ENVIRONMENT_CROSS {
@@ -193,12 +256,18 @@ class Structures {
             [0, 105, 0]
         ]
 
+        var front = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+
         var collisions = [
             [0, 85, 0],
             [94, 95, 96],
             [0, 105, 0]
         ]
-        return Structures.new(foreground, collisions, 3, 3, 1)
+        return Structures.new(foreground, collisions, front, 3, 3, 1)
     }
 }
 
@@ -473,7 +542,7 @@ class Generator {
         }
     }
 
-    place_structures(level, foreground, collisions, island_spots, rng, locations) {
+    place_structures(level, foreground, collisions, front, island_spots, rng, locations) {
         var count = rng.int(Constants.MIN_STRUCTURES, Constants.MAX_STRUCTURES + 1)
         var structure_spots = []
         
@@ -502,6 +571,7 @@ class Generator {
                     for (x in 0..structure.width - 1) {
                         foreground[x + start_x, y + start_y] = structure.foreground[y][x]
                         collisions[x + start_x, y + start_y] = structure.collisions[y][x]
+                        front[x + start_x, y + start_y] = structure.front[y][x]
 
                         remove_location(locations, x + start_x, y + start_y)
                     }
@@ -510,7 +580,7 @@ class Generator {
         }
     }
 
-    place_environment_structures(level, foreground, collisions, island_spots, rng, locations) {
+    place_environment_structures(level, foreground, collisions, front, island_spots, rng, locations) {
         var block = Structures.STRUCTURE_ENVIRONMENT_BLOCK
         var horizontal2 = Structures.STRUCTURE_ENVIRONMENT_HORIZONTAL_2
         var vertical2 = Structures.STRUCTURE_ENVIRONMENT_VERTICAL_2
@@ -550,16 +620,6 @@ class Generator {
                     }
                 }
 
-                /*
-                    [Runtime Error] Subscript must be an integer.
-                    [lib/Util line 282] in [_,_]
-                    [Generator line 514] in place_environment_structures(_,_,_,_,_,_)
-                    [Generator line 663] in generate_level(_,_,_,_)
-                    [Game line 353] in create()
-                    [Runtime Error] Null does not implement 'width=(_)'.
-                    [Game line 439] in pre_frame()
-                */
-
                 if (!collision) {
                     valid_location = loc
                 }
@@ -571,6 +631,7 @@ class Generator {
                     for (x in valid_location[0]..valid_location[0] + chosen_structure.width - 1) {
                         collisions[x, y] = chosen_structure.collisions[y - valid_location[1]][x - valid_location[0]]
                         foreground[x, y] = chosen_structure.foreground[y - valid_location[1]][x - valid_location[0]]
+                        front[x, y] = chosen_structure.front[y - valid_location[1]][x - valid_location[0]]
                         remove_location(locations, x, y)
                     }
                 }
@@ -591,22 +652,27 @@ class Generator {
         var tileset_array_1 = []
         var tileset_array_2 = []
         var tileset_array_3 = []
+        var tileset_array_4 = []
         for (y in 0..(height - 1)) {
             var inner_tileset_1 = []
             var inner_tileset_2 = []
             var inner_tileset_3 = []
+            var inner_tileset_4 = []
             for (x in 0..(width - 1)) {
                 inner_tileset_1.add(0)
                 inner_tileset_2.add(0)
                 inner_tileset_3.add(0)
+                inner_tileset_4.add(0)
             }
             tileset_array_1.add(inner_tileset_1)
             tileset_array_2.add(inner_tileset_2)
             tileset_array_3.add(inner_tileset_3)
+            tileset_array_4.add(inner_tileset_4)
         }
         var tileset_ground = Tileset.new(tileset_array_1, tileset_tex, tile_width, tile_height)
         var tileset_background = Tileset.new(tileset_array_2, tileset_tex, tile_width, tile_height)
-        var tileset_foreground = Tileset.new(tileset_array_2, tileset_tex, tile_width, tile_height)
+        var tileset_foreground = Tileset.new(tileset_array_3, tileset_tex, tile_width, tile_height)
+        var tileset_front = Tileset.new(tileset_array_4, tileset_tex, tile_width, tile_height)
 
         // Pick a few spots for the islands
         var island_spots = []
@@ -710,8 +776,8 @@ class Generator {
         //System.print("\n\n")
 
         // Place entities and such
-        place_structures(level, tileset_foreground, collisions, island_spots, rng, locations)
-        place_environment_structures(level, tileset_foreground, collisions, island_spots, rng, locations)
+        place_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
+        place_environment_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
         place_enemies(level, rng.int(Constants.LEVEL_ENEMY_MIN[Save.stage - 1], Constants.LEVEL_ENEMY_MAX[Save.stage - 1] + 1), rng, locations)
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
@@ -723,6 +789,6 @@ class Generator {
         tileset_foreground[_end_tile[0], _end_tile[1]] = 72
         tileset_foreground[_end_tile[0], _end_tile[1] - 1] = 62
 
-        return {"collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
+        return {"front": tileset_front, "collisions": collisions, "ground": tileset_ground, "background": tileset_background, "foreground": tileset_foreground}
     }
 }

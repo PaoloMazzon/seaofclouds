@@ -16,6 +16,7 @@ class CameraManagerImpl {
         _menu_camera = Camera.new()
         _menu_background_camera = Camera.new()
         _transistion_camera = Camera.new()
+        _character_shader = Shader.load("data/shaders/outline.vert.spv", "data/shaders/outline.frag.spv", 0)
     }
 
     ui_camera { _ui_camera }
@@ -25,6 +26,7 @@ class CameraManagerImpl {
     menu_camera { _menu_camera }
     menu_background_camera { _menu_background_camera }
     transistion_camera { _transistion_camera }
+    character_shader { _character_shader }
 }
 
 var CameraManager = CameraManagerImpl.new()

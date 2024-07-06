@@ -8,6 +8,7 @@ import "Controls" for Controls
 import "Attack" for Attack
 import "Boss" for Boss
 import "Between" for Between
+import "Character" for Character
 
 class Cloud {
     construct new(rng, width, height, background) {
@@ -388,6 +389,7 @@ class Game is Level {
     // Collision tileset
     tileset { _collision_tileset }
     foreground_tileset { _foreground_tileset }
+    front_tileset { _front_tileset }
 
     set_focal_point(x, y, zoom) {
         _focal_x = x
@@ -429,6 +431,7 @@ class Game is Level {
         _background_tileset = tilesets["background"]
         _foreground_tileset = tilesets["foreground"]
         _collision_tileset = tilesets["collisions"]
+        _front_tileset = tilesets["front"]
 
         // Tileset surface
         Renderer.use_cameras_on_surfaces = false
@@ -439,6 +442,7 @@ class Game is Level {
         _foreground_tileset.draw()
         _collision_tileset.draw()
         Renderer.target = Renderer.RENDER_TARGET_DEFAULT
+        _front_surface = _front_tileset.draw_to_surface()
 
         
         // Clouds
@@ -582,6 +586,12 @@ class Game is Level {
         // Entities
         super.update()
         player.death_camera(this)
+        Renderer.draw_texture(_front_surface, 0, 0)
+
+        for (char in get_entities(Character)) {
+            char.draw_outline(this)
+        }
+
         for (cloud in _clouds_foreground) {
             cloud.draw(is_paused)
         }
