@@ -8,31 +8,41 @@ import "Chest" for Chest
 import "FloatingText" for FloatingText
 import "Boss" for Boss
 
-// A little key that follows the player to show the player has it
+// Key that pops up and does a small little animation when the player grabs it
+// above the players head
 class KeyFollower is Entity {
     construct new() { super() }
+
+    bounce(time) { -4 * (time - 0.5).pow(2) + 1 }
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
         _time = 0
+        _lifetime = 2.5
     }
 
     update(level) {
         if (level.is_paused) {
             return
         }
-        _time = _time + Engine.delta * 3
-        if (Math.point_distance(x, y, level.player.x, level.player.y) > 20) {
-            var angle = Math.point_angle(level.player.x, level.player.y, x, y)
-            var tx = level.player.x + (angle.cos * 20)
-            var ty = level.player.y + (angle.sin * 20)
-            x = x + ((tx - x) * 1.2 * Engine.delta)
-            y = y + ((ty - y) * 1.2 * Engine.delta)
+        y = level.player.y - 16
+        x = level.player.x
+        _time = _time + Engine.delta
+        if (_time >= _lifetime) {
+            level.remove_entity(this)
         }
     }
 
     draw(level) {
-        Renderer.draw_texture(Assets.tex_key, x - (Assets.tex_key.width / 2), y - (Assets.tex_key.height / 2) + (_time.sin * 2))
+        var y_offset = bounce(_time) * -6
+        if (_time > 1) {
+            y_offset = 0
+        }
+        if (_time > 2) {
+            Renderer.colour_mod = [1, 1, 1, 1 - ((_time - 2) / (_lifetime - 2))]
+        }
+        Renderer.draw_texture(Assets.tex_key, x - (Assets.tex_key.width / 2), y - (Assets.tex_key.height / 2) + y_offset)
+        Renderer.colour_mod = [1, 1, 1, 1]
     }
 }
 
