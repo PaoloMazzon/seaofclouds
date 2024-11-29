@@ -102,6 +102,7 @@ class SaveImpl {
     construct new() {
         _volume = 1
         _ui_scale = 2
+        _crt_effect = true
         _items = Items.new()
         _stage = 1
         _score = 0
@@ -131,6 +132,7 @@ class SaveImpl {
         var ini = INI.open("save.ini")
         _volume = ini.get_num("game", "volume", 1)
         _ui_scale = ini.get_num("game", "ui_scale", 2)
+        _crt_effect = ini.get_bool("game", "crt_effect", true)
         _highscore = ini.get_num("game", "highscore", 0)
         _best_run_parries = ini.get_num("game", "best_run_parries", 0)
         _beaten_game = ini.get_bool("game", "beaten_game", false)
@@ -164,6 +166,7 @@ class SaveImpl {
     save() {
         var ini = INI.open("save.ini")
         ini.set_num("game", "volume", _volume)
+        ini.set_bool("game", "crt_effect", _crt_effect)
         ini.set_num("game", "ui_scale", _ui_scale)
         ini.set_string("game", "best_run_items", _best_run_items.save_to_string())
         ini.set_num("game", "highscore", highscore)
@@ -193,6 +196,8 @@ class SaveImpl {
         _oops_all_wizards = false
     }
 
+    crt_effect { _crt_effect }
+    crt_effect=(s) { _crt_effect = s }
     oops_all_wizards { _oops_all_wizards }
     oops_all_wizards=(s) { _oops_all_wizards = s }
     beaten_game { _beaten_game }

@@ -61,6 +61,7 @@ class Between is Level {
         _3d_camera.h_on_screen = Renderer.window_height
         _game_camera.update()
         _3d_camera.update()
+        CameraManager.update_backbuffer()
     }
 
     exp(percent, start, stop) {
@@ -69,6 +70,7 @@ class Between is Level {
     }
 
     update() {
+        CameraManager.begin_backbuffer()
         super.update()
         _time = _time + Engine.delta
         Renderer.lock_cameras(_game_camera)
@@ -130,6 +132,9 @@ class Between is Level {
         }
         Renderer.colour_mod = [1, 1, 1, 1]
         
+        Renderer.lock_cameras(_ui_camera)
+        CameraManager.end_backbuffer()
+
         // Move to next level
         if (Controls.confirm || _time > _time_limit) {
             Audio.stop_all()

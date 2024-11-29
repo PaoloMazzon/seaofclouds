@@ -91,6 +91,7 @@ class Menu is Level {
         _background_camera.w_on_screen = Renderer.window_width
         _background_camera.h_on_screen = Renderer.window_height
         _background_camera.update()
+        CameraManager.update_backbuffer()
     }
 
     draw_digits(num, x, y) {
@@ -185,6 +186,8 @@ class Menu is Level {
                 Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
                 if (_cursor == Menu.MENU_MAIN_PLAY) {
                     return true
+                    Steam.setStatInt("stat_run_count", Steam.getStatInt("stat_run_count") + 1)
+                    Steam.setAchievement("START_NEW_RUN")
                 } else if (_cursor == Menu.MENU_MAIN_SETTINGS) {
                     _menu = Menu.MENU_SETTINGS
                     _cursor = 0
@@ -366,6 +369,7 @@ class Menu is Level {
     }
 
     update() {
+        CameraManager.begin_backbuffer()
         super.update()
         Renderer.lock_cameras(_ui_camera)
         Controls.update_menu()
@@ -440,6 +444,7 @@ class Menu is Level {
                 Engine.switch_level(Between.new())
             }
         }
+        CameraManager.end_backbuffer()
 
         // Fullscreen
         if (Keyboard.key(Keyboard.KEY_LALT) && Keyboard.key_pressed(Keyboard.KEY_RETURN)) {

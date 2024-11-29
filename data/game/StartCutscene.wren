@@ -241,6 +241,7 @@ class StartCutscene is Level {
         _ui_camera.w_on_screen = Renderer.window_width
         _ui_camera.h_on_screen = Renderer.window_height
         _ui_camera.update()
+        CameraManager.update_backbuffer()
     }
 
     update() {
@@ -260,6 +261,11 @@ class StartCutscene is Level {
             tween.draw(_time)
         }
         Renderer.target = Renderer.RENDER_TARGET_DEFAULT
+        
+        CameraManager.begin_backbuffer()
+        Renderer.colour_mod = [0, 0, 0, 1]
+        Renderer.clear()
+        Renderer.colour_mod = [1, 1, 1, 1]
 
         // Draw animation to screen
         var scale = Renderer.window_height / 200
@@ -280,6 +286,7 @@ class StartCutscene is Level {
         if (_music == null && _time > _gamepad_time) {
             _music = Audio.play(Assets.aud_intro, false, Save.volume, Save.volume)
         }
+        CameraManager.end_backbuffer()
     }
 
     destroy() {

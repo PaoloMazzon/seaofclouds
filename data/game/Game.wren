@@ -482,6 +482,10 @@ class Game is Level {
 
         // Record current stage for graphic effects
         _current_stage = Save.stage
+
+        // Camera accumulator
+        _camera_pos_x = _player.x - (_game_camera.width / 2)
+        _camera_pos_y = _player.y - (_game_camera.height / 2)
     }
 
     pre_frame() {
@@ -496,13 +500,15 @@ class Game is Level {
             _game_camera.height = _game_camera.height + 0.05 * ((desired_height - _game_camera.height))
             _game_camera.w_on_screen = Renderer.window_width
             _game_camera.h_on_screen = Renderer.window_height
-            _game_camera.x = _game_camera.x + 3 * (((_focal_x - (_game_camera.width / 2)) - _game_camera.x)) * Engine.delta
-            _game_camera.y = _game_camera.y + 3 * (((_focal_y - (_game_camera.height / 2)) - _game_camera.y)) * Engine.delta
+            _camera_pos_x = _camera_pos_x + 6 * (((_focal_x - (_game_camera.width / 2)) - _camera_pos_x)) * Engine.delta
+            _camera_pos_y = _camera_pos_y + 6 * (((_focal_y - (_game_camera.height / 2)) - _camera_pos_y)) * Engine.delta
 
             if (is_shaking) {
-                _game_camera.x = _game_camera.x + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
-                _game_camera.y = _game_camera.y + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
+                _camera_pos_x = _camera_pos_x + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
+                _camera_pos_y = _camera_pos_y + _rng.float(-Save.shake_intensity * _shake_intensity_modifier, Save.shake_intensity * _shake_intensity_modifier)
             }
+            _game_camera.x = _camera_pos_x.round
+            _game_camera.y = _camera_pos_y.round
         }
 
         // Debug
@@ -540,9 +546,12 @@ class Game is Level {
             _window_surface.free()
             _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
         }
+        CameraManager.update_backbuffer()
     }
 
     update() {
+        CameraManager.begin_backbuffer()
+
         Renderer.lock_cameras(_game_camera)
 
         // Clouds
@@ -625,6 +634,8 @@ class Game is Level {
             Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
         }
 
+        CameraManager.end_backbuffer()
+
         // Fade in and out
         if (_fade_in > 0 || _fade_out > 0) {
             var percent = 0
@@ -634,7 +645,6 @@ class Game is Level {
 
                 // The moment we're done fading in
                 if (_fade_in <= 0) {
-                    // TODO: Different music for diff areas
                     var audio = null
                     if (Save.stage <= 3) {
                         audio = _rng.sample([Assets.aud_area1_1, Assets.aud_area1_2])
@@ -658,7 +668,7 @@ class Game is Level {
                     Engine.switch_level(next.new())
                 }
             }
-            
+
             Renderer.target = _window_surface
             Renderer.colour_mod = [0, 0, 0, 1]
             Renderer.clear()
