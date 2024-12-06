@@ -12,7 +12,7 @@ class FloatingText is Entity {
 
     static create_floating_text(level, x, y, text) {
         var t = level.add_entity(FloatingText)
-        t.x = x - Assets.fnt_kennypixel.size(text)[0] / 2
+        t.x = x - Assets.fnt_monogram.size(text)[0] / 2
         t.y = y
         t.text = text
     }
@@ -35,7 +35,7 @@ class FloatingText is Entity {
     draw(level) {
         var percent = _time / Constants.FLOATING_TEXT_DURATION
         Renderer.colour_mod = [1, 1, 1, percent]
-        Renderer.draw_font(Assets.fnt_kennypixel, text, x, y - 16 - (16 * (1 - percent)))
+        Renderer.draw_font(Assets.fnt_monogram, text, x, y - 16 - (16 * (1 - percent)))
         Renderer.colour_mod = [1, 1, 1, 1]
     }
 }

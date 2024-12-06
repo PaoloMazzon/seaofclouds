@@ -69,77 +69,81 @@ class Menu is Level {
         _background_camera.h_on_screen = Renderer.window_height
         _background_camera.update()
         reset_clouds()
-        _cursor_x = ((Renderer.window_width / 2) - (Assets.tex_mainmenu.width * 0.5 * _ui_scale)) + (35 * _ui_scale)
-        _cursor_y = (Renderer.window_height - (Assets.tex_mainmenu.height * _ui_scale) - (Renderer.window_height * 0.2)) + (12 * _ui_scale)
+        _cursor_x = 0//((Renderer.window_width / 2) - (Assets.tex_mainmenu.width * 0.5 * _ui_scale)) + (35 * _ui_scale)
+        _cursor_y = 0//(Renderer.window_height - (Assets.tex_mainmenu.height * _ui_scale) - (Renderer.window_height * 0.2)) + (12 * _ui_scale)
         _menu_effect = Audio.play(Assets.aud_menueffect, false, Save.volume, Save.volume)
 
         // Create the menu options
         _text_menu = TextMenu.new()
         var top = _text_menu.top_menu
         var options = _text_menu.add_menu("options")
-        var stats = _text_menu.add_menu("options")
+        var stats = _text_menu.add_menu("stats")
 
         // Top level
-        var play_fiber = Fiber.new {
+        var play_fn = Fn.new {
             _play = true
         }
-        var options_fiber = Fiber.new {
+        var options_fn = Fn.new {
             _text_menu.set_menu("options")
         }
-        var stats_fiber = Fiber.new {
+        var stats_fn = Fn.new {
             _text_menu.set_menu("stats")
         }
-        var quit_fiber = Fiber.new {
+        var quit_fn = Fn.new {
             Engine.quit()
         }
-        top.add_option(MenuOption.new("Play", play_fiber, MenuOption.TYPE_NONE))
-        top.add_option(MenuOption.new("Options", options_fiber, MenuOption.TYPE_NONE))
-        top.add_option(MenuOption.new("Stats", stats_fiber, MenuOption.TYPE_NONE))
-        top.add_option(MenuOption.new("Quit", quit_fiber, MenuOption.TYPE_NONE))
+        top.add_option(MenuOption.new("Play", play_fn, MenuOption.TYPE_NONE))
+        top.add_option(MenuOption.new("Options", options_fn, MenuOption.TYPE_NONE))
+        top.add_option(MenuOption.new("Stats", stats_fn, MenuOption.TYPE_NONE))
+        top.add_option(MenuOption.new("Quit", quit_fn, MenuOption.TYPE_NONE))
 
         // Stats
-        var back_to_menu_fiber = Fiber.new {
+        var back_to_menu_fn = Fn.new {
             _text_menu.set_menu("top")
         }
-        stats.add_option(MenuOption.new("Back", back_to_menu_fiber, MenuOption.TYPE_NONE))
+        stats.add_option(MenuOption.new("Back", back_to_menu_fn, MenuOption.TYPE_NONE))
 
         // Options
-        var volume_fiber = Fiber.new { |volume| 
+        var volume_fn = Fn.new { |volume| 
             Save.volume = volume
-            if (Save.volume > 1) {
-                Save.volume = 0
-            }
             _music.update(true, Save.volume, Save.volume)
         }
-        var fullscreen_fiber = Fiber.new {
+        var fullscreen_fn = Fn.new {
+            Renderer.fullscreen = !Renderer.fullscreen
             Save.fullscreen = Renderer.fullscreen
-            _background_camera.width = Renderer.window_width / 2
-            _background_camera.height = Renderer.window_height / 2
+            _background_camera.width = Renderer.window_width / 4
+            _background_camera.height = Renderer.window_height / 4
             _background_camera.w_on_screen = Renderer.window_width
             _background_camera.h_on_screen = Renderer.window_height
             reset_clouds()
         }
-        var shake_intensity_fiber = Fiber.new { |intensity|
+        var shake_intensity_fn = Fn.new { |intensity|
             Save.shake_modifier = intensity
             if (Save.shake_modifier > 2.1) {
                 Save.shake_modifier = 0
             }
         }
-        var ui_scale_fiber = Fiber.new {
+        var ui_scale_fn = Fn.new {
             Save.ui_scale = Save.ui_scale + 1
             if (Save.ui_scale == 4) {
                 Save.ui_scale = 1
             }
         }
-        var crt_filter_fiber = Fiber.new { |enabled|
+        var crt_filter_fn = Fn.new { |enabled|
             Save.crt_effect = enabled
         }
-        options.add_option(MenuOption.new("Volume", volume_fiber, MenuOption.TYPE_SLIDER))
-        options.add_option(MenuOption.new("Fullscreen", fullscreen_fiber, MenuOption.TYPE_NONE))
-        options.add_option(MenuOption.new("Shake Intensity", shake_intensity_fiber, MenuOption.TYPE_SLIDER))
-        options.add_option(MenuOption.new("UI Scale", ui_scale_fiber, MenuOption.TYPE_NONE))
-        options.add_option(MenuOption.new("CRT Shader", crt_filter_fiber, MenuOption.TYPE_RADIO))
-        options.add_option(MenuOption.new("Back", back_to_menu_fiber, MenuOption.TYPE_NONE))
+        options.add_option(MenuOption.new("Volume", volume_fn, MenuOption.TYPE_SLIDER, Save.volume))
+        options.add_option(MenuOption.new("Fullscreen", fullscreen_fn, MenuOption.TYPE_NONE))
+        options.add_option(MenuOption.new("Screen Shake", shake_intensity_fn, MenuOption.TYPE_SLIDER, Save.shake_modifier))
+        options.add_option(MenuOption.new("UI Scale", ui_scale_fn, MenuOption.TYPE_NONE))
+        options.add_option(MenuOption.new("CRT Shader", crt_filter_fn, MenuOption.TYPE_RADIO, Save.crt_effect))
+        options.add_option(MenuOption.new("Back", back_to_menu_fn, MenuOption.TYPE_NONE))
+
+        // The draw parameters for the menu
+        _text_menu.x_offset = 8
+        _text_menu.y_offset = 2
+        _text_menu.align_x = TextMenu.ALIGN_CENTER
+        _text_menu.align_y = TextMenu.ALIGN_CENTER
         _text_menu.finalize()
     }
 
@@ -576,8 +580,10 @@ class Menu is Level {
 
         // Draws the menu buttons
         if (_titlecard_time > 2.348) {
-            _text_menu.update()
-            _text_menu.draw()
+            if (!ignore_frame) {
+                _text_menu.update()
+            }
+            _text_menu.draw(middle_x, middle_y + (Renderer.window_height * 0.13 ), _ui_scale)
         }
 
         Renderer.lock_cameras(_background_camera)

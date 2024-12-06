@@ -651,43 +651,30 @@
   ],
   "fonts": [
       {
-          "file": "merriweather.ttf",
-          "name": "merriweather48",
-          "ustart": 32,
-          "uend": 128,
-          "size": 48
-      },
-      {
-          "file": "merriweather.ttf",
-          "name": "merriweather32",
-          "ustart": 32,
-          "uend": 128,
-          "size": 32
-      },
-      {
-          "file": "merriweather.ttf",
-          "name": "merriweather24",
-          "ustart": 32,
-          "uend": 128,
-          "size": 24
-      },
-      {
           "file": "kennypixel.ttf",
           "name": "kennypixel",
           "ustart": 32,
           "uend": 128,
           "size": 12
-      },
-      {
-        "file": "kingdom.ttf",
-        "name": "kingdom",
-        "ustart": 32,
-        "uend": 128,
-        "size": 40
       }
   ],
   "bitmap_fonts": [
-      
+    {
+      "file": "monogram-sheet.png",
+      "name": "monogram",
+      "w": 7,
+      "h": 12,
+      "ustart": 32,
+      "uend": 128
+    },
+    {
+      "file": "workingfont.png",
+      "name": "menufont",
+      "w": 22,
+      "h": 22,
+      "ustart": 32,
+      "uend": 128
+    }
   ],
   "buffers": [
 
