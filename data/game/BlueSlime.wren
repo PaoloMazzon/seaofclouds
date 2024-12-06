@@ -1,6 +1,7 @@
 import "Constants" for Constants
 import "Character" for Character, SpriteSet
 import "Controls" for Controls
+import "Save" for Save
 
 class BlueSlime is Character {
     construct new() { 
@@ -23,6 +24,10 @@ class BlueSlime is Character {
         if (Math.point_distance(level.player.x, level.player.y, x, y) < Constants.SLIME_AGGRO_RANGE) {
             _direction = Math.point_angle(x, y, level.player.x, level.player.y)
             melee_attack(level, 5)
+            var f = Fiber.new {
+                Audio.play(Assets.aud_slimeattack, false, Save.volume, Save.volume)
+            }
+            set_alarm(5 * sprite_set.attack.delay, f)
         } else {
             _direction = _rng.float(Num.tau)
         }
