@@ -677,6 +677,13 @@
           "ustart": 32,
           "uend": 128,
           "size": 12
+      },
+      {
+        "file": "kingdom.ttf",
+        "name": "kingdom",
+        "ustart": 32,
+        "uend": 128,
+        "size": 40
       }
   ],
   "bitmap_fonts": [

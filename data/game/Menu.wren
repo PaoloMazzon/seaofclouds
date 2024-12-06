@@ -140,6 +140,7 @@ class Menu is Level {
         options.add_option(MenuOption.new("UI Scale", ui_scale_fiber, MenuOption.TYPE_NONE))
         options.add_option(MenuOption.new("CRT Shader", crt_filter_fiber, MenuOption.TYPE_RADIO))
         options.add_option(MenuOption.new("Back", back_to_menu_fiber, MenuOption.TYPE_NONE))
+        _text_menu.finalize()
     }
 
     pre_frame() {
