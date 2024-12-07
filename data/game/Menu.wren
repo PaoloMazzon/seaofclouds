@@ -78,9 +78,15 @@ class Menu is Level {
         var top = _text_menu.top_menu
         var options = _text_menu.add_menu("options")
         var stats = _text_menu.add_menu("stats")
+        var help = _text_menu.add_menu("help")
 
         // Top level
         var play_fn = Fn.new {
+            Save.oops_all_wizards = false
+            _play = true
+        }
+        var oopsallwizards_fn = Fn.new {
+            Save.oops_all_wizards = true
             _play = true
         }
         var options_fn = Fn.new {
@@ -89,19 +95,34 @@ class Menu is Level {
         var stats_fn = Fn.new {
             _text_menu.set_menu("stats")
         }
+        var help_fn = Fn.new {
+            _showing_help = true
+            _text_menu.set_menu("help")
+        }
         var quit_fn = Fn.new {
             Engine.quit()
         }
         top.add_option(MenuOption.new("Play", play_fn, MenuOption.TYPE_NONE))
+        if (Save.beaten_game) {
+            top.add_option(MenuOption.new("Play+", oopsallwizards_fn, MenuOption.TYPE_NONE))
+        }
         top.add_option(MenuOption.new("Options", options_fn, MenuOption.TYPE_NONE))
         top.add_option(MenuOption.new("Stats", stats_fn, MenuOption.TYPE_NONE))
+        top.add_option(MenuOption.new("Help", help_fn, MenuOption.TYPE_NONE))
         top.add_option(MenuOption.new("Quit", quit_fn, MenuOption.TYPE_NONE))
 
         // Stats
         var back_to_menu_fn = Fn.new {
             _text_menu.set_menu("top")
         }
-        stats.add_option(MenuOption.new("Back", back_to_menu_fn, MenuOption.TYPE_NONE))
+        stats.add_option(MenuOption.new_hidden("Back", back_to_menu_fn, MenuOption.TYPE_NONE))
+
+        // Help
+        var back_to_menu_help_fn = Fn.new {
+            _showing_help = false
+            _text_menu.set_menu("top")
+        }
+        help.add_option(MenuOption.new_hidden("Back", back_to_menu_help_fn, MenuOption.TYPE_NONE))
 
         // Options
         var volume_fn = Fn.new { |volume| 
@@ -230,308 +251,6 @@ class Menu is Level {
             }
         }
     }
-
-    move_cursor_to(x, y) {
-        _cursor_x = _cursor_x + ((x - _cursor_x) * 12 * Engine.delta) + ((5 * Engine.time).sin * _ui_scale * 0.5) - (_ui_scale * 0.5)
-        _cursor_y = _cursor_y + ((y - _cursor_y) * 12 * Engine.delta)
-    }
-
-    draw_bar(x, y, percent) {
-        Renderer.draw_texture(Assets.tex_menubar, x, y, _ui_scale, _ui_scale, 0, 0, 0)
-        Renderer.colour_mod = "#346270"
-        Renderer.draw_rectangle(x + (_ui_scale * 2), y + (_ui_scale * 2), 69 * _ui_scale * percent, 9 * _ui_scale, 0, 0, 0)
-        Renderer.colour_mod = [1, 1, 1, 1]
-    }
-
-    process_menu(ignore_frame) {
-        var texture = _menu == Menu.MENU_MAIN ? Assets.tex_mainmenu : Assets.tex_settings
-        var x = (Renderer.window_width / 2) - (texture.width * 0.5 * _ui_scale)
-        var y = Renderer.window_height - (texture.height * _ui_scale) - (Renderer.window_height * 0.2)
-
-        if (_menu == Menu.MENU_MAIN) {
-            if (!ignore_frame && !_showing_help && Controls.menu_down) {
-                _cursor = _cursor == (Menu.MENU_MAIN_QUIT) ? 0 : _cursor + 1
-                Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
-            } else if (!ignore_frame && !_showing_help && Controls.menu_up) {
-                _cursor = _cursor == 0 ? Menu.MENU_MAIN_QUIT : (_cursor - 1)
-                Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
-            }
-            if (!ignore_frame && !_showing_help && Controls.menu_confirm) {
-                Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
-                if (_cursor == Menu.MENU_MAIN_PLAY) {
-                    Steam.setStatInt("stat_run_count", Steam.getStatInt("stat_run_count") + 1)
-                    Steam.setAchievement("START_NEW_RUN")
-                    return true
-                } else if (_cursor == Menu.MENU_MAIN_SETTINGS) {
-                    _menu = Menu.MENU_SETTINGS
-                    _cursor = 0
-                } else if (_cursor == Menu.MENU_MAIN_STATS) {
-                    _menu = Menu.MENU_STATS
-                } else if (_cursor == Menu.MENU_MAIN_QUIT) {
-                    Save.save()
-                    Engine.quit()
-                }
-            }
-
-            Renderer.draw_texture(texture, x, y, _ui_scale, _ui_scale, 0, 0, 0)
-            if (_cursor == Menu.MENU_MAIN_PLAY) {
-                move_cursor_to(x + (35 * _ui_scale * 0.5), y + (12 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_MAIN_SETTINGS) {
-                move_cursor_to(x + (-32 * _ui_scale * 0.5), y + (63 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_MAIN_STATS) {
-                move_cursor_to(x + (18 * _ui_scale * 0.5), y + (112 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_MAIN_QUIT) {
-                move_cursor_to(x + (47 * _ui_scale * 0.5), y + (159 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            }
-        } else if (_menu == Menu.MENU_SETTINGS) {
-            if (!ignore_frame && Controls.menu_down) {
-                _cursor = _cursor == (Menu.MENU_SETTINGS_BACK) ? 0 : _cursor + 1
-                Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
-            } else if (!ignore_frame && Controls.menu_up) {
-                _cursor = _cursor == 0 ? Menu.MENU_SETTINGS_BACK : (_cursor - 1)
-                Audio.play(Assets.aud_menucursor, false, Save.volume, Save.volume)
-            }
-            if (!ignore_frame && Controls.menu_confirm) {
-                Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
-                if (_cursor == Menu.MENU_SETTINGS_FULLSCREEN) {
-                    Renderer.fullscreen = !Renderer.fullscreen
-                    Save.fullscreen = Renderer.fullscreen
-                    _background_camera.width = Renderer.window_width / 2
-                    _background_camera.height = Renderer.window_height / 2
-                    _background_camera.w_on_screen = Renderer.window_width
-                    _background_camera.h_on_screen = Renderer.window_height
-                    reset_clouds()
-                } else if (_cursor == Menu.MENU_SETTINGS_VOLUME) {
-                    Save.volume = Save.volume + 0.1
-                    if (Save.volume > 1) {
-                        Save.volume = 0
-                    }
-                    _music.update(true, Save.volume, Save.volume)
-                } else if (_cursor == Menu.MENU_SETTINGS_SHAKE_INTENSITY) {
-                    Save.shake_modifier = Save.shake_modifier + 0.25
-                    if (Save.shake_modifier > 2.1) {
-                        Save.shake_modifier = 0
-                    }
-                } else if (_cursor == Menu.MENU_SETTINGS_UI_SCALE) {
-                    Save.ui_scale = Save.ui_scale + 1
-                    if (Save.ui_scale == 4) {
-                        Save.ui_scale = 1
-                    }
-                } else if (_cursor == Menu.MENU_SETTINGS_BACK) {
-                    _menu = Menu.MENU_MAIN
-                    _cursor = 0
-                }
-            }
-            Renderer.draw_texture(texture, x, y, _ui_scale, _ui_scale, 0, 0, 0)
-            draw_bar(x + (_ui_scale * 162), y + (_ui_scale * 32), Save.volume)
-            draw_bar(x + (_ui_scale * 172), y + (_ui_scale * 56), Save.ui_scale / 3)
-            draw_bar(x + (_ui_scale * 165), y + (_ui_scale * 81), Save.shake_modifier / 2)
-            if (_cursor == Menu.MENU_SETTINGS_FULLSCREEN) {
-                move_cursor_to(x + (-38 * _ui_scale * 0.5), y + (17 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_SETTINGS_VOLUME) {
-                move_cursor_to(x + (43 * _ui_scale * 0.5), y + (66 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_SETTINGS_UI_SCALE) {
-                move_cursor_to(x + (22 * _ui_scale * 0.5), y + (112 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_SETTINGS_SHAKE_INTENSITY) {
-                move_cursor_to(x + (34 * _ui_scale * 0.5), y + (161 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            } else if (_cursor == Menu.MENU_SETTINGS_BACK) {
-                move_cursor_to(x + (81 * _ui_scale * 0.5), y + (210 * _ui_scale * 0.5))
-                Renderer.draw_texture(Assets.tex_menucursor, _cursor_x, _cursor_y, _ui_scale, _ui_scale, 0, 0, 0)
-            }
-        } else if (_menu == Menu.MENU_STATS) {
-            if (!ignore_frame && Controls.menu_confirm) {
-                Audio.play(Assets.aud_menuselect, false, Save.volume, Save.volume)
-                _menu = Menu.MENU_MAIN
-                _cursor = 0
-            }
-            texture = Assets.tex_scorecard
-            x = (Renderer.window_width / 2) - (texture.width * 0.5 * _ui_scale)
-            y = Renderer.window_height - (texture.height * _ui_scale) - (Renderer.window_height * 0.13)
-            Renderer.draw_texture(texture, x, y, _ui_scale, _ui_scale, 0, 0, 0)
-            // 246, 43
-            draw_digits_wenrad(Save.highscore, x + (235 * _ui_scale), y + (6 * _ui_scale))
-            draw_digits(Save.best_run_kills, x + (235 * _ui_scale), y + (38 * _ui_scale))
-            draw_digits(Save.best_run_parries, x + (235 * _ui_scale), y + ((38 + (1 * 20)) * _ui_scale))
-            draw_digits(Save.best_run_highest_stage, x + (235 * _ui_scale), y + ((38 + (2 * 20)) * _ui_scale))
-            draw_digits(Save.best_run_npcs_killed, x + (235 * _ui_scale), y + ((38 + (3 * 20)) * _ui_scale))
-            draw_digits(Save.best_run_axes_thrown, x + (235 * _ui_scale), y + ((38 + (4 * 20)) * _ui_scale))
-            draw_digits(Save.best_run_props_destroyed, x + (235 * _ui_scale), y + ((38 + (5 * 20)) * _ui_scale))
-
-            // Items
-            Assets.spr_itemdisplay.scale_x = _ui_scale
-            Assets.spr_itemdisplay.scale_y = _ui_scale
-            Assets.spr_items.scale_x = _ui_scale
-            Assets.spr_items.scale_y = _ui_scale
-            var total_items = 2
-            for (i in 0..Items.ITEM_COUNT - 1) {
-                total_items = total_items + Save.best_run_items.item_count(i)
-            }
-            var start_x = (Renderer.window_width / 2) - (0.5 * Assets.spr_itemdisplay.width * _ui_scale * total_items)
-            var top_left = (Renderer.window_height) - (1.1 * Assets.spr_itemdisplay.height * _ui_scale)
-            var banner_current_x = start_x
-            var banner_move_x = Assets.spr_itemdisplay.width * _ui_scale
-            var item_start_x = (12 * _ui_scale)
-            var item_start_y = (12 * _ui_scale)
-            Renderer.draw_sprite(Assets.spr_itemdisplay, 0, banner_current_x, top_left)
-            banner_current_x = banner_current_x + banner_move_x
-            for (i in 0..Items.ITEM_COUNT - 1) {
-                if (Save.best_run_items.item_count(i) > 0) {
-                    for (j in 1..Save.best_run_items.item_count(i)) {
-                        Renderer.draw_sprite(Assets.spr_itemdisplay, 1, banner_current_x, top_left)
-                        Renderer.draw_sprite(Assets.spr_items, i, banner_current_x + item_start_x, top_left + item_start_y)
-                        banner_current_x = banner_current_x + banner_move_x
-                    }
-                }
-            }
-            Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)
-            Assets.spr_itemdisplay.scale_x = Save.ui_scale
-            Assets.spr_itemdisplay.scale_y = Save.ui_scale
-            Assets.spr_items.scale_x = Save.ui_scale
-            Assets.spr_items.scale_y = Save.ui_scale
-        }
-
-        // Draw buttons in the corner
-        if (_menu == Menu.MENU_MAIN) {
-            var spr_controls = Controls.on_gamepad ? Assets.spr_gamepadcontrols : Assets.spr_keyboardcontrols
-            var old_scale = _ui_scale
-            _ui_scale = Save.ui_scale
-            spr_controls.scale_x = _ui_scale
-            spr_controls.scale_y = _ui_scale
-            var corner_x = Assets.tex_menuradiobox.width * _ui_scale
-            var corner_y = Renderer.window_height - (Assets.tex_menuradiobox.height * _ui_scale * 2)
-            var move_x = Assets.tex_menuradiobox.width * _ui_scale * 1.5
-            
-            // Draw the crown if the players beaten the game (allowed to play oops all wizards mode)
-            if (Save.beaten_game) {
-                Renderer.draw_texture(Assets.tex_menuradioboxchecked, corner_x + move_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
-                Renderer.draw_texture(Assets.tex_crown, corner_x + move_x, corner_y - (12 * _ui_scale), _ui_scale, _ui_scale, 0, 0, 0)
-                Renderer.draw_sprite(spr_controls, Constants.CONTROL_THROW, corner_x + move_x + (_ui_scale * 1.5), corner_y + (34 * _ui_scale))
-
-                if (!ignore_frame && Controls.throw_axe) {
-                    Save.oops_all_wizards = true
-                    return true
-                }
-            } else {
-                Renderer.draw_texture(Assets.tex_menuradiobox, corner_x + move_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
-            }
-
-            // Draw the help button
-            Renderer.draw_texture(Assets.tex_helpbutton, corner_x, corner_y, _ui_scale, _ui_scale, 0, 0, 0)
-            Renderer.draw_sprite(spr_controls, Constants.CONTROL_PARRY, corner_x + (_ui_scale * 1.5), corner_y + (34 * _ui_scale))
-
-            if (!ignore_frame && Controls.parry) {
-                _showing_help = true
-            } else {
-                _showing_help = false
-            }
-
-
-            _ui_scale = old_scale
-            spr_controls.scale_x = Save.ui_scale
-            spr_controls.scale_y = Save.ui_scale
-        }
-
-        return false
-    }
-
-    /*update() {
-        CameraManager.begin_backbuffer()
-        super.update()
-        Renderer.lock_cameras(_ui_camera)
-        Controls.update_menu()
-        var add = Engine.delta
-        if (Controls.menu_confirm) {
-            add = 2.348
-            if (_titlecard_time < 2.348) {
-                _menu_effect.stop()
-            }
-            if (_play) {
-                _fade_out = 0
-            }
-        }
-        var ignore_frame = false
-        if (add + _titlecard_time > 2.348 && _titlecard_time < 2.348) {
-            // The moment the title card is done
-            ignore_frame = true
-            _music = Audio.play(Assets.aud_title, true, Save.volume, Save.volume)
-        }
-        _titlecard_time = _titlecard_time + add
-
-        if (Renderer.fullscreen) {
-            _ui_scale = Save.ui_scale + 1
-        } else {
-            _ui_scale = Save.ui_scale
-        }
-
-        // Background
-        draw_tiling_background(Assets.tex_background, 7)
-        Renderer.colour_mod = [1, 1, 1, 0.15]
-        draw_tiling_background(Assets.tex_cloudlayer, 9)
-        Renderer.colour_mod = [1, 1, 1, 1]
-
-        Renderer.lock_cameras(_background_camera)
-        for (cloud in _clouds_background) {
-            //cloud.draw(false)
-        }
-        Renderer.lock_cameras(_ui_camera)
-
-        var middle_x = Renderer.window_width / 2
-        var middle_y = Renderer.window_height / 2
-        Renderer.draw_texture(Assets.tex_titlecard, middle_x - (Assets.tex_titlecard.width * _ui_scale * 0.5), (Renderer.window_height * 0.05) - (bounce(_titlecard_time) * _ui_scale * 100), _ui_scale, _ui_scale, 0, 0, 0)
-
-        // Draws the menu buttons
-        if (_titlecard_time > 2.348) {
-            if (process_menu(ignore_frame || _play)) {
-                _play = true
-                Audio.play(Assets.aud_menueffect, false, Save.volume, Save.volume)
-            }
-        }
-
-        Renderer.lock_cameras(_background_camera)
-        for (cloud in _clouds_foreground) {
-            //cloud.draw(false)
-        }
-        Renderer.lock_cameras(_ui_camera)
-
-        // Draw help
-        if (_showing_help) {
-            Renderer.draw_texture(Assets.tex_tutorial, 0, 0, Renderer.window_width / Assets.tex_tutorial.width, Renderer.window_height / Assets.tex_tutorial.height, 0, 0, 0)
-        }
-
-        // Draw the fade out
-        if (_play) {
-            Renderer.colour_mod = [0, 0, 0, 1]
-            Renderer.draw_rectangle(0, 0, Renderer.window_width, Renderer.window_height - Renderer.window_height * bounce(Math.lerp((1 - (_fade_out / _fade_out_start)), 0, 2.6)), 0, 0, 0)
-            Renderer.colour_mod = [1, 1, 1, 1]
-            _fade_out = _fade_out - Engine.delta
-            if (_fade_out <= 0) {
-                Save.save()
-                Audio.stop_all()
-                Engine.switch_level(Between.new())
-            }
-        }
-        CameraManager.end_backbuffer()
-
-        // Fullscreen
-        if (Keyboard.key(Keyboard.KEY_LALT) && Keyboard.key_pressed(Keyboard.KEY_RETURN)) {
-            Renderer.fullscreen = !Renderer.fullscreen
-            Save.fullscreen = Renderer.fullscreen
-            _background_camera.width = Renderer.window_width / 4
-            _background_camera.height = Renderer.window_height / 4
-            _background_camera.w_on_screen = Renderer.window_width
-            _background_camera.h_on_screen = Renderer.window_height
-            reset_clouds()
-        }
-        _time = _time + Engine.delta
-    }*/
 
     update() {
         CameraManager.begin_backbuffer()

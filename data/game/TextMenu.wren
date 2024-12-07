@@ -12,6 +12,7 @@ class MenuOption {
         _fn = new_fn
         _type = new_type
         _value = default_value
+        _hidden = false
     }
 
     construct new(new_name, new_fn, new_type) {
@@ -19,6 +20,23 @@ class MenuOption {
         _fn = new_fn
         _type = new_type
         _value = 0
+        _hidden = false
+    }
+
+    construct new_hidden(new_name, new_fn, new_type, default_value) {
+        _name = new_name
+        _fn = new_fn
+        _type = new_type
+        _value = default_value
+        _hidden = true
+    }
+
+    construct new_hidden(new_name, new_fn, new_type) {
+        _name = new_name
+        _fn = new_fn
+        _type = new_type
+        _value = 0
+        _hidden = true
     }
 
     // Call this if the user clicks the menu option
@@ -63,6 +81,7 @@ class MenuOption {
     fn { _fn }
     value { _value }
     type { _type }
+    hidden { _hidden }
 }
 
 // A series of options
@@ -202,10 +221,12 @@ class TextMenu {
             y = 0
 
             for (option in menu) {
-                Renderer.colour_mod = [0, 0, 0, 0.7]
-                Renderer.draw_font(font, option.name, x + 1, y + 1)
-                Renderer.colour_mod = [1, 1, 1, 1]
-                Renderer.draw_font(font, option.name, x, y)
+                if (!option.hidden) {
+                    Renderer.colour_mod = [0, 0, 0, 0.7]
+                    Renderer.draw_font(font, option.name, x + 1, y + 1)
+                    Renderer.colour_mod = [1, 1, 1, 1]
+                    Renderer.draw_font(font, option.name, x, y)
+                }
                 x = x + x_offset
                 y = y + y_offset + height
             }
@@ -274,7 +295,9 @@ class TextMenu {
         move_cursor_to(draw_x - (10 * ui_scale) + (x_offset * _cursor * ui_scale), draw_y + ((height - y_offset) * 0.5 * ui_scale) + (height * _cursor * ui_scale), ui_scale)
         var w = Assets.tex_menucursor.width * ui_scale * 0.5
         var h = Assets.tex_menucursor.height * ui_scale * 0.5
-        Renderer.draw_texture(Assets.tex_menucursor, _cursor_x - w, _cursor_y - h, ui_scale, ui_scale, 0, 0, 0)
+        if (!(current_menu.count == 1 && current_menu[0].hidden)) {
+            Renderer.draw_texture(Assets.tex_menucursor, _cursor_x - w, _cursor_y - h, ui_scale, ui_scale, 0, 0, 0)
+        }
 
         var x = draw_x
         var y = draw_y
