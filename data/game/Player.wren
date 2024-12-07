@@ -7,6 +7,7 @@ import "Save" for Save, Items
 import "Chest" for Chest
 import "FloatingText" for FloatingText
 import "Boss" for Boss
+import "CameraManager" for CameraManager
 
 // Key that pops up and does a small little animation when the player grabs it
 // above the players head
@@ -379,12 +380,17 @@ class Player is Character {
 
         // Pause
         if (level.hard_paused) {
-            var pause_x = (Renderer.window_width / 2) - (Assets.tex_paused.width * Save.ui_scale * 0.5)
-            var pause_y = (Renderer.window_height / 2) - (Assets.tex_paused.height * Save.ui_scale * 0.5)
-            var control_x = pause_x + (Save.ui_scale * 53)
-            var control_y = pause_y + (Save.ui_scale * 44)
-            Renderer.draw_texture(Assets.tex_paused, pause_x, pause_y, Save.ui_scale, Save.ui_scale, 0, 0, 0)
-            Renderer.draw_sprite(spr_controls, Constants.CONTROL_RESTART, control_x, control_y)
+            var pause_x = Renderer.window_width / 2
+            var pause_y = Renderer.window_height / 2
+            var pause_w = Assets.tex_pause_bg.width * Save.ui_scale
+            var pause_h = Assets.tex_pause_bg.height * Save.ui_scale
+
+            // Draw a background
+            Renderer.draw_texture(Assets.tex_pause_bg, pause_x - (pause_w / 2), pause_y - (pause_h / 2), Save.ui_scale, Save.ui_scale, 0, 0, 0)
+
+            // Deal with menu
+            CameraManager.text_menu.update()
+            CameraManager.text_menu.draw(pause_x, pause_y, Save.ui_scale)
         }
 
         // Post death screen
@@ -452,12 +458,14 @@ class Player is Character {
         super.update(level)
 
         // Pausing
-        if (Controls.pause && !is_dead) {
+        if ((Controls.pause || CameraManager.unpause) && !is_dead) {
             if (level.hard_paused) {
                 level.unpause()
             } else {
+                CameraManager.text_menu.set_menu("top")
                 level.pause()
             }
+            CameraManager.unpause = false
         }
 
         if (!level.is_paused) {

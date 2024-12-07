@@ -89,9 +89,15 @@ class SubMenu {
     construct new() {
         _options = [] // list of MenuOption
         _surface = null
+        _x_offset = 0
+        _y_offset = 0
     }
     surface=(s) { _surface = s }
     surface { _surface }
+    x_offset { _x_offset }
+    x_offset=(s) { _x_offset = s }
+    y_offset { _y_offset }
+    y_offset=(s) { _y_offset = s }
 
     // Adds an option to this sub menu
     add_option(option) {
@@ -139,13 +145,19 @@ class TextMenu {
         _align_y = TextMenu.ALIGN_LEFT
 
         // Cursor position
-        _cursor_x = 0
-        _cursor_y = 0
+        _cursor_x = -1
+        _cursor_y = -1
     }
 
     move_cursor_to(x, y, ui_scale) {
-        _cursor_x = _cursor_x + ((x - _cursor_x) * 12 * Engine.delta) + ((5 * Engine.time).sin * ui_scale * 0.5) - (ui_scale * 0.5)
-        _cursor_y = _cursor_y + ((y - _cursor_y) * 12 * Engine.delta)
+        // To account for the cursor jumping into position at startup
+        if (_cursor_x == -1 || _cursor_y == -1) {
+            _cursor_x = x
+            _cursor_y = y
+        } else {
+            _cursor_x = _cursor_x + ((x - _cursor_x) * 12 * Engine.delta) + ((5 * Engine.time).sin * ui_scale * 0.5) - (ui_scale * 0.5)
+            _cursor_y = _cursor_y + ((y - _cursor_y) * 12 * Engine.delta)
+        }
     }
 
     // Getters and setters
@@ -160,6 +172,8 @@ class TextMenu {
     y_offset { _y_offset }
     y_offset=(s) { _y_offset = s }
     current_menu { _menus[_menu] }
+    current_width { current_menu.surface.width }
+    current_height { current_menu.surface.height }
 
     // Adds a menu and returns it
     add_menu(name) {
@@ -274,6 +288,8 @@ class TextMenu {
     // Call to draw menu
     draw(global_x, global_y, ui_scale) {
         // Handle alignment
+        global_x = global_x + (current_menu.x_offset * ui_scale)
+        global_y = global_y + (current_menu.y_offset * ui_scale)
         var draw_x = global_x
         var draw_y = global_y
         if (align_x == TextMenu.ALIGN_RIGHT) {

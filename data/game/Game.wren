@@ -629,7 +629,7 @@ class Game is Level {
         }
 
         // Restart
-        if (((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) || (hard_paused && Controls.restart) || (_player.boss_is_dead && Controls.restart)) {
+        if (((player == null || player.is_dead) && _fade_out <= 0 && Controls.restart) || (hard_paused && CameraManager.quit_to_menu) || (_player.boss_is_dead && Controls.restart)) {
             _fade_out = Constants.FADE_TIME
             Audio.play(Assets.aud_fadeout, false, Save.volume, Save.volume)
         }
@@ -678,6 +678,10 @@ class Game is Level {
             Renderer.target = Renderer.RENDER_TARGET_DEFAULT
             Renderer.lock_cameras(_ui_camera)
             Renderer.draw_texture(_window_surface, 0, 0)
+        }
+        // Update music volume
+        if (_music != null && CameraManager.music_is_updated) {
+            _music.update(true, Save.volume, Save.volume)
         }
 
         // Fullscreen
