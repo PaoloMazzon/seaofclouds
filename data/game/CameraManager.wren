@@ -87,7 +87,7 @@ class CameraManagerImpl {
             _quit_to_menu = true
         }
         quit.add_option(MenuOption.new("Nevermind", back_to_menu_fn, MenuOption.TYPE_NONE))
-        quit.add_option(MenuOption.new("Quit (for real)", quit_to_menu_fn, MenuOption.TYPE_NONE))
+        quit.add_option(MenuOption.new("Quit (prob)", quit_to_menu_fn, MenuOption.TYPE_NONE))
 
         // The draw parameters for the menu
         _text_menu.x_offset = 4

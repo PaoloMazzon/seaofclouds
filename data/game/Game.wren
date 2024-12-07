@@ -49,7 +49,7 @@ class SkillCheck {
         _pointer_position = rng.float(Num.tau)
         _goal_position = _pointer_position + rng.float(Num.pi, Num.tau)
         _difficulty_texture = difficulty == SkillCheck.SKILL_CHECK_EASY ? Assets.tex_skillcheckeasy : Assets.tex_skillcheckhard
-        _difficulty_tolerance = difficulty == SkillCheck.SKILL_CHECK_EASY ? 0.386133 : 0.207036
+        _difficulty_tolerance = difficulty == SkillCheck.SKILL_CHECK_EASY ? 0.386133 : 0.217036
         Audio.play(Assets.aud_skillcheck, false, Save.volume, Save.volume)
     }
 
@@ -84,13 +84,17 @@ class SkillCheck {
         // Draw skill check
         var centerX = camera.width / 2
         var centerY = camera.height / 2
-        var drawX = centerX - (Assets.tex_skillcheckcircle.width / 2)
-        var drawY = centerY - (Assets.tex_skillcheckcircle.height / 2)
+        var skillcheck_sw = Assets.tex_skillcheckcircle.width * Save.ui_scale // scaled width
+        var skillcheck_sh = Assets.tex_skillcheckcircle.height * Save.ui_scale
+        var skillcheck_w = Assets.tex_skillcheckcircle.width
+        var skillcheck_h = Assets.tex_skillcheckcircle.height
+        var drawX = centerX - (skillcheck_sw / 2)
+        var drawY = centerY - (skillcheck_sh / 2)
         var spr_controls = Controls.on_gamepad ? Assets.spr_gamepadcontrols : Assets.spr_keyboardcontrols
         Renderer.lock_cameras(camera)
-        Renderer.draw_texture(Assets.tex_skillcheckcircle, drawX, drawY)
-        Renderer.draw_texture(_difficulty_texture, drawX, drawY, 1, 1, _goal_position, Assets.tex_skillcheckcircle.width / 2, Assets.tex_skillcheckcircle.height / 2)
-        Renderer.draw_texture(Assets.tex_skillcheckpointer, drawX, drawY, 1, 1, _pointer_position, Assets.tex_skillcheckcircle.width / 2, Assets.tex_skillcheckcircle.height / 2)
+        Renderer.draw_texture(Assets.tex_skillcheckcircle, drawX, drawY, Save.ui_scale, Save.ui_scale, 0, 0, 0)
+        Renderer.draw_texture(_difficulty_texture, drawX, drawY, Save.ui_scale, Save.ui_scale, _goal_position, skillcheck_w / 2, skillcheck_h / 2)
+        Renderer.draw_texture(Assets.tex_skillcheckpointer, drawX, drawY, Save.ui_scale, Save.ui_scale, _pointer_position, skillcheck_w / 2, skillcheck_h / 2)
         Renderer.draw_sprite(spr_controls, Constants.CONTROL_CONFIRM, centerX - (spr_controls.width * Save.ui_scale * 0.5), centerY - (spr_controls.height * Save.ui_scale * 0.5))
 
         return skill_check_done
