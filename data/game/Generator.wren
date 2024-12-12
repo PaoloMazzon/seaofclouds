@@ -290,6 +290,16 @@ class Generator {
     static GROUND_TILE { 1 }
     static DROP_TILE { 11 }
     static DECORATION_TILES { [31, 32, 33, 34, 35, 41, 42, 43, 44, 45] }
+    static PATH_LEFT_RIGHT { 151 }
+    static PATH_LEFT_UP    { 152 }
+    static PATH_UP_DOWN    { 153 }
+    static PATH_UP_RIGHT   { 154 }
+    static PATH_LEFT_DOWN  { 155 }
+    static PATH_DOWN_RIGHT { 156 }
+    static PATH_UP         { 157 }
+    static PATH_DOWN       { 158 }
+    static PATH_RIGHT      { 159 }
+    static PATH_LEFT       { 146 }
 
     tileset_tex { _tileset_tex }
     tileset_tex=(s) { _tileset_tex = s }
@@ -423,6 +433,89 @@ class Generator {
             arr.add(inner)
         }
         return Tileset.new(arr, Save.stage <= 3 ? Assets.tex_tiles : Assets.tex_tilesmoon, ground_tileset.tile_width, ground_tileset.tile_height)
+    }
+
+    is_path(tileset, x, y) {
+        return [Generator.PATH_LEFT_RIGHT, Generator.PATH_LEFT_UP, Generator.PATH_UP_DOWN, Generator.PATH_UP_RIGHT, Generator.PATH_LEFT_DOWN, Generator.PATH_DOWN_RIGHT, Generator.PATH_UP, Generator.PATH_DOWN, Generator.PATH_RIGHT, Generator.PATH_LEFT].indexOf(tileset[x, y]) != -1
+    }
+
+    autotile_trail_spot(tileset, x, y) {
+        var up = is_path(tileset, x, y - 1)
+        var left = is_path(tileset, x - 1, y)
+        var right = is_path(tileset, x + 1, y)
+        var down = is_path(tileset, x, y + 1)
+
+        if (left && right) {
+            tileset[x, y] = Generator.PATH_LEFT_RIGHT
+        } else if (up && down) {
+            tileset[x, y] = Generator.PATH_UP_DOWN
+        } else if (left && up) {
+            tileset[x, y] = Generator.PATH_LEFT_UP
+        } else if (left && down) {
+            tileset[x, y] = Generator.PATH_LEFT_DOWN
+        } else if (down && right) {
+            tileset[x, y] = Generator.PATH_DOWN_RIGHT
+        } else if (up && right) {
+            tileset[x, y] = Generator.PATH_UP_RIGHT
+        } else if (up) {
+            tileset[x, y] = Generator.PATH_UP
+        } else if (down) {
+            tileset[x, y] = Generator.PATH_DOWN
+        } else if (left) {
+            tileset[x, y] = Generator.PATH_LEFT
+        } else if (right) {
+            tileset[x, y] = Generator.PATH_RIGHT
+        }
+    }
+
+    place_individual_trail(level, tileset_foreground, collisions, tileset_ground, start, stop, rng) {
+        var x_displacement = stop[0] - start[0]
+        var y_displacement = stop[1] - start[1]
+        var x = start[0]
+        var y = start[1]
+        var previous_location = null
+        while (x_displacement != 0 || y_displacement != 0) {
+            if (x_displacement != 0 && y_displacement != 0) {
+                if (rng.int(10) <= 4) {
+                    x = x + sign(x_displacement)
+                    x_displacement = towards_zero(x_displacement)
+                } else {
+                    y = y + sign(y_displacement)
+                    y_displacement = towards_zero(y_displacement)
+                }
+            } else if (x_displacement != 0) {
+                x = x + sign(x_displacement)
+                x_displacement = towards_zero(x_displacement)
+            } else {
+                y = y + sign(y_displacement)
+                y_displacement = towards_zero(y_displacement)
+            }
+            if (collisions[x, y] == 0 && tileset_ground[x, y] != 0) {
+                tileset_foreground[x, y] = Generator.PATH_DOWN
+            }
+            if (previous_location != null) {
+                autotile_trail_spot(tileset_foreground, previous_location[0], previous_location[1])
+            }
+            if (collisions[x, y] == 0 && tileset_ground[x, y] != 0) {
+                previous_location = [x, y]
+            }
+        }
+        autotile_trail_spot(tileset_foreground, previous_location[0], previous_location[1])
+    }
+
+    place_trails(level, tileset_foreground, collisions, tileset_ground, island_spots, rng) {
+        var number_of_trails = rng.int(Constants.LEVEL_TRAIL_COUNT_MIN[Save.stage - 1], Constants.LEVEL_TRAIL_COUNT_MAX[Save.stage - 1])
+        for (i in 0..number_of_trails) {
+            var start = rng.sample(island_spots)
+            var stop = start
+            while (stop == start && island_spots.count > 1) {
+                stop = rng.sample(island_spots)
+            }
+            island_spots.remove(start)
+            island_spots.remove(stop)
+
+            place_individual_trail(level, tileset_foreground, collisions, tileset_ground, start, stop, rng)
+        }
     }
 
     autotile(tileset_ground, tileset_background, locations, collisions, rng) {
@@ -790,8 +883,11 @@ class Generator {
         //System.print("\n\n")
 
         // Place entities and such
-        place_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
+        if (Save.stage != 1) {
+            place_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
+        }
         place_environment_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
+        place_trails(level, tileset_foreground, collisions, tileset_ground, island_spots, rng)
         place_enemies(level, rng.int(Constants.LEVEL_ENEMY_MIN[Save.stage - 1], Constants.LEVEL_ENEMY_MAX[Save.stage - 1] + 1), rng, locations)
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)

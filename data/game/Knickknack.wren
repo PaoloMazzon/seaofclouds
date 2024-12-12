@@ -7,6 +7,8 @@ class Knickknack is Entity {
         _time = 0
     }
 
+    bounce(time) { -4 * (time - 0.5).pow(2) + 1 }
+
     create(level, tiled_data) {
         super.create(level, tiled_data)
     }
