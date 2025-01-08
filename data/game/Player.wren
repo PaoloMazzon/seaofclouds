@@ -328,11 +328,14 @@ class Player is Character {
         banner_current_x = banner_current_x + banner_move_x
         for (i in 0..Items.ITEM_COUNT - 1) {
             if (Save.items.item_count(i) > 0) {
-                for (j in 1..Save.items.item_count(i)) {
-                    Renderer.draw_sprite(Assets.spr_itemdisplay, 1, banner_current_x, top_left)
-                    Renderer.draw_sprite(Assets.spr_items, i, banner_current_x + item_start_x, top_left + item_start_y)
-                    banner_current_x = banner_current_x + banner_move_x
+                Renderer.draw_sprite(Assets.spr_itemdisplay, 1, banner_current_x, top_left)
+                Renderer.draw_sprite(Assets.spr_items, i, banner_current_x + item_start_x, top_left + item_start_y)
+
+                // If multiple items, draw an amount instead of the same item repeadetely
+                if (Save.items.item_count(i) > 1) {
+                    draw_digits(Save.items.item_count(i), banner_current_x - (Save.ui_scale * 2), top_left + (Save.ui_scale * 10))
                 }
+                banner_current_x = banner_current_x + banner_move_x
             }
         }
         Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)

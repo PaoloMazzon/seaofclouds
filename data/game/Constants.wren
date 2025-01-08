@@ -53,8 +53,8 @@ class Constants {
     static LEVEL_TRAP_MIN                   { [ 2,  5,  8, 10, 15, 0] }
     static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [15, 60, 45, 30, 60, 0] }
     static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 8, 30, 25, 12, 40, 0] }
-    static LEVEL_TRAIL_COUNT_MIN            { [ 1,  1,  1,  1,  1, 0] }
-    static LEVEL_TRAIL_COUNT_MAX            { [ 2,  3,  3,  4,  4, 0] }
+    static LEVEL_TRAIL_COUNT_MIN            { [ 1,  1,  1,  1,  1, 0] } // trails are always only 1 right now
+    static LEVEL_TRAIL_COUNT_MAX            { [ 2,  3,  3,  4,  4, 0] } // trails are always only 1 right now
 
     //////////////////////////// Player base values ////////////////////////////
     static PLAYER_PARRY_COOLDOWN { 2 }

@@ -504,7 +504,7 @@ class Generator {
     }
 
     place_trails(level, tileset_foreground, collisions, tileset_ground, island_spots, rng) {
-        var number_of_trails = rng.int(Constants.LEVEL_TRAIL_COUNT_MIN[Save.stage - 1], Constants.LEVEL_TRAIL_COUNT_MAX[Save.stage - 1])
+        var number_of_trails = 0//rng.int(Constants.LEVEL_TRAIL_COUNT_MIN[Save.stage - 1], Constants.LEVEL_TRAIL_COUNT_MAX[Save.stage - 1])
         for (i in 0..number_of_trails) {
             var start = rng.sample(island_spots)
             var stop = start
