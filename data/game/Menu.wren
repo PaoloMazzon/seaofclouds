@@ -83,6 +83,7 @@ class Menu is Level {
         // Top level
         var play_fn = Fn.new {
             Save.oops_all_wizards = false
+            Save.total_runs = Save.total_runs + 1
             _play = true
         }
         var oopsallwizards_fn = Fn.new {
@@ -93,6 +94,7 @@ class Menu is Level {
             _text_menu.set_menu("options")
         }
         var stats_fn = Fn.new {
+            _showing_stats = true
             _text_menu.set_menu("stats")
         }
         var help_fn = Fn.new {
@@ -113,6 +115,7 @@ class Menu is Level {
 
         // Stats
         var back_to_menu_fn = Fn.new {
+            _showing_stats = false
             _text_menu.set_menu("top")
         }
         stats.add_option(MenuOption.new_hidden("Back", back_to_menu_fn, MenuOption.TYPE_NONE))
@@ -166,6 +169,106 @@ class Menu is Level {
         _text_menu.align_x = TextMenu.ALIGN_CENTER
         _text_menu.align_y = TextMenu.ALIGN_CENTER
         _text_menu.finalize()
+
+        // Build the stats screen
+        _stats_surface = Surface.new(300, 13 * 10)
+        Renderer.target = _stats_surface
+        Renderer.colour_mod = [0, 0, 0, 0.2]
+        Renderer.clear()
+        Renderer.colour_mod = [1, 1, 1, 1]
+        var advance = 13
+        var x_advance = 150
+        var y_stop = 0
+        var x_stop = 1
+        
+        Renderer.draw_font_ext(Assets.fnt_monogram, "[#000000]Best Run", x_stop + 1, y_stop + 1)
+        Renderer.draw_font_ext(Assets.fnt_monogram, "[#ffffff]Best Run", x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.highscore
+        Renderer.draw_font(Assets.fnt_monogram, "Highscore: " + Save.highscore.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.best_run_parries
+        Renderer.draw_font(Assets.fnt_monogram, "Parries: " + Save.best_run_parries.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.best_run_kills
+        Renderer.draw_font(Assets.fnt_monogram, "Kills: " + Save.best_run_kills.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.best_run_highest_stage
+        Renderer.draw_font(Assets.fnt_monogram, "Highest Stage: " + Save.best_run_highest_stage.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.best_run_props_destroyed
+        Renderer.draw_font(Assets.fnt_monogram, "Props Destroyed: " + Save.best_run_props_destroyed.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.best_run_npcs_killed
+        Renderer.draw_font(Assets.fnt_monogram, "NPCs Killed: " + Save.best_run_npcs_killed.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.best_run_axes_thrown
+        Renderer.draw_font(Assets.fnt_monogram, "Axes Thrown: " + Save.best_run_axes_thrown.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+
+        var banner_current_x = x_stop
+        var top_left = y_stop
+        var item_start_x = 4
+        var item_start_y = 4
+        var banner_move_x = Assets.spr_itemdisplay.width / 3
+        var spr_itemdisplay_scale_x = Assets.spr_itemdisplay.scale_x
+        var spr_items_scale_x = Assets.spr_items.scale_x
+        var spr_itemdisplay_scale_y = Assets.spr_itemdisplay.scale_y
+        var spr_items_scale_y = Assets.spr_items.scale_y
+        Assets.spr_itemdisplay.scale_x = 1/3
+        Assets.spr_items.scale_x = 1/3
+        Assets.spr_itemdisplay.scale_y = 1/3
+        Assets.spr_items.scale_y = 1/3
+        Renderer.draw_sprite(Assets.spr_itemdisplay, 0, banner_current_x, top_left)
+        banner_current_x = banner_current_x + banner_move_x
+        for (i in 0..Items.ITEM_COUNT - 1) {
+            if (Save.best_run_items.item_count(i) > 0) {
+                Renderer.draw_sprite(Assets.spr_itemdisplay, 1, banner_current_x, top_left)
+                Renderer.draw_sprite(Assets.spr_items, i, banner_current_x + item_start_x, top_left + item_start_y)
+
+                // If multiple items, draw an amount instead of the same item repeadetely
+                if (Save.best_run_items.item_count(i) > 1) {
+                    draw_digits(Save.best_run_items.item_count(i), banner_current_x - 4, top_left + 6, 1/3)
+                }
+                banner_current_x = banner_current_x + banner_move_x
+            }
+        }
+        Renderer.draw_sprite(Assets.spr_itemdisplay, 2, banner_current_x, top_left)
+        Assets.spr_itemdisplay.scale_x = spr_itemdisplay_scale_x
+        Assets.spr_items.scale_x = spr_items_scale_x
+        Assets.spr_itemdisplay.scale_y = spr_itemdisplay_scale_y
+        Assets.spr_items.scale_y = spr_items_scale_y
+
+        // Advance to next section
+        y_stop = 0
+        x_stop = x_advance
+
+        Renderer.draw_font_ext(Assets.fnt_monogram, "[#000000]Totals", x_stop + 1, y_stop + 1)
+        Renderer.draw_font_ext(Assets.fnt_monogram, "[#ffffff]Totals", x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.beaten_game
+        Renderer.draw_font_ext(Assets.fnt_monogram, "[#ffffff]Beaten Game: " + (Save.beaten_game ? "[*]Yes" : "No"), x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.total_parries
+        Renderer.draw_font(Assets.fnt_monogram, "Total Parries: " + Save.sum_parries.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.total_kills
+        Renderer.draw_font(Assets.fnt_monogram, "Total Kills: " + Save.sum_kills.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.total_props_destroyed
+        Renderer.draw_font(Assets.fnt_monogram, "Props Destroyed: " + Save.sum_props_destroyed.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.total_npcs_killed
+        Renderer.draw_font(Assets.fnt_monogram, "NPCs Killed: " + Save.sum_npcs_killed.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.total_axes_thrown
+        Renderer.draw_font(Assets.fnt_monogram, "Axes Thrown: " + Save.sum_axes_thrown.toString, x_stop, y_stop)
+        y_stop = y_stop + advance
+        //Save.total_runs
+        Renderer.draw_font(Assets.fnt_monogram, "Total Runs: " + Save.total_runs.toString, x_stop, y_stop)
+        y_stop = y_stop + advance        
+
+        Renderer.target = null
     }
 
     pre_frame() {
@@ -193,6 +296,19 @@ class Menu is Level {
         var move_x = _ui_scale * 5 * 3
         Assets.spr_digits.scale_x = _ui_scale
         Assets.spr_digits.scale_y = _ui_scale
+        for (character in num.toString) {
+            var digit = Num.fromString(character)
+            Renderer.draw_sprite(Assets.spr_digits, digit, x, y)
+            x = x + move_x
+        }
+        Assets.spr_digits.scale_x = Save.ui_scale
+        Assets.spr_digits.scale_y = Save.ui_scale
+    }
+
+    draw_digits(num, x, y, scale) {
+        var move_x = scale * 5 * 3
+        Assets.spr_digits.scale_x = scale
+        Assets.spr_digits.scale_y = scale
         for (character in num.toString) {
             var digit = Num.fromString(character)
             Renderer.draw_sprite(Assets.spr_digits, digit, x, y)
@@ -314,6 +430,11 @@ class Menu is Level {
         // Draw help
         if (_showing_help) {
             Renderer.draw_texture(Assets.tex_tutorial, 0, 0, Renderer.window_width / Assets.tex_tutorial.width, Renderer.window_height / Assets.tex_tutorial.height, 0, 0, 0)
+        }
+        if (_showing_stats) {
+            var xx = (Renderer.window_width * 0.5) - (_stats_surface.width * 0.5 * _ui_scale)
+            var yy = (Renderer.window_height * 0.7) - (_stats_surface.height * 0.5 * _ui_scale)
+            Renderer.draw_texture(_stats_surface, xx, yy, _ui_scale, _ui_scale, 0, 0, 0)
         }
 
         // Draw the fade out

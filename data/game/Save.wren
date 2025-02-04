@@ -124,6 +124,7 @@ class SaveImpl {
         _total_props_destroyed = 0
         _total_npcs_killed = 0
         _total_axes_thrown = 0
+        _total_runs = 0
         _oops_all_wizards = false
     }
 
@@ -143,7 +144,13 @@ class SaveImpl {
         _best_run_npcs_killed = ini.get_num("game", "best_run_npcs_killed", 0)
         _best_run_axes_thrown = ini.get_num("game", "best_run_axes_thrown", 0)
         _shake_modifier = ini.get_num("game", "shake_modifier", 1)
+        _total_runs = ini.get_num("game", "total_runs", 0)
         _fullscreen = ini.get_bool("game", "fullscreen", false)
+        _sum_parries = ini.get_num("game", "sum_parries", 0)
+        _sum_kills = ini.get_num("game", "sum_kills", 0)
+        _sum_props_destroyed = ini.get_num("game", "sum_props_destroyed", 0)
+        _sum_npcs_killed = ini.get_num("game", "sum_npcs_killed", 0)
+        _sum_axes_thrown = ini.get_num("game", "sum_axes_thrown", 0)
     }
 
     // Checks if a highscore was achieved and records the run
@@ -179,6 +186,12 @@ class SaveImpl {
         ini.set_num("game", "shake_modifier", _shake_modifier)
         ini.set_bool("game", "fullscreen", _fullscreen)
         ini.set_bool("game", "beaten_game", _beaten_game)
+        ini.set_num("game", "total_runs", _total_runs)
+        ini.set_num("game", "sum_parries", _sum_parries)
+        ini.set_num("game", "sum_kills", _sum_kills)
+        ini.set_num("game", "sum_props_destroyed", _sum_props_destroyed)
+        ini.set_num("game", "sum_npcs_killed", _sum_npcs_killed)
+        ini.set_num("game", "sum_axes_thrown", _sum_axes_thrown)
         ini.flush("save.ini")
     }
 
@@ -210,19 +223,41 @@ class SaveImpl {
     best_run_npcs_killed { _best_run_npcs_killed }
     best_run_axes_thrown { _best_run_axes_thrown }
     total_parries { _total_parries }
-    total_parries=(s) { _total_parries = s }
+    total_parries=(s) { 
+        _total_parries = s 
+        _sum_parries = _sum_parries + 1
+    }
     total_kills { _total_kills }
-    total_kills=(s) { _total_kills = s }
+    total_kills=(s) { 
+        _total_kills = s 
+        _sum_kills = _sum_kills + 1
+    }
     total_highest_stage { _total_highest_stage }
     total_highest_stage=(s) { _total_highest_stage = s }
     total_props_destroyed { _total_props_destroyed }
-    total_props_destroyed=(s) { _total_props_destroyed = s }
+    total_props_destroyed=(s) { 
+        _total_props_destroyed = s 
+        _sum_props_destroyed = _sum_props_destroyed + 1
+    }
     total_npcs_killed { _total_npcs_killed }
-    total_npcs_killed=(s) { _total_npcs_killed = s }
+    total_npcs_killed=(s) { 
+        _total_npcs_killed = s 
+        _sum_npcs_killed = _sum_npcs_killed + 1
+    }
     total_axes_thrown { _total_axes_thrown }
-    total_axes_thrown=(s) { _total_axes_thrown = s }
+    total_axes_thrown=(s) { 
+        _total_axes_thrown = s 
+        _sum_axes_thrown = _sum_axes_thrown + 1
+    }
+    total_runs { _total_runs }
+    total_runs=(s) { _total_runs = s }
     highscore=(s) { _highscore = s }
     highscore { _highscore }
+    sum_parries { _sum_parries }
+    sum_kills { _sum_kills }
+    sum_props_destroyed { _sum_props_destroyed }
+    sum_npcs_killed { _sum_npcs_killed }
+    sum_axes_thrown { _sum_axes_thrown }
     fullscreen=(s) { _fullscreen = s }
     fullscreen { _fullscreen}
     shake_modifier=(s) { _shake_modifier = s }

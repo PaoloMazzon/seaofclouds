@@ -108,7 +108,7 @@ class Chest is Entity {
                         _given_item = true
                         Save.items.give_item(_item)
                         Audio.play(Assets.aud_pickup, false, Save.volume, Save.volume)
-                        FloatingText.create_floating_text(level, x, y, Items.item_text(_item))
+                        FloatingText.create_floating_text(level, x, y, Items.item_text(_item), true)
                     }
                 }
             }
