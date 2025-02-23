@@ -171,10 +171,8 @@ class Menu is Level {
         _text_menu.finalize()
 
         // Build the stats screen
-        _stats_surface = Surface.new(300, 13 * 10)
+        _stats_surface = Surface.new(300, 124)
         Renderer.target = _stats_surface
-        Renderer.colour_mod = [0, 0, 0, 0.2]
-        Renderer.clear()
         Renderer.colour_mod = [1, 1, 1, 1]
         var advance = 13
         var x_advance = 150
@@ -434,6 +432,7 @@ class Menu is Level {
         if (_showing_stats) {
             var xx = (Renderer.window_width * 0.5) - (_stats_surface.width * 0.5 * _ui_scale)
             var yy = (Renderer.window_height * 0.7) - (_stats_surface.height * 0.5 * _ui_scale)
+            Renderer.draw_texture(Assets.tex_statbackground, xx - (8 * _ui_scale), yy - (8 * _ui_scale), _ui_scale, _ui_scale, 0, 0, 0)
             Renderer.draw_texture(_stats_surface, xx, yy, _ui_scale, _ui_scale, 0, 0, 0)
         }
 
