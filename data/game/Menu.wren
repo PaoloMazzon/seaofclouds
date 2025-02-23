@@ -228,7 +228,7 @@ class Menu is Level {
 
                 // If multiple items, draw an amount instead of the same item repeadetely
                 if (Save.best_run_items.item_count(i) > 1) {
-                    draw_digits(Save.best_run_items.item_count(i), banner_current_x - 4, top_left + 6, 1/3)
+                    draw_digits(Save.best_run_items.item_count(i), banner_current_x - 1, top_left + 4, 1/3)
                 }
                 banner_current_x = banner_current_x + banner_move_x
             }

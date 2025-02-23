@@ -567,12 +567,12 @@ class Generator {
                     // Autotile the drop tiles
                     if (!below && ((drop_right && drop_left) || (left && right) || (left && drop_right) || (drop_left && right))) {
                         tileset_background[x, y] = 12
-                    } else if (!below && (drop_right || right) && !drop_left && !left) {
-                        tileset_background[x, y] = 13
-                    } else if (!below && !drop_right && !right && (drop_left || left)) {
-                        tileset_background[x, y] = 14
+                    } else if ((drop_right || right) && !drop_left && !left) {
+                        tileset_background[x, y] = 13 // Nothing to the left
+                    } else if (!drop_right && !right && (drop_left || left)) {
+                        tileset_background[x, y] = 14 // Nothing to the right
                     } else if (!below && !drop_right && !drop_left && !left && !right) {
-                        tileset_background[x, y] = 15
+                        tileset_background[x, y] = 15 // Nothing either side
                     }
                 }
             }
