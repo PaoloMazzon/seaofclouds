@@ -155,14 +155,14 @@ class Prop {
         } else {
             _frame = rng.sample([0, 1, 2, 3, 4, 5, 6, 7])
             list = [
-                Assets.tex_snowparticle,
-                Assets.tex_boxparticle, 
-                Assets.tex_snowparticle, 
-                Assets.tex_snowparticle, 
-                Assets.tex_boxparticle, 
-                Assets.tex_snowparticle, 
-                Assets.tex_snowparticle, 
-                Assets.tex_snowparticle
+                Assets.tex_statueparticle,
+                Assets.tex_statueparticle, 
+                Assets.tex_statueparticle, 
+                Assets.tex_statueparticle, 
+                Assets.tex_statueparticle, 
+                Assets.tex_statueparticle, 
+                Assets.tex_statueparticle, 
+                Assets.tex_statueparticle
             ]
         }
         _particle = list[_frame]
