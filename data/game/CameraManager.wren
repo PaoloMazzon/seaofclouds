@@ -24,7 +24,8 @@ class CameraManagerImpl {
         _menu_background_camera = Camera.new()
         _transistion_camera = Camera.new()
         _character_shader = Shader.load("data/shaders/outline.vert.spv", "data/shaders/outline.frag.spv", 0)
-        _crt_shader = Shader.load("data/shaders/crt.vert.spv", "data/shaders/crt.frag.spv", 0)
+        _crt_shader = Shader.load("data/shaders/crt.vert.spv", "data/shaders/crt.frag.spv", 8)
+        _crt_shader_buffer = Buffer.new(8)
         _post_fx_surface = Surface.new(Renderer.window_width, Renderer.window_height)
 
         // Setup the pause menu
@@ -129,9 +130,15 @@ class CameraManagerImpl {
     }
 
     end_backbuffer() {
+        _crt_shader_buffer = Buffer.new(8) // this is a shit solution
+        _crt_shader_buffer.write_float(_post_fx_surface.width)
+        _crt_shader_buffer.write_float(_post_fx_surface.height)
         Renderer.target = Renderer.RENDER_TARGET_DEFAULT
         Renderer.use_cameras_on_surfaces = false
         Renderer.shader = crt_shader
+        if (crt_shader != null) {
+            crt_shader.data = _crt_shader_buffer
+        }
         Renderer.draw_texture(_post_fx_surface, 0, 0)
         Renderer.shader = null
     }

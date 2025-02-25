@@ -18,7 +18,11 @@ layout(set = 0, binding = 0) uniform UniformBufferObject {
  
 layout(set = 1, binding = 1) uniform sampler texSampler;
 layout(set = 2, binding = 2) uniform texture2D tex[];
- 
+
+layout(set = 3, binding = 3) uniform UserData {
+    vec2 resolution;
+} userData;
+
 // Input from the vertex shader
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec4 fragColour;
@@ -27,21 +31,30 @@ layout(location = 2) in vec4 fragColour;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    vec4 colour = texture(sampler2D(tex[push.textureIndex], texSampler), fragTexCoord);
-    int cell = int(fragTexCoord.x);
-    const float bleed = 0.3;
+    vec2 res = userData.resolution;
+    vec2 uv = fragTexCoord / res;
+    
+    // Slight curvature
+    vec2 curvedUV = uv * 2.0 - 1.0;
+    curvedUV *= 1.05 + 0.05 * length(curvedUV);
+    uv = curvedUV * 0.5 + 0.5;
 
-    // Simulate RGB cells
-    if (cell % 3 == 0) { // Red component
-        outColor = vec4(colour.r, colour.g * bleed, colour.b * bleed, colour.a);
-    } else if (cell % 3 == 1) { // Green component
-        outColor = vec4(colour.r * bleed, colour.g, colour.b * bleed, colour.a);
-    } else if (cell % 3 == 2) { // Blue component
-        outColor = vec4(colour.r * bleed, colour.g * bleed, colour.b, colour.a);
+    // Prevent sampling outside valid range
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+        outColor = vec4(0.0);
+        return;
     }
+
+    vec4 colour = texture(sampler2D(tex[push.textureIndex], texSampler), uv * res);
 
     // Scanlines
-    if (int(fragTexCoord.y) % 3 == 0) {
-        outColor.rgb *= 0.8;
-    }
+    float scanline = sin(fragTexCoord.y * 3.14159) * 0.1;
+    colour *= 1.0 - scanline;
+
+    // Chromatic aberration
+    float aberration = 1.25;
+    float r = texture(sampler2D(tex[push.textureIndex], texSampler), (uv * res) + vec2(aberration, 0.0)).r;
+    float b = texture(sampler2D(tex[push.textureIndex], texSampler), (uv * res) - vec2(aberration, 0.0)).b;
+    
+    outColor = vec4(r, colour.g, b, 1.0);
 }
