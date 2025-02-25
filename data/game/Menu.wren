@@ -173,6 +173,7 @@ class Menu is Level {
         // Build the stats screen
         _stats_surface = Surface.new(300, 124)
         Renderer.target = _stats_surface
+        Renderer.clear_blank()
         Renderer.colour_mod = [1, 1, 1, 1]
         var advance = 13
         var x_advance = 150
@@ -464,6 +465,7 @@ class Menu is Level {
     }
 
     destroy() {
+        _stats_surface.free()
         Save.save()
         super.destroy()
     }
