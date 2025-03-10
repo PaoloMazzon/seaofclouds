@@ -123,6 +123,8 @@ class CameraManagerImpl {
         }
     }
 
+    backbuffer { _post_fx_surface }
+
     begin_backbuffer() {
         Renderer.use_cameras_on_surfaces = true
         Renderer.target = _post_fx_surface

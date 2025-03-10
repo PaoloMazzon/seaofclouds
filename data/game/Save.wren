@@ -104,7 +104,7 @@ class SaveImpl {
         _ui_scale = 2
         _crt_effect = true
         _items = Items.new()
-        _stage = 1
+        _stage = 4
         _score = 0
         _highscore = 0
         _beaten_game = false

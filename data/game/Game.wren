@@ -226,6 +226,7 @@ class Game is Level {
         _has_key = false
         _music = null
         _in_boss_cutscene = false
+        _lighting_enabled = false
     }
     rng { _rng }
     player { _player }
@@ -490,6 +491,12 @@ class Game is Level {
         // Camera accumulator
         _camera_pos_x = _player.x - (_game_camera.width / 2)
         _camera_pos_y = _player.y - (_game_camera.height / 2)
+
+        // Lighting
+        _lighting_enabled = Save.stage == 4 || Save.stage == 5
+        if (_lighting_enabled) {
+            _lighting_surface = Surface.new(Renderer.window_width, Renderer.window_height)
+        }
     }
 
     pre_frame() {
@@ -551,6 +558,12 @@ class Game is Level {
             _window_surface = Surface.new(Renderer.window_width, Renderer.window_height)
         }
         CameraManager.update_backbuffer()
+
+        // Update lighting surface
+        if (_lighting_enabled && (_lighting_surface.width != Renderer.window_width || _lighting_surface.height != Renderer.window_height)) {
+            _lighting_surface.free()
+            _lighting_surface = Surface.new(Renderer.window_width, Renderer.window_height)
+        }
     }
 
     update() {
@@ -620,8 +633,25 @@ class Game is Level {
             _particles = new_particles
         }
 
+        // Lighting
+        if (_lighting_enabled) {
+            Renderer.target = _lighting_surface
+            Renderer.colour_mod = [0, 0, 0, 1]
+            Renderer.clear()
+            Renderer.colour_mod = [1, 1, 1, 1]
+            Renderer.blend_mode = Renderer.BLEND_MODE_SUBTRACT
+            for (char in get_entities(Character)) {
+                Renderer.draw_texture(Assets.tex_lighting, char.x - 32, char.y - 32)
+            }
+            Renderer.blend_mode = Renderer.BLEND_MODE_BLEND
+            Renderer.target = CameraManager.backbuffer
+        }
+
         // Player UI
         Renderer.lock_cameras(_ui_camera)
+        Renderer.colour_mod = [1, 1, 1, 0.9]
+        Renderer.draw_texture(_lighting_surface, 0, 0)
+        Renderer.colour_mod = [1, 1, 1, 1]
         player.draw_ui(this)
 
         // Top-level game stuff

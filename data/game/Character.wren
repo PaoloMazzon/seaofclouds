@@ -424,6 +424,7 @@ class Character is Entity {
 
     create(level, tiled_data) {
         super.create(level, tiled_data)
+        // TODO: Add lighting updates
         _level = level
     }
 
