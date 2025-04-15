@@ -443,6 +443,7 @@ class Game is Level {
         Renderer.colour_mod = [1, 1, 1, 1]
         _tileset_surface = _background_tileset.draw_to_surface()
         Renderer.target = _tileset_surface
+        Renderer.blend_mode = Renderer.BLEND_MODE_BLEND
         _tileset.draw()
         _foreground_tileset.draw()
         _collision_tileset.draw()
@@ -650,7 +651,9 @@ class Game is Level {
         // Player UI
         Renderer.lock_cameras(_ui_camera)
         Renderer.colour_mod = [1, 1, 1, 0.9]
-        Renderer.draw_texture(_lighting_surface, 0, 0)
+        if (_lighting_enabled) {
+            Renderer.draw_texture(_lighting_surface, 0, 0)
+        }
         Renderer.colour_mod = [1, 1, 1, 1]
         player.draw_ui(this)
 

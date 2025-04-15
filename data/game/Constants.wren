@@ -39,20 +39,20 @@ class Constants {
     static ENEMY_HIT_IFRAMES { 1 }
 
     //////////////////////////// Level generation by stage ////////////////////////////
-    static ISLAND_RADIUS_MAX                { [10, 10, 11, 12, 12, 0] }
-    static ISLAND_RADIUS_MIN                { [ 3,  3,  4,  8,  6, 0] }
-    static ISLAND_MINIMUM_DISTANCE          { [15, 15, 15, 35, 20, 0] }
-    static LEVEL_WIDTH                      { [50, 75, 75, 80, 99, 0] }
-    static LEVEL_HEIGHT                     { [50, 75, 75, 80, 99, 0] }
-    static LEVEL_ISLAND_COUNT               { [13, 13, 11, 10, 20, 0] }
-    static LEVEL_ENEMY_MAX                  { [15, 20, 25, 25, 40, 0] }
+    static ISLAND_RADIUS_MAX                { [10, 10, 11,  8, 12, 0] }
+    static ISLAND_RADIUS_MIN                { [ 3,  3,  4,  6,  6, 0] }
+    static ISLAND_MINIMUM_DISTANCE          { [15, 15, 15, 10, 20, 0] }
+    static LEVEL_WIDTH                      { [50, 75, 75, 50, 99, 0] }
+    static LEVEL_HEIGHT                     { [50, 75, 75, 50, 99, 0] }
+    static LEVEL_ISLAND_COUNT               { [13, 13, 11,  8, 20, 0] }
+    static LEVEL_ENEMY_MAX                  { [15, 20, 25, 15, 40, 0] }
     static LEVEL_ENEMY_MIN                  { [10, 15, 15, 10, 30, 0] }
     static LEVEL_RANDOM_CHEST_MAX           { [ 1,  2,  2,  2,  3, 0] }
     static LEVEL_RANDOM_CHEST_MIN           { [ 0,  1,  1,  1,  1, 0] }
-    static LEVEL_TRAP_MAX                   { [ 5, 10, 15, 15, 20, 0] }
-    static LEVEL_TRAP_MIN                   { [ 2,  5,  8, 10, 15, 0] }
-    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [15, 60, 45, 40, 60, 0] }
-    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 8, 30, 25, 30, 40, 0] }
+    static LEVEL_TRAP_MAX                   { [ 5, 10, 15, 10, 20, 0] }
+    static LEVEL_TRAP_MIN                   { [ 2,  5,  8,  5, 15, 0] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MAX { [15, 60, 45, 30, 60, 0] }
+    static LEVEL_ENVIRONMENT_STRUCTURES_MIN { [ 8, 30, 25, 20, 40, 0] }
     static LEVEL_TRAIL_COUNT_MIN            { [ 1,  1,  1,  1,  1, 0] } // trails are always only 1 right now
     static LEVEL_TRAIL_COUNT_MAX            { [ 2,  3,  3,  4,  4, 0] } // trails are always only 1 right now
 

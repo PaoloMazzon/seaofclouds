@@ -21,6 +21,8 @@ class Items {
 
     internal_list { _items }
 
+    count { _items.count }
+
     static item_text(id) {
         var texts = [
             "Dash a short distance",
@@ -155,7 +157,15 @@ class SaveImpl {
 
     // Checks if a highscore was achieved and records the run
     check_highscore() { 
+        // Check if over 10 items and give proper achivement
+        if (_items.count >= 10) {
+            Steam.setAchievement("GET_10_ITEMS")
+        }
+
         if (score > highscore) {
+            if (score >= 500) {
+                Steam.setAchievement("SCORE_OVER_500")
+            }
             _highscore = _score
             _best_run_parries = _total_parries
             _best_run_kills = _total_kills

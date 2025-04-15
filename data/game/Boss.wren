@@ -56,6 +56,7 @@ class Boss is Character {
         Save.beaten_game = true
         _level.stop_music()
         Audio.play(Assets.aud_title, false, Save.volume, Save.volume)
+        Steam.setAchievement("BEAT_THE_GAME")
         // _bowshot_sound.stop() - might cause crashes not sure
     }
 

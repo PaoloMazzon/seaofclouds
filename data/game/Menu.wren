@@ -84,6 +84,13 @@ class Menu is Level {
         var play_fn = Fn.new {
             Save.oops_all_wizards = false
             Save.total_runs = Save.total_runs + 1
+            Steam.setAchievement("START_NEW_RUN")
+            if (Save.total_runs >= 10) {
+                Steam.setAchievement("PLAY_10_RUNS")
+            }
+            if (Save.total_runs >= 100) {
+                Steam.setAchievement("PLAY_100_RUNS")
+            }
             _play = true
         }
         var oopsallwizards_fn = Fn.new {

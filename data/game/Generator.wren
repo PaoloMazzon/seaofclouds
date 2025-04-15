@@ -887,7 +887,7 @@ class Generator {
             place_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
         }
         place_environment_structures(level, tileset_foreground, collisions, tileset_front, island_spots, rng, locations)
-        place_trails(level, tileset_foreground, collisions, tileset_ground, island_spots, rng)
+        //place_trails(level, tileset_foreground, collisions, tileset_ground, island_spots, rng)
         place_enemies(level, rng.int(Constants.LEVEL_ENEMY_MIN[Save.stage - 1], Constants.LEVEL_ENEMY_MAX[Save.stage - 1] + 1), rng, locations)
         place_npcs(level, locations, rng)
         place_props(level, rng.int(Constants.MIN_PROPS, Constants.MAX_PROPS + 1), rng, locations)
